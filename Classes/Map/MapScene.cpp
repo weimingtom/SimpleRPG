@@ -596,6 +596,17 @@ void MapScene::_init_map() {
             this->disp_tile_tags.push_back(tag);
         }
     }
+    
+    // 帯をつける
+    auto dot_rect = Rect(0, 0, layer_size.width, tile_size.height);
+    std::vector<int> edges = {-(HEIGHT/2+1), HEIGHT/2+1};
+    for (auto y : edges) {
+        auto dot = Sprite::create();
+        dot->setTextureRect(dot_rect);
+        dot->setColor(Color3B::GREEN);
+        dot->setPosition(layer_size.width/2, layer_size.height/2 + y * tile_size.height);
+        this->addChild(dot, GS_MAP_EDGE_HIDE);
+    }
 }
 
 //---------------------------------------------------------
