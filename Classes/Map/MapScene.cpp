@@ -119,80 +119,6 @@ void MapScene::_test() {
 }
 
 
-void MapScene::_init_map() {
-    auto layer_size = this->getContentSize();
-    
-    auto _tile_map = TMXTiledMap::create("test.tmx");
-    // 元は非表示にする
-    _tile_map->setVisible(false);
-    _tile_map->setTag(TAG_MAP);
-    this->addChild(_tile_map);
-    
-    Vector<Node*> array = _tile_map->getChildren();
-    SpriteBatchNode *tileChild = NULL;
-    
-    for (int i = 0; i < array.size(); i++){
-        tileChild = (SpriteBatchNode*)array.at(i);
-        if (!tileChild) {
-            break;
-        }
-        tileChild->setVisible(false);
-        tileChild->getTexture()->setAntiAliasTexParameters();
-    }
-    
-    auto map_size  = _tile_map->getMapSize();
-    auto map_layer = _tile_map->getLayer("BG");
-    
-    auto tile_size = _tile_map->getTileSize();
-    
-    // とりあえず中心にして
-    auto center_pos = Vec2(layer_size.width/2, layer_size.height/2);
-    
-    // ループさせて、設定しておく
-    for (int h = 0; h < HEIGHT; h++) {
-        for (int w = 0; w < WIDTH; w++) {
-            // 設定されているやつをとばす
-            
-            int _w = w - WIDTH/2;
-            int _h = h - HEIGHT/2;
-            int _x = (this->now_pos_x + _w + (int)map_size.width)  % (int)map_size.width;
-            int _y = (this->now_pos_y + _h + (int)map_size.height) % (int)map_size.height;
-            
-            auto tile = this->_make_tile(_x, _y, map_layer);
-            
-            // 指定の座標にオフセット
-            int sx =  _w * tile_size.width;
-            int sy = -_h * tile_size.height;
-            
-            auto _pos = Vec2(center_pos.x + sx, center_pos.y + sy);
-            tile->setPosition(_pos);
-            this->addChild(tile, GS_MAP);
-            
-            auto tag = this->_get_tile_tag(_x, _y);
-            tile->setTag(tag);
-            this->disp_tile_tags.push_back(tag);
-        }
-    }
-}
-
-
-Sprite* MapScene::_make_tile(int x, int y, TMXLayer *layer) {
-    auto gid      = layer->getTileGIDAt(Vec2(x, y));
-    auto tile_set = layer->getTileSet();
-   
-    Rect rect = tile_set->getRectForGID(gid);
-    rect = CC_RECT_PIXELS_TO_POINTS(rect);
-    
-    auto tile = Sprite::createWithTexture(layer->getTexture(), rect);
-    tile->setBatchNode(layer);
-    return tile;
-}
-
-uint32_t MapScene::_get_tile_tag(int x, int y) {
-    auto tag = y * 10000 + x;
-    return tag;
-}
-
 //---------------------------------------------------------
 // main loop
 //---------------------------------------------------------
@@ -356,6 +282,9 @@ void MapScene::_player_move() {
     }
 }
 
+//---------------------------------------------------------
+// x方向に1列追加する
+//---------------------------------------------------------
 void MapScene::_add_x_line_tile(int fixed_y) {
     auto _tile_map  = this->_get_map();
     auto _map_layer = _tile_map->getLayer("BG");
@@ -391,7 +320,9 @@ void MapScene::_add_x_line_tile(int fixed_y) {
     }
 }
 
-
+//---------------------------------------------------------
+// y方向に1列追加する
+//---------------------------------------------------------
 void MapScene::_add_y_line_tile(int fixed_x) {
     auto _tile_map  = this->_get_map();
     auto _map_layer = _tile_map->getLayer("BG");
@@ -427,6 +358,9 @@ void MapScene::_add_y_line_tile(int fixed_x) {
     }
 }
 
+//---------------------------------------------------------
+// x方向に1列削除する
+//---------------------------------------------------------
 void MapScene::_remove_x_line_tile(int fixed_y) {
     auto map_size = this->_get_map()->getMapSize();
     auto _add_y   = (this->now_pos_y + fixed_y + (int)map_size.width) % (int)map_size.width;
@@ -445,7 +379,9 @@ void MapScene::_remove_x_line_tile(int fixed_y) {
     }
 }
 
-
+//---------------------------------------------------------
+// y方向に1列削除する
+//---------------------------------------------------------
 void MapScene::_remove_y_line_tile(int fixed_x) {
     auto map_size = this->_get_map()->getMapSize();
     auto _add_x   = (this->now_pos_x + fixed_x + (int)map_size.width) % (int)map_size.width;
@@ -603,22 +539,91 @@ void MapScene::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_event)
 void MapScene::onTouchCancelled(cocos2d::Touch *touch, cocos2d::Event *unused_event){
 }
 
-
-
-void MapScene::menuCloseCallback(Ref* pSender)
-{
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WP8) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
-	MessageBox("You pressed the close button. Windows Store Apps do not implement a close button.","Alert");
-    return;
-#endif
-
-    Director::getInstance()->end();
-
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-    exit(0);
-#endif
+//---------------------------------------------------------
+// 表示するマップの初期化
+//---------------------------------------------------------
+void MapScene::_init_map() {
+    auto layer_size = this->getContentSize();
+    
+    auto _tile_map = TMXTiledMap::create("test.tmx");
+    // 元は非表示にする
+    _tile_map->setVisible(false);
+    _tile_map->setTag(TAG_MAP);
+    this->addChild(_tile_map);
+    
+    Vector<Node*> array = _tile_map->getChildren();
+    SpriteBatchNode *tileChild = NULL;
+    
+    for (int i = 0; i < array.size(); i++){
+        tileChild = (SpriteBatchNode*)array.at(i);
+        if (!tileChild) {
+            break;
+        }
+        tileChild->setVisible(false);
+        tileChild->getTexture()->setAntiAliasTexParameters();
+    }
+    
+    auto map_size  = _tile_map->getMapSize();
+    auto map_layer = _tile_map->getLayer("BG");
+    
+    auto tile_size = _tile_map->getTileSize();
+    
+    // とりあえず中心にして
+    auto center_pos = Vec2(layer_size.width/2, layer_size.height/2);
+    
+    // ループさせて、設定しておく
+    for (int h = 0; h < HEIGHT; h++) {
+        for (int w = 0; w < WIDTH; w++) {
+            // 設定されているやつをとばす
+            
+            int _w = w - WIDTH/2;
+            int _h = h - HEIGHT/2;
+            int _x = (this->now_pos_x + _w + (int)map_size.width)  % (int)map_size.width;
+            int _y = (this->now_pos_y + _h + (int)map_size.height) % (int)map_size.height;
+            
+            auto tile = this->_make_tile(_x, _y, map_layer);
+            
+            // 指定の座標にオフセット
+            int sx =  _w * tile_size.width;
+            int sy = -_h * tile_size.height;
+            
+            auto _pos = Vec2(center_pos.x + sx, center_pos.y + sy);
+            tile->setPosition(_pos);
+            this->addChild(tile, GS_MAP);
+            
+            auto tag = this->_get_tile_tag(_x, _y);
+            tile->setTag(tag);
+            this->disp_tile_tags.push_back(tag);
+        }
+    }
 }
 
+//---------------------------------------------------------
+// タイルのスプライトを作成する
+//---------------------------------------------------------
+Sprite* MapScene::_make_tile(int x, int y, TMXLayer *layer) {
+    auto gid      = layer->getTileGIDAt(Vec2(x, y));
+    auto tile_set = layer->getTileSet();
+    
+    Rect rect = tile_set->getRectForGID(gid);
+    rect = CC_RECT_PIXELS_TO_POINTS(rect);
+    
+    auto tile = Sprite::createWithTexture(layer->getTexture(), rect);
+    tile->setBatchNode(layer);
+    return tile;
+}
+
+//---------------------------------------------------------
+// xy座標から規則そってタグを取得する
+//---------------------------------------------------------
+uint32_t MapScene::_get_tile_tag(int x, int y) {
+    auto tag = y * 10000 + x;
+    return tag;
+}
+
+//---------------------------------------------------------
+// 全体マップ情報を取得
+//---------------------------------------------------------
 TMXTiledMap* MapScene::_get_map() {
     auto tile_map = (TMXTiledMap *)this->getChildByTag(TAG_MAP);
     return tile_map;

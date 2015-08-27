@@ -1,5 +1,5 @@
-#ifndef __MAP_MAPSCENE2_H__
-#define __MAP_MAPSCENE2_H__
+#ifndef __MAP_MAPSCENE_H__
+#define __MAP_MAPSCENE_H__
 
 #include "cocos2d.h"
 
@@ -12,9 +12,6 @@ public:
     // Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
     virtual bool init();  
     
-    // a selector callback
-    void menuCloseCallback(cocos2d::Ref* pSender);
-    
     // implement the "static create()" method manually
     CREATE_FUNC(MapScene);
     
@@ -25,24 +22,29 @@ public:
     virtual void onTouchCancelled(cocos2d::Touch *touch, cocos2d::Event *unused_event);
     
 private:
+    //========================
+    // variables
+    //========================
+    int now_pos_x;  // 現在地 X
+    int now_pos_y;  // 現在地 Y
+    int goal_x;     // 移動先 X
+    int goal_y;     // 移動先 Y
     
+    float now_move_amount; // 移動中の制御用
+    
+    std::vector<int> routes; // 探索結果の道順
+    int now_route;           // 移動中の方向
+    
+    std::vector<int> disp_tile_tags; // 表示されているタイルのタグ一覧
+    
+    
+    //========================
+    // functions
+    //========================
     void _init_map();
     
     virtual void update(float delta);
-    void _player_move(); // マップ上を移動する
-    
-    int now_pos_x;
-    int now_pos_y;
-    int goal_x;
-    int goal_y;
-    
-    float now_move_amount;
-    
-    std::vector<int> routes;
-    int now_route;
-    
-    
-    void _test();
+    void _player_move();
     
     void _update_now_pos_x(int add_x);
     void _update_now_pos_y(int add_y);
@@ -57,8 +59,8 @@ private:
     
     cocos2d::TMXTiledMap* _get_map();
     
-    // 表示されているタイルのタグ一覧
-    std::vector<int> disp_tile_tags;
+    //
+    void _test();
 };
 
-#endif // __MAP_MAPSCENE2_H__
+#endif // __MAP_MAPSCENE_H__
