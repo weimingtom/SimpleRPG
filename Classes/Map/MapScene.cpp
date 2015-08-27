@@ -20,10 +20,14 @@ enum E_GS_ORDER {
     GS_MAP,
     GS_PLAYER,
     GS_TOUCH_POINT,
+    GS_MAP_EDGE_HIDE,
     NR_GSS
 };
 
 const float MOVE_SPEED = 1.0f;
+
+static const int WIDTH  = 15;
+static const int HEIGHT = 15;
 
 Scene* MapScene::createScene()
 {
@@ -43,57 +47,12 @@ Scene* MapScene::createScene()
 // on "init" you need to initialize your instance
 bool MapScene::init()
 {
-    //////////////////////////////
-    // 1. super init first
-    if ( !Layer::init() )
-    {
+    if ( !Layer::init() ) {
         return false;
     }
     
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-
-    /////////////////////////////
-    // 2. add a menu item with "X" image, which is clicked to quit the program
-    //    you may modify it.
-
-    // add a "close" icon to exit the progress. it's an autorelease object
-    auto closeItem = MenuItemImage::create(
-                                           "CloseNormal.png",
-                                           "CloseSelected.png",
-                                           CC_CALLBACK_1(MapScene::menuCloseCallback, this));
-    
-	closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2 ,
-                                origin.y + closeItem->getContentSize().height/2));
-
-    // create menu, it's an autorelease object
-    auto menu = Menu::create(closeItem, NULL);
-    menu->setPosition(Vec2::ZERO);
-    this->addChild(menu, 1);
-
-    /////////////////////////////
-    // 3. add your codes below...
-
-    // add a label shows "Hello World"
-    // create and initialize a label
-    
-    auto label = LabelTTF::create("Hello World", "Arial", 24);
-    
-    // position the label on the center of the screen
-    label->setPosition(Vec2(origin.x + visibleSize.width/2,
-                            origin.y + visibleSize.height - label->getContentSize().height));
-
-    // add the label as a child to this layer
-    this->addChild(label, 1);
-
-    // add "HelloWorld" splash screen"
-    auto sprite = Sprite::create("HelloWorld.png");
-
-    // position the sprite on the center of the screen
-    sprite->setPosition(Vec2(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
-
-    // add the sprite as a child to this layer
-    this->addChild(sprite, 0);
     
     // 初期化
     this->now_route = ROUTE_NONE;
@@ -138,6 +97,7 @@ bool MapScene::init()
     dot->setColor(Color3B::RED);
     dot->setOpacity(128);
     dot->setTag(TAG_TOUCH_POINT);
+    dot->setPosition(-100, -100);
     this->addChild(dot, GS_TOUCH_POINT);
     
     // 開始時の位置設定
@@ -159,8 +119,6 @@ void MapScene::_test() {
 }
 
 
-static const int WIDTH  = 15;
-static const int HEIGHT = 15;
 void MapScene::_init_map() {
     auto layer_size = this->getContentSize();
     
@@ -219,7 +177,6 @@ void MapScene::_init_map() {
 
 
 Sprite* MapScene::_make_tile(int x, int y, TMXLayer *layer) {
-    
     auto gid      = layer->getTileGIDAt(Vec2(x, y));
     auto tile_set = layer->getTileSet();
    
@@ -250,8 +207,6 @@ void MapScene::update(float delta) {
 // マップ上を移動する
 //---------------------------------------------------------
 void MapScene::_player_move() {
-    
-    // 移動途中でのクリックは移動先の考慮が必要。メモ
     
     // 歩き終わったか
     bool is_move_end = false;
