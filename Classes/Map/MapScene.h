@@ -41,8 +41,6 @@ private:
     std::vector<int> routes;
     int now_route;
     
-    cocos2d::Vec2 _calc_touch_pos(int tx, int ty, cocos2d::TMXTiledMap *map);
-    
     
     void _test();
     

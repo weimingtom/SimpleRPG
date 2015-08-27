@@ -518,28 +518,11 @@ void MapScene::_remove_y_line_tile(int fixed_x) {
 void MapScene::_update_now_pos_x(int add_x) {
     auto map_size = this->_get_map()->getMapSize();
     this->now_pos_x = (this->now_pos_x + add_x + (int)map_size.width) % (int)map_size.width;
-    CCLOG("update x = %d", this->now_pos_x);
 }
 
 void MapScene::_update_now_pos_y(int add_y) {
     auto map_size = this->_get_map()->getMapSize();
     this->now_pos_y = (this->now_pos_y + add_y + (int)map_size.height) % (int)map_size.height;
-    CCLOG("update y = %d", this->now_pos_y);
-}
-
-//---------------------------------------------------------
-// タッチポイントの座標計算
-// 移動中などの中途半端な状態になるので、
-// かっちり合わせたいとき用
-//---------------------------------------------------------
-Vec2 MapScene::_calc_touch_pos(int tx, int ty, TMXTiledMap *map) {
-    auto _map_pos  = map->getPosition();
-    
-    auto map_size  = map->getMapSize();
-    auto tile_size = map->getTileSize();
-    
-    return Vec2(_map_pos.x + tx * tile_size.width + tile_size.width/2,
-                _map_pos.y + (map_size.height - ty) * tile_size.height - tile_size.height/2);
 }
 
 //=========================================================
