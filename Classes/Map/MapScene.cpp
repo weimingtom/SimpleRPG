@@ -283,6 +283,8 @@ void MapScene::_player_move() {
     
     Vec2 new_map_pos   = _tile_map->getPosition();
     Vec2 new_touch_pos = _touch_rect->getPosition();
+    
+    auto goal_tag = this->_get_tile_tag(this->goal_x, this->goal_y);
     switch (this->now_route) {
         case ROUTE_UP:
         {
@@ -295,10 +297,14 @@ void MapScene::_player_move() {
             for (auto tag : this->disp_tile_tags) {
                 auto tile = this->getChildByTag(tag);
                 tile->setPositionY(tile->getPositionY() - MOVE_SPEED);
+                
+                // タッチポイントに合致する場合
+                if (tag == goal_tag) {
+                    new_touch_pos = tile->getPosition();
+                }
             }
             
             new_map_pos.y         -= MOVE_SPEED;
-            new_touch_pos.y       -= MOVE_SPEED;
             this->now_move_amount += MOVE_SPEED;
             
             if (this->now_move_amount >= tile_size.height) {
@@ -312,8 +318,6 @@ void MapScene::_player_move() {
                 // かっちり合わせて、直前情報の更新
                 auto _my = this->before_move_map_pos.y - tile_size.height;
                 new_map_pos.y = this->before_move_map_pos.y = _my;
-                
-                new_touch_pos.y = this->_calc_touch_pos(this->goal_x, this->goal_y, _tile_map).y;
             }
         }
             break;
@@ -328,10 +332,13 @@ void MapScene::_player_move() {
             for (auto tag : this->disp_tile_tags) {
                 auto tile = this->getChildByTag(tag);
                 tile->setPositionY(tile->getPositionY() + MOVE_SPEED);
+                // タッチポイントに合致する場合
+                if (tag == goal_tag) {
+                    new_touch_pos = tile->getPosition();
+                }
             }
             
             new_map_pos.y         += MOVE_SPEED;
-            new_touch_pos.y       += MOVE_SPEED;
             this->now_move_amount += MOVE_SPEED;
             
             if (this->now_move_amount >= tile_size.height) {
@@ -345,8 +352,6 @@ void MapScene::_player_move() {
                 // かっちり合わせて、直前情報の更新
                 auto _my = this->before_move_map_pos.y + tile_size.height;
                 new_map_pos.y = this->before_move_map_pos.y = _my;
-                
-                new_touch_pos.y = this->_calc_touch_pos(this->goal_x, this->goal_y, _tile_map).y;
             }
         }
             break;
@@ -361,10 +366,13 @@ void MapScene::_player_move() {
             for (auto tag : this->disp_tile_tags) {
                 auto tile = this->getChildByTag(tag);
                 tile->setPositionX(tile->getPositionX() + MOVE_SPEED);
+                // タッチポイントに合致する場合
+                if (tag == goal_tag) {
+                    new_touch_pos = tile->getPosition();
+                }
             }
             
             new_map_pos.x         += MOVE_SPEED;
-            new_touch_pos.x       += MOVE_SPEED;
             this->now_move_amount += MOVE_SPEED;
             
             if (this->now_move_amount >= tile_size.height) {
@@ -378,8 +386,6 @@ void MapScene::_player_move() {
                 // かっちり合わせて、直前情報の更新
                 auto _mx = this->before_move_map_pos.x + tile_size.width;
                 new_map_pos.x = this->before_move_map_pos.x = _mx;
-                
-                new_touch_pos.x = this->_calc_touch_pos(this->goal_x, this->goal_y, _tile_map).x;
             }
         }
             break;
@@ -394,10 +400,13 @@ void MapScene::_player_move() {
             for (auto tag : this->disp_tile_tags) {
                 auto tile = this->getChildByTag(tag);
                 tile->setPositionX(tile->getPositionX() - MOVE_SPEED);
+                // タッチポイントに合致する場合
+                if (tag == goal_tag) {
+                    new_touch_pos = tile->getPosition();
+                }
             }
             
             new_map_pos.x         -= MOVE_SPEED;
-            new_touch_pos.x       -= MOVE_SPEED;
             this->now_move_amount += MOVE_SPEED;
             
             if (this->now_move_amount >= tile_size.height) {
@@ -411,8 +420,6 @@ void MapScene::_player_move() {
                 // かっちり合わせて、直前情報の更新
                 auto _mx = this->before_move_map_pos.x - tile_size.width;
                 new_map_pos.x = this->before_move_map_pos.x = _mx;
-                
-                new_touch_pos.x = this->_calc_touch_pos(this->goal_x, this->goal_y, _tile_map).x;
             }
         }
             break;
