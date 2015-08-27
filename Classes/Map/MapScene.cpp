@@ -304,7 +304,7 @@ void MapScene::_player_move() {
             if (this->now_move_amount >= tile_size.height) {
                 is_move_end = true;
                 // 現在地更新
-                this->now_pos_y--;
+                this->_update_now_pos_y(-1);
                 
                 // 不要なタイルを削除し、一個先を追加しておく
                 this->_remove_x_line_tile((HEIGHT/2 + 1));
@@ -337,7 +337,7 @@ void MapScene::_player_move() {
             if (this->now_move_amount >= tile_size.height) {
                 is_move_end = true;
                 // 現在地更新
-                this->now_pos_y++;
+                this->_update_now_pos_y(+1);
                 
                 // 不要なタイルを削除し、一個先を追加しておく
                 this->_remove_x_line_tile(-(HEIGHT/2 + 1));
@@ -370,7 +370,7 @@ void MapScene::_player_move() {
             if (this->now_move_amount >= tile_size.height) {
                 is_move_end = true;
                 // 現在地更新
-                this->now_pos_x--;
+                this->_update_now_pos_x(-1);
                 
                 // 不要なタイルを削除し、一個先を追加しておく
                 this->_remove_y_line_tile((WIDTH/2 + 1));
@@ -403,7 +403,7 @@ void MapScene::_player_move() {
             if (this->now_move_amount >= tile_size.height) {
                 is_move_end = true;
                 // 現在地更新
-                this->now_pos_x++;
+                this->_update_now_pos_x(+1);
                 
                 // 不要なタイルを削除し、一個先を追加しておく
                 this->_remove_y_line_tile(-(WIDTH/2 + 1));
@@ -513,7 +513,7 @@ void MapScene::_add_y_line_tile(int fixed_x) {
 
 void MapScene::_remove_x_line_tile(int fixed_y) {
     auto map_size = this->_get_map()->getMapSize();
-    auto _add_y   = this->now_pos_y + fixed_y;
+    auto _add_y   = (this->now_pos_y + fixed_y + (int)map_size.width) % (int)map_size.width;
     for (int w = 0; w < WIDTH; w++) {
         
         int _w = w - WIDTH/2;
@@ -534,7 +534,7 @@ void MapScene::_remove_x_line_tile(int fixed_y) {
 
 void MapScene::_remove_y_line_tile(int fixed_x) {
     auto map_size = this->_get_map()->getMapSize();
-    auto _add_x   = this->now_pos_x + fixed_x;
+    auto _add_x   = (this->now_pos_x + fixed_x + (int)map_size.width) % (int)map_size.width;
     for (int h = 0; h < HEIGHT; h++) {
         
         int _h = h - HEIGHT/2;
@@ -551,6 +551,21 @@ void MapScene::_remove_y_line_tile(int fixed_x) {
     }
     // 該当座標を削除
     this->disp_tile_xs.erase(remove(this->disp_tile_xs.begin(), this->disp_tile_xs.end(), _add_x), this->disp_tile_xs.end());
+}
+
+//---------------------------------------------------------
+// 現在の位置情報更新
+//---------------------------------------------------------
+void MapScene::_update_now_pos_x(int add_x) {
+    auto map_size = this->_get_map()->getMapSize();
+    this->now_pos_x = (this->now_pos_x + add_x + (int)map_size.width) % (int)map_size.width;
+    CCLOG("update x = %d", this->now_pos_x);
+}
+
+void MapScene::_update_now_pos_y(int add_y) {
+    auto map_size = this->_get_map()->getMapSize();
+    this->now_pos_y = (this->now_pos_y + add_y + (int)map_size.height) % (int)map_size.height;
+    CCLOG("update y = %d", this->now_pos_y);
 }
 
 //---------------------------------------------------------

@@ -47,6 +47,9 @@ private:
     
     void _test();
     
+    void _update_now_pos_x(int add_x);
+    void _update_now_pos_y(int add_y);
+    
     void _add_x_line_tile(int fixed_y);
     void _add_y_line_tile(int fixed_x);
     void _remove_x_line_tile(int fixed_y);
