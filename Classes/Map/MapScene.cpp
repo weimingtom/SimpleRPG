@@ -213,16 +213,8 @@ void MapScene::_init_map() {
             auto tag = this->_get_tile_tag(_x, _y);
             tile->setTag(tag);
             this->disp_tile_tags.push_back(tag);
-            this->disp_tile_xs.push_back(_x);
-            this->disp_tile_ys.push_back(_y);
         }
     }
-    
-    // 重複を整理する
-    std::sort(this->disp_tile_xs.begin(), this->disp_tile_xs.end());
-    std::sort(this->disp_tile_ys.begin(), this->disp_tile_ys.end());
-    this->disp_tile_xs.erase(std::unique(this->disp_tile_xs.begin(), this->disp_tile_xs.end()), this->disp_tile_xs.end());
-    this->disp_tile_ys.erase(std::unique(this->disp_tile_ys.begin(), this->disp_tile_ys.end()), this->disp_tile_ys.end());
     
     // 移動処理のため、元ファイルも設定する
     {
@@ -476,8 +468,6 @@ void MapScene::_add_x_line_tile(int fixed_y) {
         
         this->addChild(add_tile, GS_MAP);
     }
-    // 該当座標を追加
-    this->disp_tile_ys.push_back(_add_y);
 }
 
 
@@ -514,8 +504,6 @@ void MapScene::_add_y_line_tile(int fixed_x) {
         
         this->addChild(add_tile, GS_MAP);
     }
-    // 該当座標を追加
-    this->disp_tile_xs.push_back(_add_x);
 }
 
 void MapScene::_remove_x_line_tile(int fixed_y) {
@@ -534,8 +522,6 @@ void MapScene::_remove_x_line_tile(int fixed_y) {
             this->disp_tile_tags.end()
         );
     }
-    // 該当座標を削除
-    this->disp_tile_ys.erase(remove(this->disp_tile_ys.begin(), this->disp_tile_ys.end(), _add_y), this->disp_tile_ys.end());
 }
 
 
@@ -556,8 +542,6 @@ void MapScene::_remove_y_line_tile(int fixed_x) {
             this->disp_tile_tags.end()
         );
     }
-    // 該当座標を削除
-    this->disp_tile_xs.erase(remove(this->disp_tile_xs.begin(), this->disp_tile_xs.end(), _add_x), this->disp_tile_xs.end());
 }
 
 //---------------------------------------------------------

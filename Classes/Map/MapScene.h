@@ -63,10 +63,6 @@ private:
     
     // 表示されているタイルのタグ一覧
     std::vector<int> disp_tile_tags;
-    // x座標一覧
-    std::vector<int> disp_tile_xs;
-    // y座標一覧
-    std::vector<int> disp_tile_ys;
 };
 
 #endif // __MAP_MAPSCENE2_H__
