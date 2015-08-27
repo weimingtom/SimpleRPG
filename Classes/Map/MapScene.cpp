@@ -263,8 +263,6 @@ void MapScene::_player_move() {
     
     auto _touch_rect = this->getChildByTag(TAG_TOUCH_POINT);
     
-    Vec2 new_touch_pos = _touch_rect->getPosition();
-    
     auto goal_tag = this->_get_tile_tag(this->goal_x, this->goal_y);
     switch (this->now_route) {
         case ROUTE_UP:
@@ -281,7 +279,7 @@ void MapScene::_player_move() {
                 
                 // タッチポイントに合致する場合
                 if (tag == goal_tag) {
-                    new_touch_pos = tile->getPosition();
+                    _touch_rect->setPosition(tile->getPosition());
                 }
             }
             
@@ -310,7 +308,7 @@ void MapScene::_player_move() {
                 tile->setPositionY(tile->getPositionY() + MOVE_SPEED);
                 // タッチポイントに合致する場合
                 if (tag == goal_tag) {
-                    new_touch_pos = tile->getPosition();
+                    _touch_rect->setPosition(tile->getPosition());
                 }
             }
             
@@ -339,7 +337,7 @@ void MapScene::_player_move() {
                 tile->setPositionX(tile->getPositionX() + MOVE_SPEED);
                 // タッチポイントに合致する場合
                 if (tag == goal_tag) {
-                    new_touch_pos = tile->getPosition();
+                    _touch_rect->setPosition(tile->getPosition());
                 }
             }
             
@@ -368,7 +366,7 @@ void MapScene::_player_move() {
                 tile->setPositionX(tile->getPositionX() - MOVE_SPEED);
                 // タッチポイントに合致する場合
                 if (tag == goal_tag) {
-                    new_touch_pos = tile->getPosition();
+                    _touch_rect->setPosition(tile->getPosition());
                 }
             }
             
@@ -388,7 +386,6 @@ void MapScene::_player_move() {
             assert(0);
             break;
     }
-    _touch_rect->setPosition(new_touch_pos);
     
     // 歩き終わってまだroutesがある場合、再度セットする
     if (is_move_end) {
@@ -399,6 +396,7 @@ void MapScene::_player_move() {
             this->routes.pop_back();
         } else {
             // タッチを消す
+            _touch_rect->setPosition(-100, -100);
         }
     }
 }
