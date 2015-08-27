@@ -37,7 +37,6 @@ private:
     int goal_y;
     
     float now_move_amount;
-    cocos2d::Vec2 before_move_map_pos;   // マップを動く前の座標
     
     std::vector<int> routes;
     int now_route;
@@ -57,7 +56,6 @@ private:
     
     cocos2d::Sprite* _make_tile(int x, int y, cocos2d::TMXLayer *layer);
     uint32_t _get_tile_tag(int x, int y);
-    cocos2d::Vec2 _get_tile_xy(int tag);
     
     cocos2d::TMXTiledMap* _get_map();
     

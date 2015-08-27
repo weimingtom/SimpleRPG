@@ -215,16 +215,6 @@ void MapScene::_init_map() {
             this->disp_tile_tags.push_back(tag);
         }
     }
-    
-    // 移動処理のため、元ファイルも設定する
-    {
-        auto tile_size = _tile_map->getTileSize();
-        int sx = this->now_pos_x * tile_size.width + tile_size.width/2;
-        int sy = (_tile_map->getMapSize().height - this->now_pos_y) * tile_size.height - tile_size.height/2;
-        
-        auto _pos = Vec2(center_pos.x - sx, center_pos.y - sy);
-        _tile_map->setPosition(_pos);
-    }
 }
 
 
@@ -273,7 +263,6 @@ void MapScene::_player_move() {
     
     auto _touch_rect = this->getChildByTag(TAG_TOUCH_POINT);
     
-    Vec2 new_map_pos   = _tile_map->getPosition();
     Vec2 new_touch_pos = _touch_rect->getPosition();
     
     auto goal_tag = this->_get_tile_tag(this->goal_x, this->goal_y);
@@ -296,7 +285,6 @@ void MapScene::_player_move() {
                 }
             }
             
-            new_map_pos.y         -= MOVE_SPEED;
             this->now_move_amount += MOVE_SPEED;
             
             if (this->now_move_amount >= tile_size.height) {
@@ -306,10 +294,6 @@ void MapScene::_player_move() {
                 
                 // 不要なタイルを削除し、一個先を追加しておく
                 this->_remove_x_line_tile((HEIGHT/2 + 1));
-                
-                // かっちり合わせて、直前情報の更新
-                auto _my = this->before_move_map_pos.y - tile_size.height;
-                new_map_pos.y = this->before_move_map_pos.y = _my;
             }
         }
             break;
@@ -330,7 +314,6 @@ void MapScene::_player_move() {
                 }
             }
             
-            new_map_pos.y         += MOVE_SPEED;
             this->now_move_amount += MOVE_SPEED;
             
             if (this->now_move_amount >= tile_size.height) {
@@ -340,10 +323,6 @@ void MapScene::_player_move() {
                 
                 // 不要なタイルを削除し、一個先を追加しておく
                 this->_remove_x_line_tile(-(HEIGHT/2 + 1));
-                
-                // かっちり合わせて、直前情報の更新
-                auto _my = this->before_move_map_pos.y + tile_size.height;
-                new_map_pos.y = this->before_move_map_pos.y = _my;
             }
         }
             break;
@@ -364,7 +343,6 @@ void MapScene::_player_move() {
                 }
             }
             
-            new_map_pos.x         += MOVE_SPEED;
             this->now_move_amount += MOVE_SPEED;
             
             if (this->now_move_amount >= tile_size.height) {
@@ -374,10 +352,6 @@ void MapScene::_player_move() {
                 
                 // 不要なタイルを削除し、一個先を追加しておく
                 this->_remove_y_line_tile((WIDTH/2 + 1));
-                
-                // かっちり合わせて、直前情報の更新
-                auto _mx = this->before_move_map_pos.x + tile_size.width;
-                new_map_pos.x = this->before_move_map_pos.x = _mx;
             }
         }
             break;
@@ -398,7 +372,6 @@ void MapScene::_player_move() {
                 }
             }
             
-            new_map_pos.x         -= MOVE_SPEED;
             this->now_move_amount += MOVE_SPEED;
             
             if (this->now_move_amount >= tile_size.height) {
@@ -408,10 +381,6 @@ void MapScene::_player_move() {
                 
                 // 不要なタイルを削除し、一個先を追加しておく
                 this->_remove_y_line_tile(-(WIDTH/2 + 1));
-                
-                // かっちり合わせて、直前情報の更新
-                auto _mx = this->before_move_map_pos.x - tile_size.width;
-                new_map_pos.x = this->before_move_map_pos.x = _mx;
             }
         }
             break;
@@ -419,7 +388,6 @@ void MapScene::_player_move() {
             assert(0);
             break;
     }
-    _tile_map->setPosition(new_map_pos);
     _touch_rect->setPosition(new_touch_pos);
     
     // 歩き終わってまだroutesがある場合、再度セットする
@@ -583,7 +551,6 @@ Vec2 MapScene::_calc_touch_pos(int tx, int ty, TMXTiledMap *map) {
 bool MapScene::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event)
 {
     auto _tile_map = this->_get_map();
-    auto _map_pos  = _tile_map->getPosition();
     
     auto touch_pos = touch->getLocation();
     
@@ -686,8 +653,6 @@ bool MapScene::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event)
     if (this->now_route == ROUTE_NONE) {
         this->now_route = this->routes.back();
         this->routes.pop_back();
-        // 動く前の位置を保存
-        this->before_move_map_pos   = _tile_map->getPosition();
     }
     
     return true;
