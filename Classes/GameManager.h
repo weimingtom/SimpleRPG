@@ -12,8 +12,10 @@
 
 class GameManager {
 private:
-	E_SE_TYPE se_type;
-	
+    std::string load_map_str; // 読み込むマップのファイル名
+    int map_init_x; // マップ初期化時のX座標
+    int map_init_y; // マップ初期化時のY座標
+    
 	// 単独での生成やコピーをさせないため、コンストラクタをprivateへ
 	GameManager();
 	GameManager(const GameManager& obj);
@@ -24,9 +26,10 @@ private:
 public:
 	// singleton
 	static GameManager* getInstance(void);
-	
-	void set_se_type(E_SE_TYPE se_type);
-	E_SE_TYPE get_se_type();
+    
+    void set_load_map_name(std::string name);
+    std::string get_load_map_name();
+    
 	
 };
 

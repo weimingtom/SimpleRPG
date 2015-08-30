@@ -19,13 +19,14 @@ GameManager::GameManager() {
 GameManager::~GameManager() {
 	
 }
+
 //---------------------------------------------------------
-// サウンド管理
+// 
 //---------------------------------------------------------
-void GameManager::set_se_type(E_SE_TYPE se_type) {
-	this->se_type = se_type;
+void GameManager::set_load_map_name(std::string name) {
+    this->load_map_str = name;
 }
 
-E_SE_TYPE GameManager::get_se_type() {
-	return this->se_type;
+std::string GameManager::get_load_map_name() {
+    return this->load_map_str;
 }

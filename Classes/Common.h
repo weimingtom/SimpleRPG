@@ -20,13 +20,6 @@
 
 #define COUNT_OF(array) (sizeof(array) / sizeof(array[0]))
 
-enum E_SE_TYPE {
-    SE_TYPE_NORMAL,
-    SE_TYPE_DRUM,
-    SE_TYPE_PIANO,
-    NR_SE_TYPE
-};
-
 static const int FRAME = 60;
 
 static const cocos2d::Size GAME_RESOLUTION = cocos2d::Size(480.0f, 800.0f);
