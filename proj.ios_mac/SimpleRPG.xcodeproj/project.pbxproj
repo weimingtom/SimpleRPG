@@ -34,6 +34,8 @@
 		2F7098EF1B8F0C6500B6C4F3 /* test.tmx in Resources */ = {isa = PBXBuildFile; fileRef = 2F7098E91B8F0C6500B6C4F3 /* test.tmx */; };
 		2F7098F31B92AE9200B6C4F3 /* GameManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F7098F11B92AE9200B6C4F3 /* GameManager.cpp */; };
 		2F7098F81B92AF4200B6C4F3 /* Common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F7098F61B92AF4200B6C4F3 /* Common.cpp */; };
+		2F7098FC1B93585200B6C4F3 /* Loading.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F7098FA1B93585200B6C4F3 /* Loading.cpp */; };
+		2F7098FE1B93598600B6C4F3 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = 2F7098FD1B93598600B6C4F3 /* fonts */; };
 		503AE0F817EB97AB00D1A890 /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 503AE0F617EB97AB00D1A890 /* Icon.icns */; };
 		503AE10017EB989F00D1A890 /* AppController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 503AE0FB17EB989F00D1A890 /* AppController.mm */; };
 		503AE10117EB989F00D1A890 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 503AE0FC17EB989F00D1A890 /* main.m */; };
@@ -247,6 +249,9 @@
 		2F7098F21B92AE9200B6C4F3 /* GameManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameManager.h; path = ../Classes/GameManager.h; sourceTree = "<group>"; };
 		2F7098F61B92AF4200B6C4F3 /* Common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Common.cpp; path = ../Classes/Common.cpp; sourceTree = "<group>"; };
 		2F7098F71B92AF4200B6C4F3 /* Common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Common.h; path = ../Classes/Common.h; sourceTree = "<group>"; };
+		2F7098FA1B93585200B6C4F3 /* Loading.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Loading.cpp; sourceTree = "<group>"; };
+		2F7098FB1B93585200B6C4F3 /* Loading.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Loading.h; sourceTree = "<group>"; };
+		2F7098FD1B93598600B6C4F3 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
 		503AE0F617EB97AB00D1A890 /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Icon.icns; sourceTree = "<group>"; };
 		503AE0F717EB97AB00D1A890 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		503AE0FA17EB989F00D1A890 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = ios/AppController.h; sourceTree = SOURCE_ROOT; };
@@ -361,6 +366,7 @@
 				2F7098F71B92AF4200B6C4F3 /* Common.h */,
 				2F7098F11B92AE9200B6C4F3 /* GameManager.cpp */,
 				2F7098F21B92AE9200B6C4F3 /* GameManager.h */,
+				2F7098F91B93585200B6C4F3 /* Loading */,
 				2F7098DD1B8F093200B6C4F3 /* Map */,
 			);
 			name = Classes;
@@ -441,6 +447,16 @@
 			path = ../Classes/Map;
 			sourceTree = "<group>";
 		};
+		2F7098F91B93585200B6C4F3 /* Loading */ = {
+			isa = PBXGroup;
+			children = (
+				2F7098FA1B93585200B6C4F3 /* Loading.cpp */,
+				2F7098FB1B93585200B6C4F3 /* Loading.h */,
+			);
+			name = Loading;
+			path = ../Classes/Loading;
+			sourceTree = "<group>";
+		};
 		503AE0F517EB97AB00D1A890 /* Icons */ = {
 			isa = PBXGroup;
 			children = (
@@ -489,6 +505,7 @@
 		78C7DDAA14EBA5050085D0C2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				2F7098FD1B93598600B6C4F3 /* fonts */,
 				2F7098E41B8F0C6500B6C4F3 /* test2.tmx */,
 				2F7098E51B8F0C6500B6C4F3 /* characters1.png */,
 				1AFAF8B916D35E4900DB1158 /* CloseNormal.png */,
@@ -668,6 +685,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5087E78117EB970100C73F5D /* Icon-120.png in Resources */,
+				2F7098FE1B93598600B6C4F3 /* fonts in Resources */,
 				5087E78617EB970100C73F5D /* Icon-76.png in Resources */,
 				5087E77F17EB970100C73F5D /* Default@2x.png in Resources */,
 				2F7098EE1B8F0C6500B6C4F3 /* player.plist in Resources */,
@@ -715,6 +733,7 @@
 			files = (
 				2F7098F31B92AE9200B6C4F3 /* GameManager.cpp in Sources */,
 				2F7098E31B8F093200B6C4F3 /* RouteSearch.cpp in Sources */,
+				2F7098FC1B93585200B6C4F3 /* Loading.cpp in Sources */,
 				2F7098DC1B8F092B00B6C4F3 /* AppDelegate.cpp in Sources */,
 				2F7098E21B8F093200B6C4F3 /* MapScene.cpp in Sources */,
 				2F7098F81B92AF4200B6C4F3 /* Common.cpp in Sources */,

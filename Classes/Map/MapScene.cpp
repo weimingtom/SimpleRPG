@@ -1,5 +1,7 @@
 #include "MapScene.h"
 
+#include "../Loading/Loading.h"
+
 #include "Common.h"
 #include "GameManager.h"
 
@@ -464,7 +466,7 @@ bool MapScene::_check_jump_info() {
 //---------------------------------------------------------
 void MapScene::_load_next_map() {
     
-    auto next_scene = MapScene::createScene();
+    auto next_scene = Loading::createScene();
     float duration = 1.0f;
     
     auto p_scene = TransitionFade::create(duration, next_scene);
