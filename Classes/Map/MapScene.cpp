@@ -1,6 +1,11 @@
 #include "MapScene.h"
 
+#include "Common.h"
+#include "GameManager.h"
+
 #include "RouteSearch.h"
+
+#include "spine/Json.h"
 
 USING_NS_CC;
 
@@ -23,6 +28,9 @@ enum E_GS_ORDER {
     GS_MAP_EDGE_HIDE,
     NR_GSS
 };
+
+static const std::string MAP_LAYER_TYPE_MAP = "Map";
+static const std::string MAP_LAYER_TYPE_COLLISION = "Collision";
 
 const float MOVE_SPEED = 1.0f;
 
@@ -101,9 +109,11 @@ bool MapScene::init()
     this->addChild(dot, GS_TOUCH_POINT);
     
     // 開始時の位置設定
-    this->now_pos_x = 8;
-    this->now_pos_y = 8;
-    this->_init_map();
+    auto gm = GameManager::getInstance();
+    this->now_pos_x = gm->get_map_init_position().x;
+    this->now_pos_y = gm->get_map_init_position().y;
+    this->_init_map(gm->get_load_map_name());
+    this->_init_jump_info();
     
     // test
     this->_test();
@@ -116,10 +126,6 @@ bool MapScene::init()
 }
 
 void MapScene::_test() {
-    auto tile_map = this->_get_map();
-    auto layer = tile_map->getLayer("BG");
-    auto str = layer->getProperty("test").asString();
-    CCLOG("debug %s", str.c_str());
 }
 
 
@@ -276,6 +282,14 @@ void MapScene::_player_move() {
     if (is_move_end) {
         this->now_route = ROUTE_NONE;
         this->now_move_amount = 0;
+        
+        // マップ切り替えの場合
+        if (this->_check_jump_info()) {
+            this->routes.clear();
+            this->routes.shrink_to_fit();
+            this->_load_next_map();
+        }
+        
         if (this->routes.size()) {
             this->now_route = this->routes.back();
             this->routes.pop_back();
@@ -291,7 +305,7 @@ void MapScene::_player_move() {
 //---------------------------------------------------------
 void MapScene::_add_x_line_tile(int fixed_y) {
     auto _tile_map  = this->_get_map();
-    auto _map_layer = _tile_map->getLayer("BG");
+    auto _map_layer = _tile_map->getLayer(MAP_LAYER_TYPE_MAP);
     
     auto map_size  = _tile_map->getMapSize();
     auto tile_size = _tile_map->getTileSize();
@@ -329,7 +343,7 @@ void MapScene::_add_x_line_tile(int fixed_y) {
 //---------------------------------------------------------
 void MapScene::_add_y_line_tile(int fixed_x) {
     auto _tile_map  = this->_get_map();
-    auto _map_layer = _tile_map->getLayer("BG");
+    auto _map_layer = _tile_map->getLayer(MAP_LAYER_TYPE_MAP);
     
     auto map_size  = _tile_map->getMapSize();
     auto tile_size = _tile_map->getTileSize();
@@ -418,6 +432,47 @@ void MapScene::_update_now_pos_y(int add_y) {
     this->now_pos_y = (this->now_pos_y + add_y + (int)map_size.height) % (int)map_size.height;
 }
 
+//---------------------------------------------------------
+// 別のマップに移動するべきか
+//---------------------------------------------------------
+bool MapScene::_check_jump_info() {
+    std::string jump_info_map_key = this->_get_jump_info_map_key(this->now_pos_x, this->now_pos_y);
+    
+    // 情報はない
+    if (this->jump_info_map[jump_info_map_key] == 0) {
+        return false;
+    }
+    
+    // 情報取得
+    for (auto info : this->jump_infos) {
+        if (info.map_x == this->now_pos_x && info.map_y == this->now_pos_y) {
+            auto gm = GameManager::getInstance();
+            gm->set_load_map_name(info.move_map_name);
+            gm->set_map_init_position(info.move_x, info.move_y);
+            this->is_map_jump = true;
+        }
+    }
+    
+    // 念のため
+    assert(this->is_map_jump);
+    
+    return true;
+}
+
+//---------------------------------------------------------
+// 次のマップへ
+//---------------------------------------------------------
+void MapScene::_load_next_map() {
+    
+    auto next_scene = MapScene::createScene();
+    float duration = 1.0f;
+    
+    auto p_scene = TransitionFade::create(duration, next_scene);
+    if (p_scene) {
+        Director::getInstance()->replaceScene(p_scene);
+    }
+}
+
 //=========================================================
 // touch function
 //=========================================================
@@ -426,6 +481,11 @@ void MapScene::_update_now_pos_y(int add_y) {
 //---------------------------------------------------------
 bool MapScene::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event)
 {
+    // 移動中は何もしない
+    if (this->is_map_jump) {
+        return true;
+    }
+    
     auto _tile_map = this->_get_map();
     
     auto touch_pos = touch->getLocation();
@@ -544,12 +604,55 @@ void MapScene::onTouchCancelled(cocos2d::Touch *touch, cocos2d::Event *unused_ev
 }
 
 //---------------------------------------------------------
+// マップ切り替え情報を取得
+//---------------------------------------------------------
+void MapScene::_init_jump_info() {
+    auto tile_map = this->_get_map();
+    auto layer = tile_map->getLayer(MAP_LAYER_TYPE_MAP);
+    auto jump_size = layer->getProperty("jump_num").asInt();
+    for (int i = 0; i < jump_size; i++) {
+        std::string key = "jump_" + std::to_string(i+1);
+        auto info_str = layer->getProperty(key).asString();
+        // JSONで情報取得
+        Json *json = Json_create(info_str.c_str());
+        // 起点
+        int _x = Json_getInt(json, "x", -1);
+        int _y = Json_getInt(json, "y", -1);
+        // 飛び先
+        std::string _move_map_name = Json_getString(json, "move", "");
+        int _move_x = Json_getInt(json, "move_x", -1);
+        int _move_y = Json_getInt(json, "move_y", -1);
+        
+        // check
+        std::vector<int> checks = {_x, _y, _move_x, _move_y};
+        for (auto check : checks) {
+            assert(check > -1);
+        }
+        assert(_move_map_name.size() > 0);
+        
+        CCLOG("info %d,%d  %d,%d %s", _x, _y, _move_x, _move_y, _move_map_name.c_str());
+        
+        // push
+        jump_info_t jump_info = {_x, _y, _move_x, _move_y, _move_map_name};
+        this->jump_infos.push_back(jump_info);
+        std::string map_key = this->_get_jump_info_map_key(_x, _y);
+        this->jump_info_map[map_key] = 1;
+    }
+}
+
+std::string MapScene::_get_jump_info_map_key(int x, int y) {
+    return std::to_string(x) + "_" + std::to_string(y);
+}
+
+
+
+//---------------------------------------------------------
 // 表示するマップの初期化
 //---------------------------------------------------------
-void MapScene::_init_map() {
+void MapScene::_init_map(std::string tmx_name) {
     auto layer_size = this->getContentSize();
     
-    auto _tile_map = TMXTiledMap::create("test.tmx");
+    auto _tile_map = TMXTiledMap::create(tmx_name + ".tmx");
     // 元は非表示にする
     _tile_map->setVisible(false);
     _tile_map->setTag(TAG_MAP);
@@ -568,7 +671,7 @@ void MapScene::_init_map() {
     }
     
     auto map_size  = _tile_map->getMapSize();
-    auto map_layer = _tile_map->getLayer("BG");
+    auto map_layer = _tile_map->getLayer(MAP_LAYER_TYPE_MAP);
     
     auto tile_size = _tile_map->getTileSize();
     

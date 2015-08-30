@@ -109,13 +109,13 @@ std::vector<int> RouteSearch::search_route(int sx, int sy, int gw, int gh, TMXTi
     
     if (ret == ROUTE_NOT_FOUND) {
         CCLOG("経路は見つかりませんでした\n");
-        this->_debug_out();
+        //this->_debug_out();
         return this->routes;
     }
     
     // 結果を取得
     this->_trace_route(this->goal_x, this->goal_y);
-    this->_debug_out();
+    //this->_debug_out();
     
     return this->routes;
 }

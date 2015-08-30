@@ -1,9 +1,9 @@
 #include "AppDelegate.h"
 #include "Map/MapScene.h"
 
-USING_NS_CC;
+#include "GameManager.h"
 
-static const Size GAME_RESOLUTION = Size(480.0f, 800.0f);
+USING_NS_CC;
 
 AppDelegate::AppDelegate() {
 
@@ -37,6 +37,11 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // set FPS. the default value is 1.0/60 if you don't call this
     director->setAnimationInterval(1.0 / 60);
+    
+    // とりあえずの初期化
+    auto gm = GameManager::getInstance();
+    gm->set_load_map_name("test");
+    gm->set_map_init_position(9, 9);
 
     // create a scene. it's an autorelease object
     auto scene = MapScene::createScene();

@@ -3,6 +3,14 @@
 
 #include "cocos2d.h"
 
+typedef struct {
+    int map_x;
+    int map_y;
+    int move_x;
+    int move_y;
+    std::string move_map_name;
+} jump_info_t;
+
 class MapScene : public cocos2d::Layer
 {
 public:
@@ -37,14 +45,19 @@ private:
     
     std::vector<int> disp_tile_tags; // 表示されているタイルのタグ一覧
     
+    std::map<std::string, int> jump_info_map;
+    std::vector<jump_info_t> jump_infos;
+    bool is_map_jump;
     
     //========================
     // functions
     //========================
-    void _init_map();
+    void _init_map(std::string tmx_name);
+    void _init_jump_info();
     
     virtual void update(float delta);
     void _player_move();
+    bool _check_jump_info();
     
     void _update_now_pos_x(int add_x);
     void _update_now_pos_y(int add_y);
@@ -57,8 +70,11 @@ private:
     cocos2d::Sprite* _make_tile(int x, int y, cocos2d::TMXLayer *layer);
     uint32_t _get_tile_tag(int x, int y);
     
+    std::string _get_jump_info_map_key(int x, int y);
+    
     cocos2d::TMXTiledMap* _get_map();
     
+    void _load_next_map();
     //
     void _test();
 };

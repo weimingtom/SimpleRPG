@@ -10,6 +10,7 @@
 
 #include "Common.h"
 
+
 class GameManager {
 private:
     std::string load_map_str; // 読み込むマップのファイル名
@@ -29,6 +30,9 @@ public:
     
     void set_load_map_name(std::string name);
     std::string get_load_map_name();
+    
+    void set_map_init_position(int x, int y);
+    cocos2d::Vec2 get_map_init_position();
     
 	
 };
