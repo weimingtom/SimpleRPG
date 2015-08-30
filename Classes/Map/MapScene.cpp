@@ -116,6 +116,10 @@ bool MapScene::init()
 }
 
 void MapScene::_test() {
+    auto tile_map = this->_get_map();
+    auto layer = tile_map->getLayer("BG");
+    auto str = layer->getProperty("test").asString();
+    CCLOG("debug %s", str.c_str());
 }
 
 
