@@ -128,6 +128,44 @@ bool MapScene::init()
 }
 
 void MapScene::_test() {
+    auto layer_size = this->getContentSize();
+    auto label1 = Label::createWithTTF("あいうえおかきくけこ", "fonts/misaki_gothic.ttf", 24); // createWithBMFont("fonts/bitmapFontTest2.fnt", "Test");
+    label1->setTextColor(Color4B::BLACK);
+    label1->setPosition(Vec2(layer_size.width/2, layer_size.height/2));
+    this->addChild(label1, 999999);
+    
+    for(int i = 0; i < label1->getStringLength() + label1->getStringNumLines(); i++) {
+        auto AChar = label1->getLetter(i);
+        if(nullptr != AChar) {
+            AChar->setVisible(false);
+            //auto seq = Sequence::createWithTwoActions(DelayTime::create(0.2f*i), Show::create());
+            auto seq = Sequence::create(DelayTime::create(0.2f*i), Show::create(), nullptr);
+            AChar->runAction(seq);
+        }
+    }
+    
+    /*
+    {
+        auto AChar = label1->getLetter(0);
+        auto rotate = RotateBy::create(2, 360);
+        auto rot_4ever = RepeatForever::create(rotate);
+        AChar->runAction(rot_4ever);
+    }
+    
+    {
+        auto AChar = label1->getLetter(2);
+        auto fade_out = FadeOut::create(1);
+        auto fade_in = FadeIn::create(1);
+        auto seq = Sequence::create(fade_out, fade_in, nullptr);
+        auto fade_4ever = RepeatForever::create(seq);
+        AChar->runAction(fade_4ever);
+    }
+    
+    {
+        auto AChar = label1->getLetter(1);
+        AChar->setVisible(false);
+    }
+    */
 }
 
 
