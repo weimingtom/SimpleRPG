@@ -127,11 +127,13 @@ bool MapScene::init()
     return true;
 }
 
+#include "extensions/cocos-ext.h"
+USING_NS_CC_EXT;
 void MapScene::_test() {
     auto layer_size = this->getContentSize();
     auto label1 = Label::createWithTTF("あいうえおかきくけこ", "fonts/misaki_gothic.ttf", 24); // createWithBMFont("fonts/bitmapFontTest2.fnt", "Test");
-    label1->setTextColor(Color4B::BLACK);
-    label1->setPosition(Vec2(layer_size.width/2, layer_size.height/2));
+    label1->setTextColor(Color4B::WHITE);
+    label1->setPosition(Vec2(layer_size.width/2, layer_size.height/8));
     this->addChild(label1, 999999);
     
     for(int i = 0; i < label1->getStringLength() + label1->getStringNumLines(); i++) {
@@ -166,6 +168,12 @@ void MapScene::_test() {
         AChar->setVisible(false);
     }
     */
+    
+    // ウインドウテスト
+    Scale9Sprite* pScale = Scale9Sprite::create("window.png", Rect(0, 0, 64, 64), Rect(10, 10, 44, 44));
+    pScale->setContentSize(layer_size / 3 * 2);
+    pScale->setPosition(layer_size / 2);
+    this->addChild(pScale, 9999999);
 }
 
 

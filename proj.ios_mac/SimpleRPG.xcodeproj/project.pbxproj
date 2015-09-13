@@ -36,6 +36,7 @@
 		2F7098F81B92AF4200B6C4F3 /* Common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F7098F61B92AF4200B6C4F3 /* Common.cpp */; };
 		2F7098FC1B93585200B6C4F3 /* Loading.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F7098FA1B93585200B6C4F3 /* Loading.cpp */; };
 		2F7098FE1B93598600B6C4F3 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = 2F7098FD1B93598600B6C4F3 /* fonts */; };
+		2F7099001BA5077500B6C4F3 /* window.png in Resources */ = {isa = PBXBuildFile; fileRef = 2F7098FF1BA5077500B6C4F3 /* window.png */; };
 		503AE0F817EB97AB00D1A890 /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 503AE0F617EB97AB00D1A890 /* Icon.icns */; };
 		503AE10017EB989F00D1A890 /* AppController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 503AE0FB17EB989F00D1A890 /* AppController.mm */; };
 		503AE10117EB989F00D1A890 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 503AE0FC17EB989F00D1A890 /* main.m */; };
@@ -252,6 +253,7 @@
 		2F7098FA1B93585200B6C4F3 /* Loading.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Loading.cpp; sourceTree = "<group>"; };
 		2F7098FB1B93585200B6C4F3 /* Loading.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Loading.h; sourceTree = "<group>"; };
 		2F7098FD1B93598600B6C4F3 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
+		2F7098FF1BA5077500B6C4F3 /* window.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = window.png; sourceTree = "<group>"; };
 		503AE0F617EB97AB00D1A890 /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Icon.icns; sourceTree = "<group>"; };
 		503AE0F717EB97AB00D1A890 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		503AE0FA17EB989F00D1A890 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = ios/AppController.h; sourceTree = SOURCE_ROOT; };
@@ -505,16 +507,17 @@
 		78C7DDAA14EBA5050085D0C2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				2F7098FD1B93598600B6C4F3 /* fonts */,
-				2F7098E41B8F0C6500B6C4F3 /* test2.tmx */,
 				2F7098E51B8F0C6500B6C4F3 /* characters1.png */,
 				1AFAF8B916D35E4900DB1158 /* CloseNormal.png */,
 				1AFAF8BA16D35E4900DB1158 /* CloseSelected.png */,
 				2F7098E61B8F0C6500B6C4F3 /* DQTFE_overworld.png */,
+				2F7098FD1B93598600B6C4F3 /* fonts */,
 				1AFAF8BB16D35E4900DB1158 /* HelloWorld.png */,
 				2F7098E71B8F0C6500B6C4F3 /* player_animations.plist */,
 				2F7098E81B8F0C6500B6C4F3 /* player.plist */,
 				2F7098E91B8F0C6500B6C4F3 /* test.tmx */,
+				2F7098E41B8F0C6500B6C4F3 /* test2.tmx */,
+				2F7098FF1BA5077500B6C4F3 /* window.png */,
 			);
 			name = Resources;
 			path = ../Resources;
@@ -708,6 +711,7 @@
 				2F7098EC1B8F0C6500B6C4F3 /* DQTFE_overworld.png in Resources */,
 				5087E78417EB970100C73F5D /* Icon-57.png in Resources */,
 				5087E77E17EB970100C73F5D /* Default.png in Resources */,
+				2F7099001BA5077500B6C4F3 /* window.png in Resources */,
 				50EF629717ECD46A001EB2F8 /* Icon-58.png in Resources */,
 				2F7098EA1B8F0C6500B6C4F3 /* test2.tmx in Resources */,
 			);
