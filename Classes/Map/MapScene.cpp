@@ -80,6 +80,25 @@ bool MapScene::init()
     // イベントディスパッチャにシングルタップ用リスナーを追加する
     _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
     
+    // キー入力
+    if ( 1 ) {
+        
+        auto listener = EventListenerKeyboard::create();
+        
+        listener->onKeyPressed = [&](EventKeyboard::KeyCode keyCode, Event* event) {
+            auto str = String::createWithFormat("%c", keyCode);
+            CCLOG("%s", str->getCString());
+        };
+        
+        listener->onKeyReleased = [](EventKeyboard::KeyCode keyCode, Event* event) {
+            // 放されたときの処理
+        };
+        
+        _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+        CCLOG("seww!!");
+    }
+    
+    
     // プレーヤー
     auto frame_cache = SpriteFrameCache::getInstance();
     frame_cache->removeSpriteFrames();
@@ -127,6 +146,12 @@ bool MapScene::init()
     return true;
 }
 
+void MapScene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event * event)
+{
+    auto str = String::createWithFormat("%c", keyCode);
+    CCLOG("hoge %s", str->getCString());
+}
+
 #include "extensions/cocos-ext.h"
 USING_NS_CC_EXT;
 void MapScene::_test() {
@@ -171,7 +196,7 @@ void MapScene::_test() {
     
     // ウインドウテスト
     Scale9Sprite* pScale = Scale9Sprite::create("window.png", Rect(0, 0, 64, 64), Rect(10, 10, 44, 44));
-    pScale->setContentSize(layer_size / 3 * 2);
+    pScale->setContentSize(Size(layer_size.width, 100));
     pScale->setPosition(layer_size / 2);
     this->addChild(pScale, 9999999);
 }
