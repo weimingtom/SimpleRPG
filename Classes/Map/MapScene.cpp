@@ -190,29 +190,6 @@ void MapScene::_test() {
         index++;
     }
     
-    /*
-    {
-        auto AChar = label1->getLetter(0);
-        auto rotate = RotateBy::create(2, 360);
-        auto rot_4ever = RepeatForever::create(rotate);
-        AChar->runAction(rot_4ever);
-    }
-    
-    {
-        auto AChar = label1->getLetter(2);
-        auto fade_out = FadeOut::create(1);
-        auto fade_in = FadeIn::create(1);
-        auto seq = Sequence::create(fade_out, fade_in, nullptr);
-        auto fade_4ever = RepeatForever::create(seq);
-        AChar->runAction(fade_4ever);
-    }
-    
-    {
-        auto AChar = label1->getLetter(1);
-        AChar->setVisible(false);
-    }
-    */
-    
     // ウインドウテスト
     Size window_size = Size(layer_size.width - 50, 200);
     Scale9Sprite* pScale = Scale9Sprite::create("window.png", Rect(0, 0, 64, 64), Rect(10, 10, 44, 44));
