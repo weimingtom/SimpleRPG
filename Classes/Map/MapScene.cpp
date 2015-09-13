@@ -145,7 +145,7 @@ bool MapScene::init()
     this->_init_jump_info();
     
     // test
-    //this->_test();
+    this->_test();
     
     //
     this->message_tests = {
@@ -178,35 +178,6 @@ USING_NS_CC_EXT;
 void MapScene::_test() {
     auto layer_size = this->getContentSize();
     auto base_position = Vec2(layer_size.width/2, layer_size.height/4);
-    //
-    std::vector<std::string> strs = {
-        "あいうえおかきくけこさしすせそ",
-        "たたたたたたたたたたたたたたた",
-        "たたたたたたたたたたたたたたち",
-        "たたたたたたたたたたたたたたつ",
-    };
-    
-    auto font_size = 24;
-    auto space = font_size/2;
-    int index = 0;
-    auto start_y = base_position.y + (font_size + space) + space;
-    for (auto str : strs) {
-        auto label = Label::createWithTTF(str, "fonts/misaki_gothic.ttf", font_size); // createWithBMFont("fonts/bitmapFontTest2.fnt", "Test");
-        label->setTextColor(Color4B::WHITE);
-        label->setPosition(layer_size.width/2, start_y - index * (font_size + space));
-        this->addChild(label, GS_MESSAGE_WINDOW_TEXT);
-        
-        for(int i = 0; i < label->getStringLength() + label->getStringNumLines(); i++) {
-            auto letter = label->getLetter(i);
-            if(nullptr != letter) {
-                letter->setVisible(false);
-                //auto seq = Sequence::createWithTwoActions(DelayTime::create(0.2f*i), Show::create());
-                auto seq = Sequence::create(DelayTime::create(0.2f*i), Show::create(), nullptr);
-                letter->runAction(seq);
-            }
-        }
-        index++;
-    }
     
     // ウインドウテスト
     Size window_size = Size(layer_size.width - 50, 200);
