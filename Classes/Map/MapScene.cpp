@@ -19,6 +19,7 @@ enum E_TAG {
     TAG_MAP,
     TAG_PLAYER,
     TAG_TOUCH_POINT,
+    TAG_MESSAGE_WINDOW,
     NR_TAGS
 };
 
@@ -28,6 +29,8 @@ enum E_GS_ORDER {
     GS_PLAYER,
     GS_TOUCH_POINT,
     GS_MAP_EDGE_HIDE,
+    GS_MESSAGE_WINDOW,
+    GS_MESSAGE_WINDOW_TEXT,
     NR_GSS
 };
 
@@ -156,19 +159,35 @@ void MapScene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::E
 USING_NS_CC_EXT;
 void MapScene::_test() {
     auto layer_size = this->getContentSize();
-    auto label1 = Label::createWithTTF("あいうえおかきくけこ", "fonts/misaki_gothic.ttf", 24); // createWithBMFont("fonts/bitmapFontTest2.fnt", "Test");
-    label1->setTextColor(Color4B::WHITE);
-    label1->setPosition(Vec2(layer_size.width/2, layer_size.height/8));
-    this->addChild(label1, 999999);
+    auto base_position = Vec2(layer_size.width/2, layer_size.height/4);
+    //
+    std::vector<std::string> strs = {
+        "あいうえおかきくけこさしすせそ",
+        "たたたたたたたたたたたたたたた",
+        "たたたたたたたたたたたたたたち",
+        "たたたたたたたたたたたたたたつ",
+    };
     
-    for(int i = 0; i < label1->getStringLength() + label1->getStringNumLines(); i++) {
-        auto AChar = label1->getLetter(i);
-        if(nullptr != AChar) {
-            AChar->setVisible(false);
-            //auto seq = Sequence::createWithTwoActions(DelayTime::create(0.2f*i), Show::create());
-            auto seq = Sequence::create(DelayTime::create(0.2f*i), Show::create(), nullptr);
-            AChar->runAction(seq);
+    auto font_size = 24;
+    auto space = font_size/2;
+    int index = 0;
+    auto start_y = base_position.y + (font_size + space) + space;
+    for (auto str : strs) {
+        auto label = Label::createWithTTF(str, "fonts/misaki_gothic.ttf", font_size); // createWithBMFont("fonts/bitmapFontTest2.fnt", "Test");
+        label->setTextColor(Color4B::WHITE);
+        label->setPosition(layer_size.width/2, start_y - index * (font_size + space));
+        this->addChild(label, GS_MESSAGE_WINDOW_TEXT);
+        
+        for(int i = 0; i < label->getStringLength() + label->getStringNumLines(); i++) {
+            auto letter = label->getLetter(i);
+            if(nullptr != letter) {
+                letter->setVisible(false);
+                //auto seq = Sequence::createWithTwoActions(DelayTime::create(0.2f*i), Show::create());
+                auto seq = Sequence::create(DelayTime::create(0.2f*i), Show::create(), nullptr);
+                letter->runAction(seq);
+            }
         }
+        index++;
     }
     
     /*
@@ -195,10 +214,12 @@ void MapScene::_test() {
     */
     
     // ウインドウテスト
+    Size window_size = Size(layer_size.width - 50, 200);
     Scale9Sprite* pScale = Scale9Sprite::create("window.png", Rect(0, 0, 64, 64), Rect(10, 10, 44, 44));
-    pScale->setContentSize(Size(layer_size.width, 100));
-    pScale->setPosition(layer_size / 2);
-    this->addChild(pScale, 9999999);
+    pScale->setContentSize(window_size);
+    pScale->setPosition(base_position);
+    pScale->setTag(TAG_MESSAGE_WINDOW);
+    this->addChild(pScale, GS_MESSAGE_WINDOW);
 }
 
 
