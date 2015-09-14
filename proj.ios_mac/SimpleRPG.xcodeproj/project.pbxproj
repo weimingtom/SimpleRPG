@@ -37,6 +37,7 @@
 		2F7098FC1B93585200B6C4F3 /* Loading.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F7098FA1B93585200B6C4F3 /* Loading.cpp */; };
 		2F7098FE1B93598600B6C4F3 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = 2F7098FD1B93598600B6C4F3 /* fonts */; };
 		2F7099001BA5077500B6C4F3 /* window.png in Resources */ = {isa = PBXBuildFile; fileRef = 2F7098FF1BA5077500B6C4F3 /* window.png */; };
+		2F7864EB1BA7132D0075B6C1 /* MessageLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F7864E91BA7132D0075B6C1 /* MessageLayer.cpp */; };
 		503AE0F817EB97AB00D1A890 /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 503AE0F617EB97AB00D1A890 /* Icon.icns */; };
 		503AE10017EB989F00D1A890 /* AppController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 503AE0FB17EB989F00D1A890 /* AppController.mm */; };
 		503AE10117EB989F00D1A890 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 503AE0FC17EB989F00D1A890 /* main.m */; };
@@ -254,6 +255,8 @@
 		2F7098FB1B93585200B6C4F3 /* Loading.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Loading.h; sourceTree = "<group>"; };
 		2F7098FD1B93598600B6C4F3 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
 		2F7098FF1BA5077500B6C4F3 /* window.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = window.png; sourceTree = "<group>"; };
+		2F7864E91BA7132D0075B6C1 /* MessageLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageLayer.cpp; path = ../Classes/Util/MessageLayer.cpp; sourceTree = "<group>"; };
+		2F7864EA1BA7132D0075B6C1 /* MessageLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageLayer.h; path = ../Classes/Util/MessageLayer.h; sourceTree = "<group>"; };
 		503AE0F617EB97AB00D1A890 /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Icon.icns; sourceTree = "<group>"; };
 		503AE0F717EB97AB00D1A890 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		503AE0FA17EB989F00D1A890 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = ios/AppController.h; sourceTree = SOURCE_ROOT; };
@@ -370,6 +373,7 @@
 				2F7098F21B92AE9200B6C4F3 /* GameManager.h */,
 				2F7098F91B93585200B6C4F3 /* Loading */,
 				2F7098DD1B8F093200B6C4F3 /* Map */,
+				2F7864E61BA7130F0075B6C1 /* Util */,
 			);
 			name = Classes;
 			path = ../classes;
@@ -457,6 +461,15 @@
 			);
 			name = Loading;
 			path = ../Classes/Loading;
+			sourceTree = "<group>";
+		};
+		2F7864E61BA7130F0075B6C1 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				2F7864E91BA7132D0075B6C1 /* MessageLayer.cpp */,
+				2F7864EA1BA7132D0075B6C1 /* MessageLayer.h */,
+			);
+			name = Util;
 			sourceTree = "<group>";
 		};
 		503AE0F517EB97AB00D1A890 /* Icons */ = {
@@ -744,6 +757,7 @@
 				503AE10017EB989F00D1A890 /* AppController.mm in Sources */,
 				503AE10217EB989F00D1A890 /* RootViewController.mm in Sources */,
 				503AE10117EB989F00D1A890 /* main.m in Sources */,
+				2F7864EB1BA7132D0075B6C1 /* MessageLayer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

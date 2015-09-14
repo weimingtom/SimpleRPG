@@ -2,6 +2,8 @@
 
 #include "../Loading/Loading.h"
 
+#include "../Util/MessageLayer.h"
+
 #include "Common.h"
 #include "GameManager.h"
 
@@ -187,6 +189,11 @@ void MapScene::_test() {
     pScale->setTag(TAG_MESSAGE_WINDOW);
     this->addChild(pScale, GS_MESSAGE_WINDOW);
     
+    auto message_layer = MessageLayer::create();
+    message_layer->setTag(999);
+    this->addChild(message_layer, 99999);
+   // message_layer->setVisible(false);
+    this->removeChildByTag(999);
 }
 
 void MapScene::__test(Node* sender) {
