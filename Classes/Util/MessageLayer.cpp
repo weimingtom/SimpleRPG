@@ -31,15 +31,20 @@ bool MessageLayer::init()
     {
         return false;
 	}
-	//if ( !LayerColor::initWithColor(Color4B::BLACK, 300, 400)) {
+	//if ( !LayerColor::initWithColor(Color4B::GREEN, GAME_RESOLUTION.width, GAME_RESOLUTION.height)) {
 	//	return false;
 	//}
+    //this->setContentSize(GAME_RESOLUTION);
 	
 	this->tweet_text = "";
 	this->update_start = false;
 	
 	auto layer_size = this->getContentSize();
 	auto bg_position = Vec2(layer_size.width/2, layer_size.height/2);
+    
+    CCLOG("ssziede %f, %f", layer_size.width, layer_size.height);
+    
+    //this->setPosition(Common::get_layer_position(this->getContentSize(), Vec2(layer_size.width/2, layer_size.height/2)));
 	
     
     Size window_size = Size(layer_size.width - 50, 200);
@@ -47,6 +52,8 @@ bool MessageLayer::init()
     pScale->setContentSize(window_size);
     //pScale->setPosition(base_position);
     pScale->setTag(TAG_MESSAGE_WINDOW);
+    pScale->setPosition(layer_size.width/2, layer_size.height/2);
+
     this->addChild(pScale, ORDER_MESSAGE_WINDOW);
 
 	this->scheduleUpdate();

@@ -193,7 +193,7 @@ void MapScene::_test() {
     message_layer->setTag(999);
     this->addChild(message_layer, 99999);
    // message_layer->setVisible(false);
-    this->removeChildByTag(999);
+    //this->removeChildByTag(999);
 }
 
 void MapScene::__test(Node* sender) {
