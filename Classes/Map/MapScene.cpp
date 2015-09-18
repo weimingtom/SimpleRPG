@@ -21,12 +21,7 @@ enum E_TAG {
     TAG_MAP,
     TAG_PLAYER,
     TAG_TOUCH_POINT,
-    TAG_MESSAGE_WINDOW,
-    TAG_MESSAGE_WINDOW_TEXT_0, // 開始位置としてのみ利用する
-    TAG_MESSAGE_WINDOW_TEXT_1,
-    TAG_MESSAGE_WINDOW_TEXT_2,
-    TAG_MESSAGE_WINDOW_TEXT_3,
-    TAG_MESSAGE_WINDOW_TEXT_4,
+    TAG_LAYER_MESSAGE_WINDOW,
     NR_TAGS
 };
 
@@ -37,7 +32,6 @@ enum E_GS_ORDER {
     GS_TOUCH_POINT,
     GS_MAP_EDGE_HIDE,
     GS_MESSAGE_WINDOW,
-    GS_MESSAGE_WINDOW_TEXT,
     NR_GSS
 };
 
@@ -149,19 +143,6 @@ bool MapScene::init()
     // test
     this->_test();
     
-    //
-    this->message_tests = {
-        "あいうえおかきくけこさしすせそ",
-        "たたたたたたたたたたたたたたた",
-        "たたたたたたたたたたたたたたち",
-        "たたたたたたたたたたたたたたつ",
-        "こんにちは",
-        "これはメッセージ",
-        "ながれる",
-        "テスト",
-    };
-    this->__test(nullptr);
-    
     // 毎フレームでupdateを実行させる
     this->schedule(schedule_selector(MapScene::update));
     this->scheduleUpdate();
@@ -178,87 +159,15 @@ void MapScene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::E
 #include "extensions/cocos-ext.h"
 USING_NS_CC_EXT;
 void MapScene::_test() {
-    auto layer_size = this->getContentSize();
-    auto base_position = Vec2(layer_size.width/2, layer_size.height/4);
-    
-    // ウインドウテスト
-    Size window_size = Size(layer_size.width - 50, 200);
-    Scale9Sprite* pScale = Scale9Sprite::create("window.png", Rect(0, 0, 64, 64), Rect(10, 10, 44, 44));
-    pScale->setContentSize(window_size);
-    pScale->setPosition(base_position);
-    pScale->setTag(TAG_MESSAGE_WINDOW);
-    this->addChild(pScale, GS_MESSAGE_WINDOW);
     
     auto message_layer = MessageLayer::create();
-    message_layer->setTag(999);
-    this->addChild(message_layer, 99999);
+    message_layer->setTag(TAG_LAYER_MESSAGE_WINDOW);
+    this->addChild(message_layer, GS_MESSAGE_WINDOW);
    // message_layer->setVisible(false);
     //this->removeChildByTag(999);
 }
 
-void MapScene::__test(Node* sender) {
-    
-    auto layer_size = this->getContentSize();
-    auto base_position = Vec2(layer_size.width/2, layer_size.height/4);
-    
-    if (this->message_tests.size() < 1) {
-        return;
-    }
-    
-    auto font_size = 24;
-    auto space = font_size/2;
-    auto start_y = base_position.y + (font_size + space) * 2 + space;
-    
-    // 4ラインまで
-    this->message_now_line++;
-    if (this->message_now_line > 4) {
-        this->message_now_line = 4;
-        // 一番上を削除し、他ラインのタグを更新する
-        this->removeChildByTag(TAG_MESSAGE_WINDOW_TEXT_1);
-        for (int tag = TAG_MESSAGE_WINDOW_TEXT_2; tag <= TAG_MESSAGE_WINDOW_TEXT_4; tag++) {
-            auto _message = this->getChildByTag(tag);
-            auto _tag = _message->getTag();
-            _message->setTag(_tag - 1);
-            // 上に移動する
-            auto move_by = MoveBy::create(0.2f, Vec2(0.0f, font_size + space));
-            _message->runAction(move_by);
-        }
-    }
-    
-    // 1ラインずつ取得する
-    std::string message = this->message_tests.back();
-    this->message_tests.pop_back();
-    
-    // 文書を生成
-    auto label = Label::createWithTTF(message, "fonts/misaki_gothic.ttf", font_size);
-    label->setTextColor(Color4B::WHITE);
-    label->setPosition(layer_size.width/2, start_y - this->message_now_line * (font_size + space));
-    label->setTag(TAG_MESSAGE_WINDOW_TEXT_0 + this->message_now_line);
-    this->addChild(label, GS_MESSAGE_WINDOW_TEXT);
-    
-    // 流れるようにする
-    int letter_num = 0;
-    for(int i = 0; i < label->getStringLength() + label->getStringNumLines(); i++) {
-        auto letter = label->getLetter(i);
-        if(nullptr != letter) {
-            letter_num++;
-            letter->setVisible(false);
-            if (letter_num == label->getStringLength()) {
-                auto callback = CallFuncN::create( CC_CALLBACK_1(MapScene::__test, this));
-                auto seq = Sequence::create(DelayTime::create(0.2f * (i+1)), Show::create(), callback, nullptr);
-                letter->runAction(seq);
-                CCLOG("end txt");
-            } else {
-                auto seq = Sequence::create(DelayTime::create(0.2f * (i+1)), Show::create(), nullptr);
-                letter->runAction(seq);
-                CCLOG("go txt");
-            }
-        }
-    }
-    
-    // はい、いいえ　：　もしくは▼のタイミングで状態をリセットして設定する。
-    
-}
+
 
 
 //---------------------------------------------------------

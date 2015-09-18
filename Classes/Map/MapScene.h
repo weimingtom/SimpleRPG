@@ -79,13 +79,7 @@ private:
     void _load_next_map();
     //
     void _test();
-    void __test(cocos2d::Node* sender);
     
-    //==========================
-    //  メッセージ処理関連
-    //==========================
-    int message_now_line;
-    std::vector<std::string> message_tests;
 };
 
 #endif // __MAP_MAPSCENE_H__
