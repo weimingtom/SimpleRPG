@@ -43,6 +43,14 @@ private:
 	int wait_counter; // 演出用汎用カウンタ
 	
 	std::string tweet_text;
+    
+    //==========================
+    //  メッセージ処理関連
+    //==========================
+    int message_now_line;
+    std::vector<std::string> message_tests;
+    
+    void _test(cocos2d::Node *sender);
 	
 };
 
