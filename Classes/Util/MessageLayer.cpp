@@ -31,6 +31,7 @@ enum E_TAG_LAYER_RESULT {
     TAG_MESSAGE_WINDOW_TEXT_2,
     TAG_MESSAGE_WINDOW_TEXT_3,
     TAG_MESSAGE_WINDOW_TEXT_4,
+    TAG_MESSAGE_BR,
 	NR_TAGS
 };
 
@@ -96,6 +97,21 @@ bool MessageLayer::init()
     
     this->message_start_y_pos = base_position.y + (FONT_SIZE + SPACE) * 2 + SPACE;
     this->_test(nullptr);
+    
+    // 改行演出
+    auto delay = 0.5f;
+    auto br = Sprite::create("message_br.png");
+    br->setPosition(base_position.x + 200, base_position.y - 80);
+    
+    auto visible = FadeIn::create(.0f);
+    auto invisivle = FadeOut::create(.0f);
+    auto seq = Sequence::create(visible, DelayTime::create(delay), invisivle, DelayTime::create(delay), nullptr);
+    auto rep = RepeatForever::create(seq);
+    br->runAction(rep);
+    br->setTag(TAG_MESSAGE_BR);
+    br->setVisible(false);
+    
+    this->addChild(br, ORDER_MESSAGE);
 
     return true;
 }
@@ -124,6 +140,8 @@ void MessageLayer::_test(Node* sender) {
         CCLOG("br!!");
         // カーソルを表示する
         this->is_disp_br_cursor = true;
+        auto br = this->getChildByTag(TAG_MESSAGE_BR);
+        br->setVisible(true);
     }
     else {
         this->_set_message(message);
@@ -189,6 +207,8 @@ bool MessageLayer::onTouchBegan(Touch *touch, Event *unused_event)
         // タッチしたら次のメッセージを読む
         this->_test(nullptr);
         this->is_disp_br_cursor = false;
+        auto br = this->getChildByTag(TAG_MESSAGE_BR);
+        br->setVisible(false);
     }
 	return true;
 }
