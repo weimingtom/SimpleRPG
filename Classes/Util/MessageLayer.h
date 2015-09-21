@@ -47,7 +47,10 @@ private:
     //==========================
     //  メッセージ処理関連
     //==========================
-    void _make_message(std::string message);
+    void _set_message(std::string message);
+    void _set_br();
+    
+    bool is_disp_br_cursor; // 次の矢印が表示されているか
     
     int message_now_line;
     float message_start_y_pos;

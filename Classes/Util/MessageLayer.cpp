@@ -13,6 +13,9 @@ USING_NS_CC_EXT;
 
 const int FONT_SIZE = 24;
 const int SPACE = FONT_SIZE/2;
+const int MAX_LINE = 4;
+
+const float LETTER_DELAY = 0.1f;
 
 // ORDER
 enum E_ORDER_LAYER_RESULT {
@@ -64,9 +67,16 @@ bool MessageLayer::init()
     
 	auto listener = EventListenerTouchOneByOne::create();
 	listener->setSwallowTouches(true);
-	listener->onTouchBegan = [](Touch *touch,Event*event)->bool{
+    
+    listener->onTouchBegan     = CC_CALLBACK_2(MessageLayer::onTouchBegan, this);
+    listener->onTouchMoved     = CC_CALLBACK_2(MessageLayer::onTouchMoved, this);
+    listener->onTouchEnded     = CC_CALLBACK_2(MessageLayer::onTouchEnded, this);
+    listener->onTouchCancelled = CC_CALLBACK_2(MessageLayer::onTouchCancelled, this);
+	/*
+    listener->onTouchBegan = [](Touch *touch,Event*event)->bool{
 		return true;
 	};
+     */
 	auto dip = Director::getInstance()->getEventDispatcher();
 	dip->addEventListenerWithSceneGraphPriority(listener, this);
 	dip->setPriority(listener, kModalLayerPriority);
@@ -102,10 +112,34 @@ void MessageLayer::_test(Node* sender) {
         return;
     }
     
-    // 4ラインまで
+    // 1ラインずつ取得する
+    std::string message = this->message_tests.back();
+    this->message_tests.pop_back();
+    
+    CCLOG("mesa len %lu", message.length());
+    
+    // メッセージの内容によって、処理を変更
+    // 改行
+    if (message.length() < 1) {
+        CCLOG("br!!");
+        // カーソルを表示する
+        this->is_disp_br_cursor = true;
+    }
+    else {
+        this->_set_message(message);
+    }
+    
+    
+    // はい、いいえ　：　もしくは▼のタイミングで状態をリセットして設定する。
+    
+}
+
+void MessageLayer::_set_message(std::string message) {
+    
+    // 規定のラインを送ったらライン送り
     this->message_now_line++;
-    if (this->message_now_line > 4) {
-        this->message_now_line = 4;
+    if (this->message_now_line > MAX_LINE) {
+        this->message_now_line = MAX_LINE;
         // 一番上を削除し、他ラインのタグを更新する
         this->removeChildByTag(TAG_MESSAGE_WINDOW_TEXT_1);
         for (int tag = TAG_MESSAGE_WINDOW_TEXT_2; tag <= TAG_MESSAGE_WINDOW_TEXT_4; tag++) {
@@ -113,22 +147,10 @@ void MessageLayer::_test(Node* sender) {
             auto _tag = _message->getTag();
             _message->setTag(_tag - 1);
             // 上に移動する
-            auto move_by = MoveBy::create(0.2f, Vec2(0.0f, FONT_SIZE + SPACE));
+            auto move_by = MoveBy::create(LETTER_DELAY, Vec2(0.0f, FONT_SIZE + SPACE));
             _message->runAction(move_by);
         }
     }
-    
-    // 1ラインずつ取得する
-    std::string message = this->message_tests.back();
-    this->message_tests.pop_back();
-    
-    this->_make_message(message);
-    
-    // はい、いいえ　：　もしくは▼のタイミングで状態をリセットして設定する。
-    
-}
-
-void MessageLayer::_make_message(std::string message) {
     
     auto layer_size = this->getContentSize();
     auto x = this->getContentSize().width/2;
@@ -148,15 +170,14 @@ void MessageLayer::_make_message(std::string message) {
         if(nullptr != letter) {
             letter_num++;
             letter->setVisible(false);
+            // 終了時は次のメッセージを取得するコールバックを設定
             if (letter_num == label->getStringLength()) {
                 auto callback = CallFuncN::create( CC_CALLBACK_1(MessageLayer::_test, this));
-                auto seq = Sequence::create(DelayTime::create(0.2f * (i+1)), Show::create(), callback, nullptr);
+                auto seq = Sequence::create(DelayTime::create(LETTER_DELAY * (i+1)), Show::create(), callback, nullptr);
                 letter->runAction(seq);
-                CCLOG("end txt");
             } else {
-                auto seq = Sequence::create(DelayTime::create(0.2f * (i+1)), Show::create(), nullptr);
+                auto seq = Sequence::create(DelayTime::create(LETTER_DELAY * (i+1)), Show::create(), nullptr);
                 letter->runAction(seq);
-                CCLOG("go txt");
             }
         }
     }
@@ -164,6 +185,11 @@ void MessageLayer::_make_message(std::string message) {
 
 bool MessageLayer::onTouchBegan(Touch *touch, Event *unused_event)
 {
+    if (this->is_disp_br_cursor) {
+        // タッチしたら次のメッセージを読む
+        this->_test(nullptr);
+        this->is_disp_br_cursor = false;
+    }
 	return true;
 }
 
