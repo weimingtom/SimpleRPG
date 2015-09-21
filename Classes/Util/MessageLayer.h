@@ -47,7 +47,10 @@ private:
     //==========================
     //  メッセージ処理関連
     //==========================
+    void _make_message(std::string message);
+    
     int message_now_line;
+    float message_start_y_pos;
     std::vector<std::string> message_tests;
     
     void _test(cocos2d::Node *sender);

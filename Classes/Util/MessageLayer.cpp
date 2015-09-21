@@ -11,6 +11,9 @@ USING_NS_CC_EXT;
 
 #define kModalLayerPriority -1
 
+const int FONT_SIZE = 24;
+const int SPACE = FONT_SIZE/2;
+
 // ORDER
 enum E_ORDER_LAYER_RESULT {
     ORDER_MESSAGE_WINDOW,
@@ -74,11 +77,14 @@ bool MessageLayer::init()
         "たたたたたたたたたたたたたたた",
         "たたたたたたたたたたたたたたち",
         "たたたたたたたたたたたたたたつ",
+        "",
         "こんにちは",
         "これはメッセージ",
         "ながれる",
         "テスト２",
     };
+    
+    this->message_start_y_pos = base_position.y + (FONT_SIZE + SPACE) * 2 + SPACE;
     this->_test(nullptr);
 
     return true;
@@ -92,16 +98,9 @@ void MessageLayer::update(float flame) {
 
 void MessageLayer::_test(Node* sender) {
     
-    auto layer_size = this->getContentSize();
-    auto base_position = Vec2(layer_size.width/2, layer_size.height/4);
-    
     if (this->message_tests.size() < 1) {
         return;
     }
-    
-    auto font_size = 24;
-    auto space = font_size/2;
-    auto start_y = base_position.y + (font_size + space) * 2 + space;
     
     // 4ラインまで
     this->message_now_line++;
@@ -114,7 +113,7 @@ void MessageLayer::_test(Node* sender) {
             auto _tag = _message->getTag();
             _message->setTag(_tag - 1);
             // 上に移動する
-            auto move_by = MoveBy::create(0.2f, Vec2(0.0f, font_size + space));
+            auto move_by = MoveBy::create(0.2f, Vec2(0.0f, FONT_SIZE + SPACE));
             _message->runAction(move_by);
         }
     }
@@ -123,10 +122,22 @@ void MessageLayer::_test(Node* sender) {
     std::string message = this->message_tests.back();
     this->message_tests.pop_back();
     
+    this->_make_message(message);
+    
+    // はい、いいえ　：　もしくは▼のタイミングで状態をリセットして設定する。
+    
+}
+
+void MessageLayer::_make_message(std::string message) {
+    
+    auto layer_size = this->getContentSize();
+    auto x = this->getContentSize().width/2;
+    auto y = this->message_start_y_pos - this->message_now_line * (FONT_SIZE + SPACE);
+    
     // 文書を生成
-    auto label = Label::createWithTTF(message, "fonts/misaki_gothic.ttf", font_size);
+    auto label = Label::createWithTTF(message, "fonts/misaki_gothic.ttf", FONT_SIZE);
     label->setTextColor(Color4B::WHITE);
-    label->setPosition(layer_size.width/2, start_y - this->message_now_line * (font_size + space));
+    label->setPosition(x, y);
     label->setTag(TAG_MESSAGE_WINDOW_TEXT_0 + this->message_now_line);
     this->addChild(label, ORDER_MESSAGE);
     
@@ -149,9 +160,6 @@ void MessageLayer::_test(Node* sender) {
             }
         }
     }
-    
-    // はい、いいえ　：　もしくは▼のタイミングで状態をリセットして設定する。
-    
 }
 
 bool MessageLayer::onTouchBegan(Touch *touch, Event *unused_event)
