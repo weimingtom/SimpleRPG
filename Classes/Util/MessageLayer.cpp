@@ -43,13 +43,7 @@ bool MessageLayer::init()
     {
         return false;
 	}
-	//if ( !LayerColor::initWithColor(Color4B::GREEN, GAME_RESOLUTION.width, GAME_RESOLUTION.height)) {
-	//	return false;
-	//}
-    //this->setContentSize(GAME_RESOLUTION);
 	
-	this->tweet_text = "";
-	this->update_start = false;
 	
 	auto layer_size = this->getContentSize();
 	auto base_position = Vec2(layer_size.width/2, layer_size.height/4);
@@ -96,7 +90,7 @@ bool MessageLayer::init()
     };
     
     this->message_start_y_pos = base_position.y + (FONT_SIZE + SPACE) * 2 + SPACE;
-    this->_test(nullptr);
+    this->_read_line();
     
     // 改行演出
     auto delay = 0.5f;
@@ -117,26 +111,47 @@ bool MessageLayer::init()
 }
 
 void MessageLayer::update(float flame) {
-	if (!this->update_start) {
-		return;
-	}
 }
 
-void MessageLayer::_test(Node* sender) {
+void MessageLayer::_test() {
+}
+
+
+
+//---------------------------------------------------------
+// 入力からのライン処理
+//---------------------------------------------------------
+void MessageLayer::_read_line() {
     
     if (this->message_tests.size() < 1) {
         return;
     }
     
     // 1ラインずつ取得する
-    std::string message = this->message_tests.back();
+    std::string line = this->message_tests.back();
     this->message_tests.pop_back();
     
-    CCLOG("mesa len %lu", message.length());
+    CCLOG("mesa len %lu", line.length());
+    
+    this->_proc_line(line);
+}
+
+//---------------------------------------------------------
+// コールバック時のライン処理
+//---------------------------------------------------------
+void MessageLayer::_callback_line(Node *sender) {
+    
+    this->_read_line();
+}
+
+//---------------------------------------------------------
+// テキスト内容の把握
+//---------------------------------------------------------
+void MessageLayer::_proc_line(std::string line) {
     
     // メッセージの内容によって、処理を変更
     // 改行
-    if (message.length() < 1) {
+    if (line.length() < 1) {
         CCLOG("br!!");
         // カーソルを表示する
         this->is_disp_br_cursor = true;
@@ -144,15 +159,14 @@ void MessageLayer::_test(Node* sender) {
         br->setVisible(true);
     }
     else {
-        this->_set_message(message);
+        this->_set_line(line);
     }
-    
-    
-    // はい、いいえ　：　もしくは▼のタイミングで状態をリセットして設定する。
-    
 }
 
-void MessageLayer::_set_message(std::string message) {
+//---------------------------------------------------------
+// ラインを流すように設定する
+//---------------------------------------------------------
+void MessageLayer::_set_line(std::string line) {
     
     // 規定のラインを送ったらライン送り
     this->message_now_line++;
@@ -175,7 +189,7 @@ void MessageLayer::_set_message(std::string message) {
     auto y = this->message_start_y_pos - this->message_now_line * (FONT_SIZE + SPACE);
     
     // 文書を生成
-    auto label = Label::createWithTTF(message, "fonts/misaki_gothic.ttf", FONT_SIZE);
+    auto label = Label::createWithTTF(line, "fonts/misaki_gothic.ttf", FONT_SIZE);
     label->setTextColor(Color4B::WHITE);
     label->setPosition(x, y);
     label->setTag(TAG_MESSAGE_WINDOW_TEXT_0 + this->message_now_line);
@@ -190,7 +204,7 @@ void MessageLayer::_set_message(std::string message) {
             letter->setVisible(false);
             // 終了時は次のメッセージを取得するコールバックを設定
             if (letter_num == label->getStringLength()) {
-                auto callback = CallFuncN::create( CC_CALLBACK_1(MessageLayer::_test, this));
+                auto callback = CallFuncN::create( CC_CALLBACK_1(MessageLayer::_callback_line, this));
                 auto seq = Sequence::create(DelayTime::create(LETTER_DELAY * (i+1)), Show::create(), callback, nullptr);
                 letter->runAction(seq);
             } else {
@@ -201,11 +215,14 @@ void MessageLayer::_set_message(std::string message) {
     }
 }
 
+//---------------------------------------------------------
+//
+//---------------------------------------------------------
 bool MessageLayer::onTouchBegan(Touch *touch, Event *unused_event)
 {
     if (this->is_disp_br_cursor) {
         // タッチしたら次のメッセージを読む
-        this->_test(nullptr);
+        this->_read_line();
         this->is_disp_br_cursor = false;
         auto br = this->getChildByTag(TAG_MESSAGE_BR);
         br->setVisible(false);

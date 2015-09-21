@@ -47,16 +47,21 @@ private:
     //==========================
     //  メッセージ処理関連
     //==========================
-    void _set_message(std::string message);
+    void _read_line();
+    void _callback_line(cocos2d::Node *sender);
+    void _proc_line(std::string line);
+    
+    void _set_line(std::string line);
     void _set_br();
     
     bool is_disp_br_cursor; // 次の矢印が表示されているか
+    bool is_end_line;
     
     int message_now_line;
     float message_start_y_pos;
     std::vector<std::string> message_tests;
     
-    void _test(cocos2d::Node *sender);
+    void _test();
 	
 };
 
