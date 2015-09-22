@@ -78,7 +78,9 @@ private:
     
     void _load_next_map();
     //
+    //MessageLayer *message_window;
     void _test();
+    void _test_button(cocos2d::Ref* pSender);
     
 };
 

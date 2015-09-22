@@ -156,17 +156,34 @@ void MapScene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::E
     CCLOG("hoge %s", str->getCString());
 }
 
-#include "extensions/cocos-ext.h"
-USING_NS_CC_EXT;
 void MapScene::_test() {
     
     auto message_layer = MessageLayer::create();
     message_layer->setTag(TAG_LAYER_MESSAGE_WINDOW);
     this->addChild(message_layer, GS_MESSAGE_WINDOW);
-   // message_layer->setVisible(false);
-    //this->removeChildByTag(999);
+    
+    
+    auto closeItem = MenuItemImage::create("CloseNormal.png",
+                                           "CloseSelected.png",
+                                           CC_CALLBACK_1(MapScene::_test_button, this));
+    
+    auto layer_size = this->getContentSize();
+    closeItem->setPosition(Vec2(layer_size.width - closeItem->getContentSize().width/2 ,
+                                closeItem->getContentSize().height/2));
+    
+    // create menu, it's an autorelease object
+    auto menu = Menu::create(closeItem, NULL);
+    menu->setPosition(Vec2::ZERO);
+    this->addChild(menu, 999);
 }
 
+
+void MapScene::_test_button(Ref* pSender)
+{
+    CCLOG("push!!");
+    auto message_window = (MessageLayer *)this->getChildByTag(TAG_LAYER_MESSAGE_WINDOW);
+    message_window->set_message();
+}
 
 
 

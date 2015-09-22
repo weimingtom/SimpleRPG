@@ -57,40 +57,8 @@ bool MessageLayer::init()
     this->addChild(pScale, ORDER_MESSAGE_WINDOW);
 
 	this->scheduleUpdate();
-	
-	// こっちのレイヤーのタッチを優先にしている
-    
-	auto listener = EventListenerTouchOneByOne::create();
-	listener->setSwallowTouches(true);
-    
-    listener->onTouchBegan     = CC_CALLBACK_2(MessageLayer::onTouchBegan, this);
-    listener->onTouchMoved     = CC_CALLBACK_2(MessageLayer::onTouchMoved, this);
-    listener->onTouchEnded     = CC_CALLBACK_2(MessageLayer::onTouchEnded, this);
-    listener->onTouchCancelled = CC_CALLBACK_2(MessageLayer::onTouchCancelled, this);
-	/*
-    listener->onTouchBegan = [](Touch *touch,Event*event)->bool{
-		return true;
-	};
-     */
-	auto dip = Director::getInstance()->getEventDispatcher();
-	dip->addEventListenerWithSceneGraphPriority(listener, this);
-	dip->setPriority(listener, kModalLayerPriority);
-    
-    
-    this->message_tests = {
-        "あいうえおかきくけこさしすせそ",
-        "たたたたたたたたたたたたたたた",
-        "たたたたたたたたたたたたたたち",
-        "たたたたたたたたたたたたたたつ",
-        "",
-        "こんにちは",
-        "これはメッセージ",
-        "ながれる",
-        "テスト２",
-    };
     
     this->message_start_y_pos = base_position.y + (FONT_SIZE + SPACE) * 2 + SPACE;
-    this->_read_line();
     
     // 改行演出
     auto delay = 0.5f;
@@ -106,8 +74,75 @@ bool MessageLayer::init()
     br->setVisible(false);
     
     this->addChild(br, ORDER_MESSAGE);
+    
+    this->setVisible(false);
 
     return true;
+}
+
+//---------------------------------------------------------
+//
+//---------------------------------------------------------
+void MessageLayer::_set_touch_enabled(bool enabled)
+{
+    if (enabled) {
+        auto listener = EventListenerTouchOneByOne::create();
+        listener->setSwallowTouches(true);
+        listener->onTouchBegan = CC_CALLBACK_2(MessageLayer::onTouchBegan, this);
+        
+        _touchListener = listener;
+        _touchListener->retain();
+        _eventDispatcher->addEventListenerWithSceneGraphPriority(_touchListener, this);
+        _eventDispatcher->setPriority(_touchListener, kModalLayerPriority);
+        
+    }
+    else {
+        _eventDispatcher->removeEventListener(_touchListener);
+        _touchListener->release();
+        _touchListener = nullptr;
+    }
+}
+
+//---------------------------------------------------------
+//
+//---------------------------------------------------------
+void MessageLayer::set_message() {
+    
+    this->message_tests = {
+        "あいうえおかきくけこさしすせそ",
+        "たたたたたたたたたたたたたたた",
+        "たたたたたたたたたたたたたたち",
+        "たたたたたたたたたたたたたたつ",
+        "",
+        "こんにちは",
+        "これはメッセージ",
+        "ながれる",
+        "テスト２",
+    };
+    
+    this->_set_touch_enabled(true);
+    this->setVisible(true);
+    
+    this->_read_line();
+}
+
+//---------------------------------------------------------
+// 後始末
+//---------------------------------------------------------
+void MessageLayer::_finalize() {
+    
+    // 表示済みの文字を削除する
+    auto index_tag = TAG_MESSAGE_WINDOW_TEXT_0 + this->message_now_line; // 1以上じゃないとおかしくなる
+    for (int tag = TAG_MESSAGE_WINDOW_TEXT_1; tag <= index_tag; tag++) {
+        this->removeChildByTag(tag);
+    }
+    
+    this->is_end_line = false;
+    this->is_disp_br_cursor = false;
+    this->message_now_line = 0;
+    
+    this->_set_touch_enabled(false);
+    this->setVisible(false);
 }
 
 void MessageLayer::update(float flame) {
@@ -124,6 +159,7 @@ void MessageLayer::_test() {
 void MessageLayer::_read_line() {
     
     if (this->message_tests.size() < 1) {
+        this->is_end_line = true;
         return;
     }
     
@@ -226,6 +262,12 @@ bool MessageLayer::onTouchBegan(Touch *touch, Event *unused_event)
         this->is_disp_br_cursor = false;
         auto br = this->getChildByTag(TAG_MESSAGE_BR);
         br->setVisible(false);
+        return true;
+    }
+    if (this->is_end_line) {
+        this->_finalize();
+        //this->removeFromParent();
+        return true;
     }
 	return true;
 }

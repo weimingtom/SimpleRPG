@@ -19,34 +19,18 @@ public:
 	virtual void onTouchCancelled(cocos2d::Touch *touch, cocos2d::Event *unused_event);
 	
 	void update(float frame);
-	
+    
+    void set_message();
 	
 private:
-	int game_step;
-	
-	float input_timer;
-	
-	bool update_start;
-	int combo;
-	int damage;
-	int attack;
-	int total_damage;
-	int great_rate;
-	
-	int disp_combo;
-	int disp_damage;
-	int disp_attack;
-	int disp_total_damage;
-	int disp_grate_rate;
-	
-	int se_counter;
-	int wait_counter; // 演出用汎用カウンタ
-	
-	std::string tweet_text;
     
     //==========================
     //  メッセージ処理関連
     //==========================
+    
+    void _set_touch_enabled(bool enabled);
+    void _finalize();
+    
     void _read_line();
     void _callback_line(cocos2d::Node *sender);
     void _proc_line(std::string line);
