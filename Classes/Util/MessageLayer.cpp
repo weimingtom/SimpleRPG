@@ -116,7 +116,7 @@ void MessageLayer::set_message() {
         "",
         "こんにちは",
         "これはメッセージ",
-        "ながれる",
+        "ながれる　あれ",
         "テスト２",
     };
     
@@ -221,15 +221,17 @@ void MessageLayer::_set_line(std::string line) {
     }
     
     auto layer_size = this->getContentSize();
-    auto x = this->getContentSize().width/2;
+    auto x = this->getContentSize().width/2 - 180;
     auto y = this->message_start_y_pos - this->message_now_line * (FONT_SIZE + SPACE);
     
     // 文書を生成
     auto label = Label::createWithTTF(line, "fonts/misaki_gothic.ttf", FONT_SIZE);
     label->setTextColor(Color4B::WHITE);
-    label->setPosition(x, y);
     label->setTag(TAG_MESSAGE_WINDOW_TEXT_0 + this->message_now_line);
     this->addChild(label, ORDER_MESSAGE);
+    
+    label->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
+    label->setPosition(x, y);
     
     // 流れるようにする
     int letter_num = 0;
