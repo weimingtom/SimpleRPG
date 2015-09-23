@@ -21,6 +21,7 @@ const float LETTER_DELAY = 0.1f;
 enum E_ORDER_LAYER_RESULT {
     ORDER_MESSAGE_WINDOW,
     ORDER_MESSAGE,
+    ORDER_BUTTON,
 	NR_ORDER
 };
 
@@ -32,6 +33,8 @@ enum E_TAG_LAYER_RESULT {
     TAG_MESSAGE_WINDOW_TEXT_3,
     TAG_MESSAGE_WINDOW_TEXT_4,
     TAG_MESSAGE_BR,
+    TAG_YES_BUTTON,
+    TAG_NO_BUTTON,
 	NR_TAGS
 };
 
@@ -76,6 +79,27 @@ bool MessageLayer::init()
     this->addChild(br, ORDER_MESSAGE);
     
     this->setVisible(false);
+    
+    // YES NOボタン
+    auto yes_func = CC_CALLBACK_1(MessageLayer::_push_yes, this);
+    auto no_func = CC_CALLBACK_1(MessageLayer::_push_no, this);
+    
+    float xs[2] = { layer_size.width/2 - 80, layer_size.width/2 + 80};
+    int tags[2] = { TAG_YES_BUTTON, TAG_NO_BUTTON};
+    
+    for (int i = 0; i < 2; i++) {
+        auto item = MenuItemImage::create("CloseNormal.png",
+                                          "CloseSelected.png",
+                                          i == 1 ? no_func : yes_func);
+        
+        item->setPosition(xs[i], layer_size.height/8);
+        
+        auto menu = Menu::create(item, nullptr);
+        menu->setPosition(Vec2::ZERO);
+        menu->setTag(tags[i]);
+        menu->setVisible(false); // 開始時は消しておく
+        this->addChild(menu, ORDER_BUTTON);
+    }
 
     return true;
 }
@@ -107,8 +131,7 @@ void MessageLayer::_set_touch_enabled(bool enabled)
 //
 //---------------------------------------------------------
 void MessageLayer::set_message() {
-    
-    this->message_tests = {
+    std::vector<std::string> m = {
         "あいうえおかきくけこさしすせそ",
         "たたたたたたたたたたたたたたた",
         "たたたたたたたたたたたたたたち",
@@ -118,7 +141,14 @@ void MessageLayer::set_message() {
         "これはメッセージ",
         "ながれる　あれ",
         "テスト２",
+        "yes_no;11,13",
+        "こたえはイエス！",
+        "end;",
+        "答えはノー",
     };
+    //std::reverse(m.begin(), m.end());
+    
+    this->message_tests = m;
     
     this->_set_touch_enabled(true);
     this->setVisible(true);
@@ -140,6 +170,9 @@ void MessageLayer::_finalize() {
     this->is_end_line = false;
     this->is_disp_br_cursor = false;
     this->message_now_line = 0;
+    this->message_now_count = 0;
+    
+    this->yesno_line.clear();
     
     this->_set_touch_enabled(false);
     this->setVisible(false);
@@ -158,17 +191,16 @@ void MessageLayer::_test() {
 //---------------------------------------------------------
 void MessageLayer::_read_line() {
     
-    if (this->message_tests.size() < 1) {
+    // ライン全部読んだら終わり
+    if (this->message_tests.size() <= this->message_now_count) {
         this->is_end_line = true;
         return;
     }
     
-    // 1ラインずつ取得する
-    std::string line = this->message_tests.back();
-    this->message_tests.pop_back();
+    std::string line = this->message_tests[this->message_now_count];
     
-    CCLOG("mesa len %lu", line.length());
-    
+    this->message_now_count++;
+    // ラインの内容で処理を分岐
     this->_proc_line(line);
 }
 
@@ -190,9 +222,22 @@ void MessageLayer::_proc_line(std::string line) {
     if (line.length() < 1) {
         CCLOG("br!!");
         // カーソルを表示する
-        this->is_disp_br_cursor = true;
-        auto br = this->getChildByTag(TAG_MESSAGE_BR);
-        br->setVisible(true);
+        this->_set_br();
+    }
+    // YES or NO
+    else if (line.find("yes_no;") != std::string::npos) {
+        CCLOG("find yes or now");
+        this->_set_yesno(line);
+    }
+    // 指定の行数にとぶ
+    else if (line.find("jump;") != std::string::npos) {
+        CCLOG("jump");
+        this->_set_line(line);
+    }
+    // 途中だけど終了
+    else if (line.find("end;") != std::string::npos) {
+        this->_set_end();
+        return;
     }
     else {
         this->_set_line(line);
@@ -252,6 +297,66 @@ void MessageLayer::_set_line(std::string line) {
         }
     }
 }
+
+//---------------------------------------------------------
+// 改行演出
+//---------------------------------------------------------
+void MessageLayer::_set_br() {
+    this->is_disp_br_cursor = true;
+    auto br = this->getChildByTag(TAG_MESSAGE_BR);
+    br->setVisible(true);
+}
+
+//---------------------------------------------------------
+// 会話終了
+//---------------------------------------------------------
+void MessageLayer::_set_end() {
+    // 終了フラグ
+    this->is_end_line = true;
+}
+
+//---------------------------------------------------------
+// yes or noライン処理
+//---------------------------------------------------------
+void MessageLayer::_set_yesno(std::string line) {
+    // 規則にそって処理 : yes_no;y_jump,n_jump
+    auto _split = Common::split(line, ';');
+    auto jumps = Common::split(_split[1], ',');
+    
+    // 必ず2つある
+    assert(_split.size() == 2);
+    assert(jumps.size() == 2);
+    
+    this->yesno_line["yes"] = std::atoi(jumps[0].c_str()) - 1;
+    this->yesno_line["no"]  = std::atoi(jumps[1].c_str()) - 1;
+    
+    // ボタンを表示
+    this->getChildByTag(TAG_YES_BUTTON)->setVisible(true);
+    this->getChildByTag(TAG_NO_BUTTON)->setVisible(true);
+}
+
+//---------------------------------------------------------
+// yes or noを押した
+//---------------------------------------------------------
+void MessageLayer::_push_yes(Ref* pSender)
+{
+    CCLOG("yes!!");
+    this->_push_yesno("yes");
+}
+void MessageLayer::_push_no(Ref* pSender)
+{
+    CCLOG("no!!");
+    this->_push_yesno("no");
+}
+void MessageLayer::_push_yesno(std::string yesno) {
+    // 指定の場所に飛ばす
+    this->message_now_count = this->yesno_line[yesno];
+    this->_read_line();
+    // 非表示
+    this->getChildByTag(TAG_YES_BUTTON)->setVisible(false);
+    this->getChildByTag(TAG_NO_BUTTON)->setVisible(false);
+}
+
 
 //---------------------------------------------------------
 //

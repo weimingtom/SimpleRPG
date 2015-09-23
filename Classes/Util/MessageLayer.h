@@ -37,11 +37,19 @@ private:
     
     void _set_line(std::string line);
     void _set_br();
+    void _set_yesno(std::string line);
+    void _set_end();
+    
+    std::map<std::string, int> yesno_line;
+    void _push_yes(cocos2d::Ref* pSender);
+    void _push_no(cocos2d::Ref* pSender);
+    void _push_yesno(std::string yesno);
     
     bool is_disp_br_cursor; // 次の矢印が表示されているか
     bool is_end_line;
     
-    int message_now_line;
+    int message_now_line;  // 表示に使っているライン(1 - 4)
+    int message_now_count; // 表示している行番号
     float message_start_y_pos;
     std::vector<std::string> message_tests;
     
