@@ -84,12 +84,24 @@ bool MessageLayer::init()
     this->setVisible(false);
     
     // YES NOボタン
-    Size yesno_window_size = Size(80, 50);
+    this->_init_yesno();
+
+    return true;
+}
+
+//---------------------------------------------------------
+// YES NOボタン作成
+//---------------------------------------------------------
+void MessageLayer::_init_yesno() {
+    
+    Size yesno_window_size = Size(100, 50);
     
     auto yes_func = CC_CALLBACK_1(MessageLayer::_push_yes, this);
     auto no_func = CC_CALLBACK_1(MessageLayer::_push_no, this);
     
+    auto layer_size = this->getContentSize();
     float xs[2] = { layer_size.width/2 - 80, layer_size.width/2 + 80};
+    float y = layer_size.height/8;
     int tags[2] = { TAG_YES_BUTTON, TAG_NO_BUTTON};
     
     std::string text[2] = {"はい", "いいえ"};
@@ -100,7 +112,7 @@ bool MessageLayer::init()
         yesno_window->setContentSize(yesno_window_size);
         
         auto item = MenuItemSprite::create(yesno_window, yesno_window, i == 1 ? no_func : yes_func);
-        item->setPosition(xs[i], layer_size.height/8);
+        item->setPosition(xs[i], y);
         
         auto menu = Menu::create(item, nullptr);
         menu->setPosition(Vec2::ZERO);
@@ -112,12 +124,10 @@ bool MessageLayer::init()
         auto label = Label::createWithTTF(text[i], "fonts/misaki_gothic.ttf", FONT_SIZE);
         label->setTextColor(Color4B::WHITE);
         label->setTag(text_tags[i]);
-        label->setPosition(xs[i], layer_size.height/8);
+        label->setPosition(xs[i], y - 4);
         label->setVisible(false);
         this->addChild(label, ORDER_BUTTON_LABEL);
     }
-
-    return true;
 }
 
 //---------------------------------------------------------

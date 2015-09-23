@@ -24,9 +24,7 @@ public:
 	
 private:
     
-    //==========================
-    //  メッセージ処理関連
-    //==========================
+    void _init_yesno();
     
     void _set_touch_enabled(bool enabled);
     void _finalize();
