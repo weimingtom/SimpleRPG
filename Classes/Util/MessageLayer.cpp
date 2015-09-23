@@ -22,6 +22,7 @@ enum E_ORDER_LAYER_RESULT {
     ORDER_MESSAGE_WINDOW,
     ORDER_MESSAGE,
     ORDER_BUTTON,
+    ORDER_BUTTON_LABEL,
 	NR_ORDER
 };
 
@@ -34,7 +35,9 @@ enum E_TAG_LAYER_RESULT {
     TAG_MESSAGE_WINDOW_TEXT_4,
     TAG_MESSAGE_BR,
     TAG_YES_BUTTON,
+    TAG_YES_BUTTON_LABEL,
     TAG_NO_BUTTON,
+    TAG_NO_BUTTON_LABEL,
 	NR_TAGS
 };
 
@@ -81,17 +84,22 @@ bool MessageLayer::init()
     this->setVisible(false);
     
     // YES NOボタン
+    Size yesno_window_size = Size(80, 50);
+    
     auto yes_func = CC_CALLBACK_1(MessageLayer::_push_yes, this);
     auto no_func = CC_CALLBACK_1(MessageLayer::_push_no, this);
     
     float xs[2] = { layer_size.width/2 - 80, layer_size.width/2 + 80};
     int tags[2] = { TAG_YES_BUTTON, TAG_NO_BUTTON};
     
+    std::string text[2] = {"はい", "いいえ"};
+    int text_tags[2] = { TAG_YES_BUTTON_LABEL, TAG_NO_BUTTON_LABEL};
+    
     for (int i = 0; i < 2; i++) {
-        auto item = MenuItemImage::create("CloseNormal.png",
-                                          "CloseSelected.png",
-                                          i == 1 ? no_func : yes_func);
+        Scale9Sprite* yesno_window = Scale9Sprite::create("window.png", Rect(0, 0, 64, 64), Rect(10, 10, 44, 44));
+        yesno_window->setContentSize(yesno_window_size);
         
+        auto item = MenuItemSprite::create(yesno_window, yesno_window, i == 1 ? no_func : yes_func);
         item->setPosition(xs[i], layer_size.height/8);
         
         auto menu = Menu::create(item, nullptr);
@@ -99,6 +107,14 @@ bool MessageLayer::init()
         menu->setTag(tags[i]);
         menu->setVisible(false); // 開始時は消しておく
         this->addChild(menu, ORDER_BUTTON);
+        
+        // はい、いいえ
+        auto label = Label::createWithTTF(text[i], "fonts/misaki_gothic.ttf", FONT_SIZE);
+        label->setTextColor(Color4B::WHITE);
+        label->setTag(text_tags[i]);
+        label->setPosition(xs[i], layer_size.height/8);
+        label->setVisible(false);
+        this->addChild(label, ORDER_BUTTON_LABEL);
     }
 
     return true;
@@ -348,8 +364,10 @@ void MessageLayer::_set_yesno(std::string line) {
     this->yesno_line["no"]  = std::atoi(jumps[1].c_str()) - 1;
     
     // ボタンを表示
-    this->getChildByTag(TAG_YES_BUTTON)->setVisible(true);
-    this->getChildByTag(TAG_NO_BUTTON)->setVisible(true);
+    std::vector<int> tags = {TAG_YES_BUTTON, TAG_NO_BUTTON, TAG_YES_BUTTON_LABEL, TAG_NO_BUTTON_LABEL};
+    for (auto tag : tags) {
+        this->getChildByTag(tag)->setVisible(true);
+    }
 }
 
 //---------------------------------------------------------
@@ -370,8 +388,10 @@ void MessageLayer::_push_yesno(std::string yesno) {
     this->message_now_count = this->yesno_line[yesno];
     this->_read_line();
     // 非表示
-    this->getChildByTag(TAG_YES_BUTTON)->setVisible(false);
-    this->getChildByTag(TAG_NO_BUTTON)->setVisible(false);
+    std::vector<int> tags = {TAG_YES_BUTTON, TAG_NO_BUTTON, TAG_YES_BUTTON_LABEL, TAG_NO_BUTTON_LABEL};
+    for (auto tag : tags) {
+        this->getChildByTag(tag)->setVisible(false);
+    }
 }
 
 
