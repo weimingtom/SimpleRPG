@@ -40,6 +40,9 @@
 		2F7864EB1BA7132D0075B6C1 /* MessageLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F7864E91BA7132D0075B6C1 /* MessageLayer.cpp */; };
 		2F7864ED1BB00A0D0075B6C1 /* message_br.png in Resources */ = {isa = PBXBuildFile; fileRef = 2F7864EC1BB00A0D0075B6C1 /* message_br.png */; };
 		2F7864F01BB2813A0075B6C1 /* Player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F7864EE1BB2813A0075B6C1 /* Player.cpp */; };
+		2F7864F31BB2D1430075B6C1 /* character_animations.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2F7864F11BB2D1430075B6C1 /* character_animations.plist */; };
+		2F7864F41BB2D1430075B6C1 /* character.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2F7864F21BB2D1430075B6C1 /* character.plist */; };
+		2F7864F71BB2D7330075B6C1 /* Character.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F7864F51BB2D7330075B6C1 /* Character.cpp */; };
 		503AE0F817EB97AB00D1A890 /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 503AE0F617EB97AB00D1A890 /* Icon.icns */; };
 		503AE10017EB989F00D1A890 /* AppController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 503AE0FB17EB989F00D1A890 /* AppController.mm */; };
 		503AE10117EB989F00D1A890 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 503AE0FC17EB989F00D1A890 /* main.m */; };
@@ -262,6 +265,10 @@
 		2F7864EC1BB00A0D0075B6C1 /* message_br.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = message_br.png; sourceTree = "<group>"; };
 		2F7864EE1BB2813A0075B6C1 /* Player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Player.cpp; sourceTree = "<group>"; };
 		2F7864EF1BB2813A0075B6C1 /* Player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Player.h; sourceTree = "<group>"; };
+		2F7864F11BB2D1430075B6C1 /* character_animations.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = character_animations.plist; sourceTree = "<group>"; };
+		2F7864F21BB2D1430075B6C1 /* character.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = character.plist; sourceTree = "<group>"; };
+		2F7864F51BB2D7330075B6C1 /* Character.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Character.cpp; sourceTree = "<group>"; };
+		2F7864F61BB2D7330075B6C1 /* Character.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Character.h; sourceTree = "<group>"; };
 		503AE0F617EB97AB00D1A890 /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Icon.icns; sourceTree = "<group>"; };
 		503AE0F717EB97AB00D1A890 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		503AE0FA17EB989F00D1A890 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = ios/AppController.h; sourceTree = SOURCE_ROOT; };
@@ -449,6 +456,8 @@
 		2F7098DD1B8F093200B6C4F3 /* Map */ = {
 			isa = PBXGroup;
 			children = (
+				2F7864F51BB2D7330075B6C1 /* Character.cpp */,
+				2F7864F61BB2D7330075B6C1 /* Character.h */,
 				2F7098DE1B8F093200B6C4F3 /* MapScene.cpp */,
 				2F7098DF1B8F093200B6C4F3 /* MapScene.h */,
 				2F7098E01B8F093200B6C4F3 /* RouteSearch.cpp */,
@@ -534,6 +543,8 @@
 				2F7098E61B8F0C6500B6C4F3 /* DQTFE_overworld.png */,
 				2F7098FD1B93598600B6C4F3 /* fonts */,
 				1AFAF8BB16D35E4900DB1158 /* HelloWorld.png */,
+				2F7864F11BB2D1430075B6C1 /* character_animations.plist */,
+				2F7864F21BB2D1430075B6C1 /* character.plist */,
 				2F7098E71B8F0C6500B6C4F3 /* player_animations.plist */,
 				2F7098E81B8F0C6500B6C4F3 /* player.plist */,
 				2F7098E91B8F0C6500B6C4F3 /* test.tmx */,
@@ -708,6 +719,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F7864F41BB2D1430075B6C1 /* character.plist in Resources */,
 				5087E78117EB970100C73F5D /* Icon-120.png in Resources */,
 				2F7098FE1B93598600B6C4F3 /* fonts in Resources */,
 				5087E78617EB970100C73F5D /* Icon-76.png in Resources */,
@@ -733,6 +745,7 @@
 				2F7098EC1B8F0C6500B6C4F3 /* DQTFE_overworld.png in Resources */,
 				5087E78417EB970100C73F5D /* Icon-57.png in Resources */,
 				5087E77E17EB970100C73F5D /* Default.png in Resources */,
+				2F7864F31BB2D1430075B6C1 /* character_animations.plist in Resources */,
 				2F7099001BA5077500B6C4F3 /* window.png in Resources */,
 				50EF629717ECD46A001EB2F8 /* Icon-58.png in Resources */,
 				2F7098EA1B8F0C6500B6C4F3 /* test2.tmx in Resources */,
@@ -760,6 +773,7 @@
 				2F7098F31B92AE9200B6C4F3 /* GameManager.cpp in Sources */,
 				2F7098E31B8F093200B6C4F3 /* RouteSearch.cpp in Sources */,
 				2F7098FC1B93585200B6C4F3 /* Loading.cpp in Sources */,
+				2F7864F71BB2D7330075B6C1 /* Character.cpp in Sources */,
 				2F7098DC1B8F092B00B6C4F3 /* AppDelegate.cpp in Sources */,
 				2F7098E21B8F093200B6C4F3 /* MapScene.cpp in Sources */,
 				2F7864F01BB2813A0075B6C1 /* Player.cpp in Sources */,

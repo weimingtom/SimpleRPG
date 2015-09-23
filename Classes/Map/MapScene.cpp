@@ -9,6 +9,7 @@
 
 #include "RouteSearch.h"
 #include "Player.h"
+#include "Character.h"
 
 #include "spine/Json.h"
 
@@ -30,6 +31,7 @@ enum E_TAG {
 enum E_GS_ORDER {
     GS_NONE,
     GS_MAP,
+    GS_CHARACTER,
     GS_PLAYER,
     GS_TOUCH_POINT,
     GS_MAP_EDGE_HIDE,
@@ -105,19 +107,27 @@ bool MapScene::init()
     }
     
     
-    // プレーヤー
     auto frame_cache = SpriteFrameCache::getInstance();
     frame_cache->removeSpriteFrames();
     frame_cache->addSpriteFramesWithFile("player.plist");
+    frame_cache->addSpriteFramesWithFile("character.plist");
     
     auto animation_cache = AnimationCache::getInstance();
     //animation_cache->destroyInstance();
     animation_cache->addAnimationsWithFile("player_animations.plist");
+    animation_cache->addAnimationsWithFile("character_animations.plist");
     
+    // プレーヤー
     auto player = Player::create();
     player->setPosition(visibleSize.width/2, visibleSize.height/2);
     player->setTag(TAG_PLAYER);
     this->addChild(player, GS_PLAYER);
+    
+    auto chara = Character::create();
+    chara->setPosition(visibleSize.width/2 - 32, visibleSize.height/2);
+    chara->setTag(TAG_CHARACTER);
+    this->addChild(chara, GS_CHARACTER);
+    
     
     // タッチしたとこ
     auto dot_rect = Rect(0, 0, 32, 32);
