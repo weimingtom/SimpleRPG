@@ -8,6 +8,7 @@
 #include "GameManager.h"
 
 #include "RouteSearch.h"
+#include "Player.h"
 
 #include "spine/Json.h"
 
@@ -85,7 +86,7 @@ bool MapScene::init()
     _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
     
     // キー入力
-    if ( 1 ) {
+    if ( 0 ) {
         
         auto listener = EventListenerKeyboard::create();
         
@@ -112,16 +113,10 @@ bool MapScene::init()
     //animation_cache->destroyInstance();
     animation_cache->addAnimationsWithFile("player_animations.plist");
     
-    auto player = Sprite::createWithSpriteFrameName("player_front_01.png");
+    auto player = Player::create();
     player->setPosition(visibleSize.width/2, visibleSize.height/2);
     player->setTag(TAG_PLAYER);
     this->addChild(player, GS_PLAYER);
-    
-    auto animation = animation_cache->getAnimation("walk_front");
-    auto action = Animate::create(animation);
-    auto action_req = RepeatForever::create(action);
-    action_req->setTag(999);
-    player->runAction(action_req);
     
     // タッチしたとこ
     auto dot_rect = Rect(0, 0, 32, 32);
@@ -219,6 +214,8 @@ void MapScene::_player_move() {
             // 移動開始時にマップを追加
             if (this->now_move_amount == 0) {
                 this->_add_x_line_tile(-(HEIGHT/2 + 1));
+                auto player = (Player *)this->getChildByTag(TAG_PLAYER);
+                player->move(Player::ACTION_TYPE::MOVE_UP);
             }
             
             // マップを移動
@@ -249,6 +246,8 @@ void MapScene::_player_move() {
             // 移動開始時にマップを追加
             if (this->now_move_amount == 0) {
                 this->_add_x_line_tile((HEIGHT/2 + 1));
+                auto player = (Player *)this->getChildByTag(TAG_PLAYER);
+                player->move(Player::ACTION_TYPE::MOVE_DOWN);
             }
             
             // マップを移動
@@ -278,6 +277,8 @@ void MapScene::_player_move() {
             // 移動開始時にマップを追加
             if (this->now_move_amount == 0) {
                 this->_add_y_line_tile(-(WIDTH/2 + 1));
+                auto player = (Player *)this->getChildByTag(TAG_PLAYER);
+                player->move(Player::ACTION_TYPE::MOVE_LEFT);
             }
             
             // マップを移動
@@ -307,6 +308,8 @@ void MapScene::_player_move() {
             // 移動開始時にマップを追加
             if (this->now_move_amount == 0) {
                 this->_add_y_line_tile((WIDTH/2 + 1));
+                auto player = (Player *)this->getChildByTag(TAG_PLAYER);
+                player->move(Player::ACTION_TYPE::MOVE_RIGHT);
             }
             
             // マップを移動
@@ -348,6 +351,7 @@ void MapScene::_player_move() {
             this->_load_next_map();
         }
         
+        // 歩く
         if (this->routes.size()) {
             this->now_route = this->routes.back();
             this->routes.pop_back();
