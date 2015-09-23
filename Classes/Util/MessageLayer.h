@@ -38,6 +38,7 @@ private:
     void _set_line(std::string line);
     void _set_br();
     void _set_yesno(std::string line);
+    void _set_jump(std::string line);
     void _set_end();
     
     std::map<std::string, int> yesno_line;

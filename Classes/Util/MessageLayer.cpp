@@ -145,6 +145,9 @@ void MessageLayer::set_message() {
         "こたえはイエス！",
         "end;",
         "答えはノー",
+        "もう一度きくぞ",
+        "jump;10"
+        
     };
     //std::reverse(m.begin(), m.end());
     
@@ -232,7 +235,7 @@ void MessageLayer::_proc_line(std::string line) {
     // 指定の行数にとぶ
     else if (line.find("jump;") != std::string::npos) {
         CCLOG("jump");
-        this->_set_line(line);
+        this->_set_jump(line);
     }
     // 途中だけど終了
     else if (line.find("end;") != std::string::npos) {
@@ -305,6 +308,20 @@ void MessageLayer::_set_br() {
     this->is_disp_br_cursor = true;
     auto br = this->getChildByTag(TAG_MESSAGE_BR);
     br->setVisible(true);
+}
+
+//---------------------------------------------------------
+// 指定箇所に飛ぶ
+//---------------------------------------------------------
+void MessageLayer::_set_jump(std::string line) {
+    auto _split = Common::split(line, ';');
+    assert(_split.size() == 2);
+    
+    int jump_line = std::atoi(_split[1].c_str()) - 1;
+    assert(jump_line > -1);
+    assert(jump_line < 255);
+    this->message_now_count = jump_line;
+    this->_read_line();
 }
 
 //---------------------------------------------------------
