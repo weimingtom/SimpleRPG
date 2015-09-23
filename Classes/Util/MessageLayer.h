@@ -27,7 +27,7 @@ private:
     void _init_yesno();
     
     void _set_touch_enabled(bool enabled);
-    void _finalize();
+    void _finalize(cocos2d::Node *sender);
     
     void _read_line();
     void _callback_line(cocos2d::Node *sender);

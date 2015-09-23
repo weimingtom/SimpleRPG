@@ -188,7 +188,7 @@ void MessageLayer::set_message() {
 //---------------------------------------------------------
 // 後始末
 //---------------------------------------------------------
-void MessageLayer::_finalize() {
+void MessageLayer::_finalize(cocos2d::Node *sender) {
     
     // 表示済みの文字を削除する
     auto index_tag = TAG_MESSAGE_WINDOW_TEXT_0 + this->message_now_line; // 1以上じゃないとおかしくなる
@@ -419,8 +419,10 @@ bool MessageLayer::onTouchBegan(Touch *touch, Event *unused_event)
         return true;
     }
     if (this->is_end_line) {
-        this->_finalize();
-        //this->removeFromParent();
+        this->is_end_line = false;
+        auto callback = CallFuncN::create( CC_CALLBACK_1(MessageLayer::_finalize, this));
+        auto seq = Sequence::create(DelayTime::create(0.5f), callback, nullptr);
+        this->runAction(seq);
         return true;
     }
 	return true;
