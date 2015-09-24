@@ -117,18 +117,6 @@ bool MapScene::init()
     animation_cache->addAnimationsWithFile("player_animations.plist");
     animation_cache->addAnimationsWithFile("character_animations.plist");
     
-    // プレーヤー
-    auto player = Player::create();
-    player->setPosition(visibleSize.width/2, visibleSize.height/2);
-    player->setTag(TAG_PLAYER);
-    this->addChild(player, GS_PLAYER);
-    
-    auto chara = Character::create();
-    chara->setPosition(visibleSize.width/2 - 32, visibleSize.height/2);
-    chara->setTag(TAG_CHARACTER);
-    this->addChild(chara, GS_CHARACTER);
-    
-    
     // タッチしたとこ
     auto dot_rect = Rect(0, 0, 32, 32);
     auto dot = Sprite::create();
@@ -145,6 +133,20 @@ bool MapScene::init()
     this->now_pos_y = gm->get_map_init_position().y;
     this->_init_map(gm->get_load_map_name());
     this->_init_jump_info();
+    
+    // プレーヤー
+    auto player = Player::create();
+    auto center_pos = Vec2(visibleSize.width/2, visibleSize.height/2);
+    player->setPosition(center_pos);
+    player->setTag(TAG_PLAYER);
+    this->addChild(player, GS_PLAYER);
+    
+    int testx = 6, testy = 6;
+    auto tile_size = this->_get_map()->getTileSize();
+    auto chara = Character::create(Vec2(testx, testy), tile_size);
+    chara->setPosition(center_pos.x + (testx - this->now_pos_x) * tile_size.width, center_pos.y - (testy - this->now_pos_y) * tile_size.height);
+    chara->setTag(TAG_CHARACTER);
+    this->addChild(chara, GS_CHARACTER);
     
     // test
     this->_test();

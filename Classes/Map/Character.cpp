@@ -23,13 +23,13 @@ USING_NS_CC;
 //---------------------------------------------------------
 // initial method
 //---------------------------------------------------------
-Character* Character::create()
+Character* Character::create(Vec2 map, Size tile)
 {
     Character *_chara = new Character();
     std::string file_name = "player_front_01.png";
     if (_chara && _chara->initWithSpriteFrameName(file_name))
     {
-        _chara->_init();
+        _chara->_init(map, tile);
         _chara->autorelease();
         _chara->retain();
         return _chara;
@@ -39,7 +39,12 @@ Character* Character::create()
     return NULL;
 }
 
-void Character::_init() {
+void Character::_init(Vec2 map, Size tile) {
+    this->tile_size = tile;
+    
+    this->now_map_x = (int)map.x;
+    this->now_map_y = (int)map.y;
+    
     // アクションマップ作成
     this->animation_map[DIRECTON::UP]    = "back";
     this->animation_map[DIRECTON::DOWN]  = "front";
