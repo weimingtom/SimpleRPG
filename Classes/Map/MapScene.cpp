@@ -141,9 +141,10 @@ bool MapScene::init()
     player->setTag(TAG_PLAYER);
     this->addChild(player, GS_PLAYER);
     
+    // キャラテスト
     int testx = 6, testy = 6;
     auto tile_size = this->_get_map()->getTileSize();
-    auto chara = Character::create(Vec2(testx, testy), tile_size);
+    auto chara = Character::create(Vec2(testx, testy), tile_size, this->_get_map());
     chara->setPosition(center_pos.x + (testx - this->now_pos_x) * tile_size.width, center_pos.y - (testy - this->now_pos_y) * tile_size.height);
     chara->setTag(TAG_CHARACTER);
     this->addChild(chara, GS_CHARACTER);
@@ -203,6 +204,9 @@ void MapScene::update(float delta) {
     if (this->now_route != ROUTE_NONE) {
         this->_player_move();
     }
+    // 他更新
+    auto chara = (Character *)this->getChildByTag(TAG_CHARACTER);
+    chara->update();
 }
 
 //---------------------------------------------------------
