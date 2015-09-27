@@ -201,3 +201,9 @@ void Character::_set_animation(DIRECTON directon) {
     this->now_direction = directon;
 }
 
+//---------------------------------------------------------
+// マップ上の座標を返す
+//---------------------------------------------------------
+Vec2 Character::get_map_positon() {
+    return Vec2(this->now_map_x, this->now_map_y);
+}

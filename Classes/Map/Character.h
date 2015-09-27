@@ -27,6 +27,8 @@ public:
     
     void set_directon(DIRECTON directon);
     
+    cocos2d::Vec2 get_map_positon();
+    
 private:
     void _init(cocos2d::Vec2 map, cocos2d::Size tile);
     

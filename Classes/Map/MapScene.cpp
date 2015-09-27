@@ -536,6 +536,31 @@ bool MapScene::_check_jump_info() {
 }
 
 //---------------------------------------------------------
+// プレーヤーの周囲を確認
+//---------------------------------------------------------
+bool MapScene::_check_near_player(int near_x, int near_y) {
+    // 宝箱があるか
+    if (0) {
+        return false;
+    }
+    
+    // キャラがいるか
+    for (auto tag : this->chara_tags) {
+        auto chara = (Character *)this->getChildByTag(tag);
+        auto pos = chara->get_map_positon();
+        if ( near_x == (int)pos.x && near_y == (int)pos.y) {
+            // プレーヤーの方を向けて、会話を表示
+            CCLOG("chara mess!!");
+            auto message_window = (MessageLayer *)this->getChildByTag(TAG_LAYER_MESSAGE_WINDOW);
+            message_window->set_message();
+            return true;
+        }
+    }
+    
+    
+}
+
+//---------------------------------------------------------
 // 次のマップへ
 //---------------------------------------------------------
 void MapScene::_load_next_map() {
@@ -637,6 +662,14 @@ bool MapScene::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event)
     // タッチしたところが現在地なら何もしない
     if (find_map_x == sx && find_map_y == sy) {
         return true;
+    }
+    // 移動距離が１の場合検索する
+    int distance_x = abs(find_map_x - this->now_pos_x);
+    int distance_y = abs(find_map_y - this->now_pos_y);
+    if ((distance_x + distance_y) == 1) {
+        if (this->_check_near_player(find_map_x, find_map_y)) {
+            return true;
+        }
     }
     
     // ルートを検索して、可能なら移動する
