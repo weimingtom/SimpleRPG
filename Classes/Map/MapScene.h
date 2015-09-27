@@ -46,6 +46,7 @@ private:
     int now_route;           // 移動中の方向
     
     std::vector<int> disp_tile_tags; // 表示されているタイルのタグ一覧
+    std::vector<int> chara_tags; // 使っているキャラのタグ一覧
     
     std::map<std::string, int> jump_info_map;
     std::vector<jump_info_t> jump_infos;
@@ -60,6 +61,7 @@ private:
     virtual void update(float delta);
     void _player_move();
     bool _check_jump_info();
+    void _update_object_pos(float add_x, float add_y);
     
     void _update_now_pos_x(int add_x);
     void _update_now_pos_y(int add_y);

@@ -148,6 +148,7 @@ bool MapScene::init()
     chara->setPosition(center_pos.x + (testx - this->now_pos_x) * tile_size.width, center_pos.y - (testy - this->now_pos_y) * tile_size.height);
     chara->setTag(TAG_CHARACTER);
     this->addChild(chara, GS_CHARACTER);
+    this->chara_tags.push_back(TAG_CHARACTER);
     
     // test
     this->_test();
@@ -220,11 +221,7 @@ void MapScene::_player_move() {
     // 歩く
     auto _tile_map = this->_get_map();
     auto tile_size = _tile_map->getTileSize();
-    auto map_size  = _tile_map->getMapSize();
     
-    auto _touch_rect = this->getChildByTag(TAG_TOUCH_POINT);
-    
-    auto goal_tag = this->_get_tile_tag(this->goal_x, this->goal_y);
     switch (this->now_route) {
         case ROUTE_UP:
         {
@@ -236,15 +233,7 @@ void MapScene::_player_move() {
             }
             
             // マップを移動
-            for (auto tag : this->disp_tile_tags) {
-                auto tile = this->getChildByTag(tag);
-                tile->setPositionY(tile->getPositionY() - MOVE_SPEED);
-                
-                // タッチポイントに合致する場合
-                if (tag == goal_tag) {
-                    _touch_rect->setPosition(tile->getPosition());
-                }
-            }
+            this->_update_object_pos(0, -MOVE_SPEED);
             
             this->now_move_amount += MOVE_SPEED;
             
@@ -268,14 +257,7 @@ void MapScene::_player_move() {
             }
             
             // マップを移動
-            for (auto tag : this->disp_tile_tags) {
-                auto tile = this->getChildByTag(tag);
-                tile->setPositionY(tile->getPositionY() + MOVE_SPEED);
-                // タッチポイントに合致する場合
-                if (tag == goal_tag) {
-                    _touch_rect->setPosition(tile->getPosition());
-                }
-            }
+            this->_update_object_pos(0, MOVE_SPEED);
             
             this->now_move_amount += MOVE_SPEED;
             
@@ -299,14 +281,7 @@ void MapScene::_player_move() {
             }
             
             // マップを移動
-            for (auto tag : this->disp_tile_tags) {
-                auto tile = this->getChildByTag(tag);
-                tile->setPositionX(tile->getPositionX() + MOVE_SPEED);
-                // タッチポイントに合致する場合
-                if (tag == goal_tag) {
-                    _touch_rect->setPosition(tile->getPosition());
-                }
-            }
+            this->_update_object_pos(MOVE_SPEED, 0);
             
             this->now_move_amount += MOVE_SPEED;
             
@@ -330,14 +305,7 @@ void MapScene::_player_move() {
             }
             
             // マップを移動
-            for (auto tag : this->disp_tile_tags) {
-                auto tile = this->getChildByTag(tag);
-                tile->setPositionX(tile->getPositionX() - MOVE_SPEED);
-                // タッチポイントに合致する場合
-                if (tag == goal_tag) {
-                    _touch_rect->setPosition(tile->getPosition());
-                }
-            }
+            this->_update_object_pos(-MOVE_SPEED, 0);
             
             this->now_move_amount += MOVE_SPEED;
             
@@ -374,9 +342,38 @@ void MapScene::_player_move() {
             this->routes.pop_back();
         } else {
             // タッチを消す
+            auto _touch_rect = this->getChildByTag(TAG_TOUCH_POINT);
             _touch_rect->setPosition(-100, -100);
         }
     }
+}
+
+//---------------------------------------------------------
+// マップとキャラを更新
+//---------------------------------------------------------
+void MapScene::_update_object_pos(float add_x, float add_y) {
+    
+    auto goal_tag = this->_get_tile_tag(this->goal_x, this->goal_y);
+    
+    // マップを移動
+    for (auto tag : this->disp_tile_tags) {
+        auto tile = this->getChildByTag(tag);
+        auto pos  = tile->getPosition();
+        tile->setPosition(pos.x + add_x, pos.y + add_y);
+        // タッチポイントに合致する場合
+        if (tag == goal_tag) {
+            auto _touch_rect = this->getChildByTag(TAG_TOUCH_POINT);
+            _touch_rect->setPosition(tile->getPosition());
+        }
+    }
+    // きゃら
+    for (auto tag : this->chara_tags) {
+        auto chara = this->getChildByTag(tag);
+        auto pos  = chara->getPosition();
+        chara->setPosition(pos.x + add_x, pos.y + add_y);
+    }
+    
+    
 }
 
 //---------------------------------------------------------
