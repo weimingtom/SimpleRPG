@@ -28,12 +28,15 @@ public:
     void set_directon(DIRECTON directon);
     
     cocos2d::Vec2 get_map_positon();
+    std::vector<std::string> get_serif();
     
 private:
     void _init(cocos2d::Vec2 map, cocos2d::Size tile);
     
     void _update_move();
     void _set_animation(DIRECTON directon);
+    
+    std::vector<std::string> serif;
     
     int now_map_x;
     int now_map_y;
@@ -47,6 +50,7 @@ private:
     
     cocos2d::TMXTiledMap* ref_map;
     bool _collision_check(Character::DIRECTON dir);
+    
     
 };
 

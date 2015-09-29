@@ -20,7 +20,7 @@ public:
 	
 	void update(float frame);
     
-    void set_message();
+    void set_message(std::vector<std::string> messages);
 	
 private:
     
@@ -50,7 +50,7 @@ private:
     int message_now_line;  // 表示に使っているライン(1 - 4)
     int message_now_count; // 表示している行番号
     float message_start_y_pos;
-    std::vector<std::string> message_tests;
+    std::vector<std::string> messages;
     
     void _test();
 	

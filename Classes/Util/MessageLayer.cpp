@@ -156,28 +156,8 @@ void MessageLayer::_set_touch_enabled(bool enabled)
 //---------------------------------------------------------
 //
 //---------------------------------------------------------
-void MessageLayer::set_message() {
-    std::vector<std::string> m = {
-        "あいうえおかきくけこさしすせそ",
-        "たたたたたたたたたたたたたたた",
-        "たたたたたたたたたたたたたたち",
-        "たたたたたたたたたたたたたたつ",
-        "",
-        "こんにちは",
-        "これはメッセージ",
-        "ながれる　あれ",
-        "テスト２",
-        "yes_no;11,13",
-        "こたえはイエス！",
-        "end;",
-        "答えはノー",
-        "もう一度きくぞ",
-        "jump;10"
-        
-    };
-    //std::reverse(m.begin(), m.end());
-    
-    this->message_tests = m;
+void MessageLayer::set_message(std::vector<std::string> messages) {
+    this->messages = messages;
     
     this->_set_touch_enabled(true);
     this->setVisible(true);
@@ -221,12 +201,12 @@ void MessageLayer::_test() {
 void MessageLayer::_read_line() {
     
     // ライン全部読んだら終わり
-    if (this->message_tests.size() <= this->message_now_count) {
+    if (this->messages.size() <= this->message_now_count) {
         this->is_end_line = true;
         return;
     }
     
-    std::string line = this->message_tests[this->message_now_count];
+    std::string line = this->messages[this->message_now_count];
     
     this->message_now_count++;
     // ラインの内容で処理を分岐

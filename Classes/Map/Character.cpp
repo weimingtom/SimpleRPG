@@ -55,6 +55,23 @@ void Character::_init(Vec2 map, Size tile) {
     this->MOVE_SPEED = 1.0f;
     
     this->_set_animation(DIRECTON::DOWN);
+    
+    // かり
+    this->serif = {
+        "ほれほれ",
+        "たたたたたたたたたたたたたたつ",
+        "",
+        "こんにちは",
+        "これはメッセージ",
+        "ながれる　あれ",
+        "テスト２",
+        "yes_no;9,11",
+        "こたえはイエス！",
+        "end;",
+        "答えはノー",
+        "もう一度きくぞ",
+        "jump;8"
+    };
 }
 
 //=========================================================
@@ -206,4 +223,11 @@ void Character::_set_animation(DIRECTON directon) {
 //---------------------------------------------------------
 Vec2 Character::get_map_positon() {
     return Vec2(this->now_map_x, this->now_map_y);
+}
+
+//---------------------------------------------------------
+// セリフを取得
+//---------------------------------------------------------
+std::vector<std::string> Character::get_serif() {
+    return this->serif;
 }

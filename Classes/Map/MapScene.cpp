@@ -192,7 +192,7 @@ void MapScene::_test_button(Ref* pSender)
 {
     CCLOG("push!!");
     auto message_window = (MessageLayer *)this->getChildByTag(TAG_LAYER_MESSAGE_WINDOW);
-    message_window->set_message();
+    message_window->set_message({"a", "b"});
 }
 
 
@@ -552,7 +552,7 @@ bool MapScene::_check_near_player(int near_x, int near_y) {
             // プレーヤーの方を向けて、会話を表示
             CCLOG("chara mess!!");
             auto message_window = (MessageLayer *)this->getChildByTag(TAG_LAYER_MESSAGE_WINDOW);
-            message_window->set_message();
+            message_window->set_message(chara->get_serif());
             return true;
         }
     }
