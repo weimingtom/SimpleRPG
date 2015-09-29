@@ -26,6 +26,8 @@ public:
     void update();
     
     void set_directon(DIRECTON directon);
+    void set_face();
+    void talk_end();
     
     cocos2d::Vec2 get_map_positon();
     std::vector<std::string> get_serif();
@@ -37,6 +39,7 @@ private:
     void _set_animation(DIRECTON directon);
     
     std::vector<std::string> serif;
+    bool is_now_talking;
     
     int now_map_x;
     int now_map_y;

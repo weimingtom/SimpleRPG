@@ -78,6 +78,14 @@ void Character::_init(Vec2 map, Size tile) {
 // instance methods
 //=========================================================
 void Character::update() {
+    if (this->is_move) {
+        this->_update_move();
+    }
+    // 話し中は何もしない
+    if (this->is_now_talking) {
+        return;
+    }
+    
     if (!this->is_move && arc4random() % 200 < 2) {
         CCLOG("move!!");
         // 方向を決めて動かす
@@ -87,9 +95,6 @@ void Character::update() {
             this->set_directon(dir);
             this->is_move = true;
         }
-    }
-    if (this->is_move) {
-        this->_update_move();
     }
 }
 
@@ -216,6 +221,14 @@ void Character::_set_animation(DIRECTON directon) {
     
     // 更新
     this->now_direction = directon;
+}
+
+void Character::set_face() {
+    this->is_now_talking = true;
+}
+
+void Character::talk_end() {
+    this->is_now_talking = false;
 }
 
 //---------------------------------------------------------

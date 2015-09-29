@@ -3,6 +3,8 @@
 
 #include "cocos2d.h"
 
+#include "../Map/Character.h"
+
 class MessageLayer : public cocos2d::Layer
 {
 public:
@@ -21,6 +23,7 @@ public:
 	void update(float frame);
     
     void set_message(std::vector<std::string> messages);
+    void set_message(std::vector<std::string> messages, Character *character);
 	
 private:
     
@@ -51,6 +54,8 @@ private:
     int message_now_count; // 表示している行番号
     float message_start_y_pos;
     std::vector<std::string> messages;
+    
+    Character *character; // 人に話しかけた場合
     
     void _test();
 	

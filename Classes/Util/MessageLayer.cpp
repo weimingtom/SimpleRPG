@@ -156,6 +156,11 @@ void MessageLayer::_set_touch_enabled(bool enabled)
 //---------------------------------------------------------
 //
 //---------------------------------------------------------
+void MessageLayer::set_message(std::vector<std::string> messages, Character *character) {
+    this->character = character;
+    this->set_message(messages);
+}
+
 void MessageLayer::set_message(std::vector<std::string> messages) {
     this->messages = messages;
     
@@ -185,6 +190,12 @@ void MessageLayer::_finalize(cocos2d::Node *sender) {
     
     this->_set_touch_enabled(false);
     this->setVisible(false);
+    
+    // 人に話しかけた場合は解除する
+    if (this->character != nullptr) {
+        this->character->talk_end();
+        this->character = nullptr;
+    }
 }
 
 void MessageLayer::update(float flame) {
