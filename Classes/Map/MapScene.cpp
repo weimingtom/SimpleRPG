@@ -229,7 +229,7 @@ void MapScene::_player_move() {
             if (this->now_move_amount == 0) {
                 this->_add_x_line_tile(-(HEIGHT/2 + 1));
                 auto player = (Player *)this->getChildByTag(TAG_PLAYER);
-                player->move(Player::ACTION_TYPE::MOVE_UP);
+                player->move(Common::E_DIRECTON::UP);
             }
             
             // マップを移動
@@ -253,7 +253,7 @@ void MapScene::_player_move() {
             if (this->now_move_amount == 0) {
                 this->_add_x_line_tile((HEIGHT/2 + 1));
                 auto player = (Player *)this->getChildByTag(TAG_PLAYER);
-                player->move(Player::ACTION_TYPE::MOVE_DOWN);
+                player->move(Common::E_DIRECTON::DOWN);
             }
             
             // マップを移動
@@ -277,7 +277,7 @@ void MapScene::_player_move() {
             if (this->now_move_amount == 0) {
                 this->_add_y_line_tile(-(WIDTH/2 + 1));
                 auto player = (Player *)this->getChildByTag(TAG_PLAYER);
-                player->move(Player::ACTION_TYPE::MOVE_LEFT);
+                player->move(Common::E_DIRECTON::LEFT);
             }
             
             // マップを移動
@@ -301,7 +301,7 @@ void MapScene::_player_move() {
             if (this->now_move_amount == 0) {
                 this->_add_y_line_tile((WIDTH/2 + 1));
                 auto player = (Player *)this->getChildByTag(TAG_PLAYER);
-                player->move(Player::ACTION_TYPE::MOVE_RIGHT);
+                player->move(Common::E_DIRECTON::RIGHT);
             }
             
             // マップを移動
@@ -550,10 +550,12 @@ bool MapScene::_check_near_player(int near_x, int near_y) {
         auto pos = chara->get_map_positon();
         if ( near_x == (int)pos.x && near_y == (int)pos.y) {
             // プレーヤーの方を向けて、会話を表示
-            CCLOG("chara mess!!");
+            auto player = (Player *)this->getChildByTag(TAG_PLAYER);
+            player->set_face_by_pos(near_x - this->now_pos_x, near_y - this->now_pos_y); // マップの回り込み考慮してない
+            chara->set_face(player->get_direction());
+            // メッセージ表示
             auto message_window = (MessageLayer *)this->getChildByTag(TAG_LAYER_MESSAGE_WINDOW);
             message_window->set_message(chara->get_serif(), chara);
-            chara->set_face();
             return true;
         }
     }

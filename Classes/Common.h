@@ -28,6 +28,15 @@ static const float NEND_BANNER_HEIGHT = 100.0f;
 
 class Common {
 public:
+    
+    enum E_DIRECTON {
+        NONE,
+        UP,
+        DOWN,
+        LEFT,
+        RIGHT
+    };
+    
     static cocos2d::Vec2 get_layer_position(cocos2d::Size layer_size, cocos2d::Vec2 orig);
 	static int sec2frame(float sec);
     static std::vector<std::string> split(const std::string &str, char sep);
