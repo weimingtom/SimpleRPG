@@ -1,5 +1,6 @@
 #include "AppDelegate.h"
 #include "Map/MapScene.h"
+#include "Battle/Game.h"
 
 #include "GameManager.h"
 
@@ -44,8 +45,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
     gm->set_map_init_position(9, 9);
 
     // create a scene. it's an autorelease object
-    auto scene = MapScene::createScene();
-
+    //auto scene = MapScene::createScene();
+    auto scene = Game::createScene();
     // run
     director->runWithScene(scene);
 

@@ -36,6 +36,15 @@
 		2F8CD2161BBFDD7600011989 /* common in Resources */ = {isa = PBXBuildFile; fileRef = 2F8CD2151BBFDD7600011989 /* common */; };
 		2F8CD2181BBFDD7E00011989 /* map in Resources */ = {isa = PBXBuildFile; fileRef = 2F8CD2171BBFDD7E00011989 /* map */; };
 		2F8CD21A1BBFDD8400011989 /* battle in Resources */ = {isa = PBXBuildFile; fileRef = 2F8CD2191BBFDD8400011989 /* battle */; };
+		2F8CD2291BBFF6FA00011989 /* AttackEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F8CD21C1BBFF6FA00011989 /* AttackEffect.cpp */; };
+		2F8CD22A1BBFF6FA00011989 /* DamageText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F8CD21E1BBFF6FA00011989 /* DamageText.cpp */; };
+		2F8CD22B1BBFF6FA00011989 /* Enemy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F8CD2211BBFF6FA00011989 /* Enemy.cpp */; };
+		2F8CD22C1BBFF6FA00011989 /* Game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F8CD2231BBFF6FA00011989 /* Game.cpp */; };
+		2F8CD22D1BBFF6FA00011989 /* LayerResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F8CD2251BBFF6FA00011989 /* LayerResult.cpp */; };
+		2F8CD22E1BBFF6FA00011989 /* _Player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F8CD2271BBFF6FA00011989 /* _Player.cpp */; };
+		2F8CD2351BBFFA5500011989 /* MusicFade.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F8CD2311BBFFA5500011989 /* MusicFade.cpp */; };
+		2F8CD2361BBFFA5500011989 /* Sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F8CD2331BBFFA5500011989 /* Sound.cpp */; };
+		2F8CD2391BBFFAED00011989 /* MessageWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F8CD2371BBFFAED00011989 /* MessageWindow.cpp */; };
 		503AE0F817EB97AB00D1A890 /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 503AE0F617EB97AB00D1A890 /* Icon.icns */; };
 		503AE10017EB989F00D1A890 /* AppController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 503AE0FB17EB989F00D1A890 /* AppController.mm */; };
 		503AE10117EB989F00D1A890 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 503AE0FC17EB989F00D1A890 /* main.m */; };
@@ -256,6 +265,26 @@
 		2F8CD2151BBFDD7600011989 /* common */ = {isa = PBXFileReference; lastKnownFileType = folder; path = common; sourceTree = "<group>"; };
 		2F8CD2171BBFDD7E00011989 /* map */ = {isa = PBXFileReference; lastKnownFileType = folder; path = map; sourceTree = "<group>"; };
 		2F8CD2191BBFDD8400011989 /* battle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = battle; sourceTree = "<group>"; };
+		2F8CD21C1BBFF6FA00011989 /* AttackEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AttackEffect.cpp; sourceTree = "<group>"; };
+		2F8CD21D1BBFF6FA00011989 /* AttackEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttackEffect.h; sourceTree = "<group>"; };
+		2F8CD21E1BBFF6FA00011989 /* DamageText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DamageText.cpp; sourceTree = "<group>"; };
+		2F8CD21F1BBFF6FA00011989 /* DamageText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DamageText.h; sourceTree = "<group>"; };
+		2F8CD2201BBFF6FA00011989 /* Define.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Define.h; sourceTree = "<group>"; };
+		2F8CD2211BBFF6FA00011989 /* Enemy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Enemy.cpp; sourceTree = "<group>"; };
+		2F8CD2221BBFF6FA00011989 /* Enemy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Enemy.h; sourceTree = "<group>"; };
+		2F8CD2231BBFF6FA00011989 /* Game.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Game.cpp; sourceTree = "<group>"; };
+		2F8CD2241BBFF6FA00011989 /* Game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Game.h; sourceTree = "<group>"; };
+		2F8CD2251BBFF6FA00011989 /* LayerResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayerResult.cpp; sourceTree = "<group>"; };
+		2F8CD2261BBFF6FA00011989 /* LayerResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerResult.h; sourceTree = "<group>"; };
+		2F8CD2271BBFF6FA00011989 /* _Player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = _Player.cpp; sourceTree = "<group>"; };
+		2F8CD2281BBFF6FA00011989 /* _Player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _Player.h; sourceTree = "<group>"; };
+		2F8CD22F1BBFF78B00011989 /* CreateFunc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CreateFunc.h; sourceTree = "<group>"; };
+		2F8CD2311BBFFA5500011989 /* MusicFade.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MusicFade.cpp; sourceTree = "<group>"; };
+		2F8CD2321BBFFA5500011989 /* MusicFade.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MusicFade.h; sourceTree = "<group>"; };
+		2F8CD2331BBFFA5500011989 /* Sound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sound.cpp; sourceTree = "<group>"; };
+		2F8CD2341BBFFA5500011989 /* Sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sound.h; sourceTree = "<group>"; };
+		2F8CD2371BBFFAED00011989 /* MessageWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageWindow.cpp; sourceTree = "<group>"; };
+		2F8CD2381BBFFAED00011989 /* MessageWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageWindow.h; sourceTree = "<group>"; };
 		503AE0F617EB97AB00D1A890 /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Icon.icns; sourceTree = "<group>"; };
 		503AE0F717EB97AB00D1A890 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		503AE0FA17EB989F00D1A890 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = ios/AppController.h; sourceTree = SOURCE_ROOT; };
@@ -364,6 +393,7 @@
 		15AA9C4015B7EC450033D6C2 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				2F8CD21B1BBFF6FA00011989 /* Battle */,
 				2F7098DA1B8F092B00B6C4F3 /* AppDelegate.cpp */,
 				2F7098DB1B8F092B00B6C4F3 /* AppDelegate.h */,
 				2F7098F61B92AF4200B6C4F3 /* Common.cpp */,
@@ -470,6 +500,7 @@
 			isa = PBXGroup;
 			children = (
 				2F8CD2091BBFB46400011989 /* Util.h */,
+				2F8CD2301BBFFA5500011989 /* Sound */,
 				2F8CD2021BBFAD6200011989 /* Base */,
 				2F7864E91BA7132D0075B6C1 /* MessageLayer.cpp */,
 				2F7864EA1BA7132D0075B6C1 /* MessageLayer.h */,
@@ -484,6 +515,41 @@
 				2F8CD2061BBFAD7C00011989 /* IntVec2.h */,
 			);
 			name = Base;
+			sourceTree = "<group>";
+		};
+		2F8CD21B1BBFF6FA00011989 /* Battle */ = {
+			isa = PBXGroup;
+			children = (
+				2F8CD22F1BBFF78B00011989 /* CreateFunc.h */,
+				2F8CD21C1BBFF6FA00011989 /* AttackEffect.cpp */,
+				2F8CD21D1BBFF6FA00011989 /* AttackEffect.h */,
+				2F8CD21E1BBFF6FA00011989 /* DamageText.cpp */,
+				2F8CD21F1BBFF6FA00011989 /* DamageText.h */,
+				2F8CD2201BBFF6FA00011989 /* Define.h */,
+				2F8CD2211BBFF6FA00011989 /* Enemy.cpp */,
+				2F8CD2221BBFF6FA00011989 /* Enemy.h */,
+				2F8CD2231BBFF6FA00011989 /* Game.cpp */,
+				2F8CD2241BBFF6FA00011989 /* Game.h */,
+				2F8CD2251BBFF6FA00011989 /* LayerResult.cpp */,
+				2F8CD2261BBFF6FA00011989 /* LayerResult.h */,
+				2F8CD2271BBFF6FA00011989 /* _Player.cpp */,
+				2F8CD2281BBFF6FA00011989 /* _Player.h */,
+				2F8CD2371BBFFAED00011989 /* MessageWindow.cpp */,
+				2F8CD2381BBFFAED00011989 /* MessageWindow.h */,
+			);
+			path = Battle;
+			sourceTree = "<group>";
+		};
+		2F8CD2301BBFFA5500011989 /* Sound */ = {
+			isa = PBXGroup;
+			children = (
+				2F8CD2311BBFFA5500011989 /* MusicFade.cpp */,
+				2F8CD2321BBFFA5500011989 /* MusicFade.h */,
+				2F8CD2331BBFFA5500011989 /* Sound.cpp */,
+				2F8CD2341BBFFA5500011989 /* Sound.h */,
+			);
+			name = Sound;
+			path = Util/Sound;
 			sourceTree = "<group>";
 		};
 		503AE0F517EB97AB00D1A890 /* Icons */ = {
@@ -753,15 +819,24 @@
 			files = (
 				2F8CD2071BBFAD7C00011989 /* IntVec2.cpp in Sources */,
 				2F7098F31B92AE9200B6C4F3 /* GameManager.cpp in Sources */,
+				2F8CD22C1BBFF6FA00011989 /* Game.cpp in Sources */,
 				2F7098E31B8F093200B6C4F3 /* RouteSearch.cpp in Sources */,
+				2F8CD22D1BBFF6FA00011989 /* LayerResult.cpp in Sources */,
 				2F7098FC1B93585200B6C4F3 /* Loading.cpp in Sources */,
 				2F7864F71BB2D7330075B6C1 /* Character.cpp in Sources */,
 				2F7098DC1B8F092B00B6C4F3 /* AppDelegate.cpp in Sources */,
 				2F7098E21B8F093200B6C4F3 /* MapScene.cpp in Sources */,
+				2F8CD2391BBFFAED00011989 /* MessageWindow.cpp in Sources */,
 				2F7864F01BB2813A0075B6C1 /* Player.cpp in Sources */,
+				2F8CD22B1BBFF6FA00011989 /* Enemy.cpp in Sources */,
+				2F8CD2361BBFFA5500011989 /* Sound.cpp in Sources */,
 				2F7098F81B92AF4200B6C4F3 /* Common.cpp in Sources */,
 				503AE10017EB989F00D1A890 /* AppController.mm in Sources */,
+				2F8CD22A1BBFF6FA00011989 /* DamageText.cpp in Sources */,
+				2F8CD2291BBFF6FA00011989 /* AttackEffect.cpp in Sources */,
+				2F8CD2351BBFFA5500011989 /* MusicFade.cpp in Sources */,
 				503AE10217EB989F00D1A890 /* RootViewController.mm in Sources */,
+				2F8CD22E1BBFF6FA00011989 /* _Player.cpp in Sources */,
 				503AE10117EB989F00D1A890 /* main.m in Sources */,
 				2F7864EB1BA7132D0075B6C1 /* MessageLayer.cpp in Sources */,
 			);
