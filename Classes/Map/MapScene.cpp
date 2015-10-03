@@ -109,13 +109,13 @@ bool MapScene::init()
     
     auto frame_cache = SpriteFrameCache::getInstance();
     frame_cache->removeSpriteFrames();
-    frame_cache->addSpriteFramesWithFile("player.plist");
-    frame_cache->addSpriteFramesWithFile("character.plist");
+    frame_cache->addSpriteFramesWithFile(RES_CHARA_DIR + "player.plist");
+    frame_cache->addSpriteFramesWithFile(RES_CHARA_DIR + "character.plist");
     
     auto animation_cache = AnimationCache::getInstance();
     //animation_cache->destroyInstance();
-    animation_cache->addAnimationsWithFile("player_animations.plist");
-    animation_cache->addAnimationsWithFile("character_animations.plist");
+    animation_cache->addAnimationsWithFile(RES_CHARA_DIR + "player_animations.plist");
+    animation_cache->addAnimationsWithFile(RES_CHARA_DIR + "character_animations.plist");
     
     // タッチしたとこ
     auto dot_rect = Rect(0, 0, 32, 32);
@@ -790,7 +790,7 @@ std::string MapScene::_get_jump_info_map_key(int x, int y) {
 void MapScene::_init_map(std::string tmx_name) {
     auto layer_size = this->getContentSize();
     
-    auto _tile_map = TMXTiledMap::create(tmx_name + ".tmx");
+    auto _tile_map = TMXTiledMap::create(RES_FILED_DIR + tmx_name + ".tmx");
     // 元は非表示にする
     _tile_map->setVisible(false);
     _tile_map->setTag(TAG_MAP);

@@ -55,7 +55,7 @@ bool MessageLayer::init()
 	auto base_position = Vec2(layer_size.width/2, layer_size.height/4);
     
     Size window_size = Size(layer_size.width - 50, 200);
-    Scale9Sprite* pScale = Scale9Sprite::create("window.png", Rect(0, 0, 64, 64), Rect(10, 10, 44, 44));
+    Scale9Sprite* pScale = Scale9Sprite::create(RES_COMMON_DIR + "window.png", Rect(0, 0, 64, 64), Rect(10, 10, 44, 44));
     pScale->setContentSize(window_size);
     pScale->setPosition(base_position);
     pScale->setTag(TAG_MESSAGE_WINDOW);
@@ -68,7 +68,7 @@ bool MessageLayer::init()
     
     // 改行演出
     auto delay = 0.5f;
-    auto br = Sprite::create("message_br.png");
+    auto br = Sprite::create(RES_COMMON_DIR + "message_br.png");
     br->setPosition(base_position.x + 200, base_position.y - 80);
     
     auto visible = FadeIn::create(.0f);
@@ -108,7 +108,7 @@ void MessageLayer::_init_yesno() {
     int text_tags[2] = { TAG_YES_BUTTON_LABEL, TAG_NO_BUTTON_LABEL};
     
     for (int i = 0; i < 2; i++) {
-        Scale9Sprite* yesno_window = Scale9Sprite::create("window.png", Rect(0, 0, 64, 64), Rect(10, 10, 44, 44));
+        Scale9Sprite* yesno_window = Scale9Sprite::create(RES_COMMON_DIR + "window.png", Rect(0, 0, 64, 64), Rect(10, 10, 44, 44));
         yesno_window->setContentSize(yesno_window_size);
         
         auto item = MenuItemSprite::create(yesno_window, yesno_window, i == 1 ? no_func : yes_func);

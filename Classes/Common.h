@@ -21,6 +21,11 @@
 
 #define COUNT_OF(array) (sizeof(array) / sizeof(array[0]))
 
+static const std::string RES_COMMON_DIR = "common/";
+static const std::string RES_CHARA_DIR  = "map/character/";
+static const std::string RES_FILED_DIR  = "map/field/";
+static const std::string RES_BATTLE_DIR = "battle/";
+
 static const int FRAME = 60;
 
 static const cocos2d::Size GAME_RESOLUTION = cocos2d::Size(480.0f, 800.0f);
