@@ -116,4 +116,31 @@ Common::E_DIRECTON Player::get_direction() {
     return this->now_type;
 }
 
+//---------------------------------------------------------
+// 次に移動する先のアドレスを取得する
+//---------------------------------------------------------
+IntVec2 Player::get_next_pos(IntVec2 now_position, Common::E_DIRECTON direction) {
+    auto next_pos = now_position;
+    
+    // NOTE : 回り込みを考慮していない
+
+    switch (direction) {
+        case Common::E_DIRECTON::UP:
+            next_pos.y -= 1;
+            break;
+        case Common::E_DIRECTON::DOWN:
+            next_pos.y += 1;
+            break;
+        case Common::E_DIRECTON::LEFT:
+            next_pos.x -= 1;
+            break;
+        case Common::E_DIRECTON::RIGHT:
+            next_pos.x += 1;
+            break;
+        default:
+            assert(0);
+            break;
+    }
+    return next_pos;
+}
 

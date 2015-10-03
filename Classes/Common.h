@@ -11,6 +11,7 @@
 #include <iostream>
 
 #include "cocos2d.h"
+#include "Util/Util.h"
 
 //#define NEND_ENABLE
 #define NEND_TEST 0 // 仮IDでテスト表示する
@@ -26,11 +27,11 @@ static const cocos2d::Size GAME_RESOLUTION = cocos2d::Size(480.0f, 800.0f);
 
 static const float NEND_BANNER_HEIGHT = 100.0f;
 
+// これってUtilにするべきかも
 class Common {
 public:
     
     enum E_DIRECTON {
-        NONE,
         UP,
         DOWN,
         LEFT,

@@ -337,11 +337,22 @@ void MapScene::_player_move() {
         }
         
         // 歩く
+        bool is_walk_continue = false;
         if (this->routes.size()) {
-            this->now_route = this->routes.back();
+            auto next_route = this->routes.back();
             this->routes.pop_back();
-        } else {
-            // タッチを消す
+            // 次の場所に人がいないか確認する
+            auto player = (Player *)this->getChildByTag(TAG_PLAYER);
+            auto next_pos = player->get_next_pos(IntVec2(this->now_pos_x, this->now_pos_y), (Common::E_DIRECTON)next_route);
+            if (!this->_check_next_position(next_pos)) {
+                this->now_route = next_route;
+                is_walk_continue = true;
+            }
+        }
+        // 歩かない場合、タッチを消す
+        if (!is_walk_continue) {
+            this->now_route = ROUTE_NONE;
+            this->routes.clear();
             auto _touch_rect = this->getChildByTag(TAG_TOUCH_POINT);
             _touch_rect->setPosition(-100, -100);
         }
@@ -533,6 +544,22 @@ bool MapScene::_check_jump_info() {
     assert(this->is_map_jump);
     
     return true;
+}
+
+//---------------------------------------------------------
+//　次の移動先に人がいたら止まる
+//---------------------------------------------------------
+bool MapScene::_check_next_position(IntVec2 next_position) {
+    
+    // キャラがいるか
+    for (auto tag : this->chara_tags) {
+        auto chara = (Character *)this->getChildByTag(tag);
+        auto pos = chara->get_map_positon();
+        if ( pos.equals(next_position)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 //---------------------------------------------------------

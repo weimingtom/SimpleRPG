@@ -21,6 +21,8 @@ public:
     void set_face_by_pos(int diff_x, int diff_y);
     Common::E_DIRECTON get_direction();
     
+    IntVec2 get_next_pos(IntVec2 now_position, Common::E_DIRECTON directon);
+    
 private:
     void _init();
     

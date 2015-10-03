@@ -251,8 +251,8 @@ void Character::talk_end() {
 //---------------------------------------------------------
 // マップ上の座標を返す
 //---------------------------------------------------------
-Vec2 Character::get_map_positon() {
-    return Vec2(this->now_map_x, this->now_map_y);
+IntVec2 Character::get_map_positon() {
+    return IntVec2(this->now_map_x, this->now_map_y);
 }
 
 //---------------------------------------------------------

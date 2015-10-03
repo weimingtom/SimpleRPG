@@ -2,6 +2,7 @@
 #define __MAP_MAPSCENE_H__
 
 #include "cocos2d.h"
+#include "Common.h"
 
 typedef struct {
     int map_x;
@@ -62,6 +63,7 @@ private:
     void _player_move();
     bool _check_jump_info();
     bool _check_near_player(int near_x, int near_y); // プレーヤーの四方向を確認
+    bool _check_next_position(IntVec2 next_postion);
     void _update_object_pos(float add_x, float add_y);
     
     void _update_now_pos_x(int add_x);

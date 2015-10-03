@@ -23,7 +23,7 @@ public:
     void set_face(Common::E_DIRECTON player_direction);
     void talk_end();
     
-    cocos2d::Vec2 get_map_positon();
+    IntVec2 get_map_positon();
     std::vector<std::string> get_serif();
     
 private:
