@@ -172,7 +172,6 @@ void MapScene::_test() {
     message_layer->setTag(TAG_LAYER_MESSAGE_WINDOW);
     this->addChild(message_layer, GS_MESSAGE_WINDOW);
     
-    
     auto closeItem = MenuItemImage::create("CloseNormal.png",
                                            "CloseSelected.png",
                                            CC_CALLBACK_1(MapScene::_test_button, this));

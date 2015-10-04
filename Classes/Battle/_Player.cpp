@@ -37,7 +37,7 @@ bool _Player::init() {
 
 void _Player::onEnter() {
 	Sprite::onEnter();
-	
+    
 	setSpriteFrame("player_stand.png");
 	setScale(2.0f);
 	

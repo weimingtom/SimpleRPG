@@ -17,6 +17,9 @@
 
 #include "../GameManager.h"
 
+// TODO 整理
+#include "../Util/MessageLayer.h"
+
 USING_NS_CC;
 
 //---------------------------------------------------------
@@ -217,6 +220,11 @@ bool Game::init()
 	message_window->setTag(TAG_MESSAGE_WINDOW);
 	message_window->set_message("敵が現れた！！");
 	this->addChild(message_window, ORDER_UI);
+    
+    // メッセージウインドウ
+    auto message_layer = MessageLayer::create();
+    message_layer->setTag(TAG_MESSAGE_WINDOW_LAYER);
+    this->addChild(message_layer, ORDER_MESSAGE_WINDOW_LAYER);
 	
 	// ダメージ表示のテクスチャ作成
 	for (int i = 0; i < DAMAGE_TEXT_NUM; i++) {
@@ -636,6 +644,7 @@ void Game::_update_result() {
 		this->_save_play_data();
 		
 		// モーダル的に表示
+        /*
 		auto result = LayerResult::create();
 		result->set_info(this->combo_num, damage, this->added_attack_value, (int)great_rate);
 		result->set_result(enemy->is_defeated());
@@ -643,7 +652,18 @@ void Game::_update_result() {
 													   result->getContentSize(),
 													   Vec2(this->getContentSize().width/2, this->getContentSize().height/2)));
 		this->addChild(result, ORDER_RESULT_LAYER, TAG_RESULT_LAYER);
-		
+         */
+        
+        // メッセージウインドウで結果を表示
+        std::vector<std::string> test_message = {
+            "てきをたおした！",
+            "の経験値を得た",
+            "ゴールドをてに入れた",
+            "",
+            "てうと"
+        };
+        auto message_window = (MessageLayer *)this->getChildByTag(TAG_MESSAGE_WINDOW_LAYER);
+        message_window->set_message(test_message);
 		//Common::nend_icon_enable();
 		
 		// BGM

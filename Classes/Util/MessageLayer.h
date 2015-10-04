@@ -1,5 +1,5 @@
-#ifndef __GAME_LAYER_RESULT_H__
-#define __GAME_LAYER_RESULT_H__
+#ifndef __UTIL_MESSAGE_LAYER_H__
+#define __UTIL_MESSAGE_LAYER_H__
 
 #include "cocos2d.h"
 
@@ -62,4 +62,4 @@ private:
 };
 
 
-#endif // __GAME_LAYER_RESULT_H__
+#endif // __UTIL_MESSAGE_LAYER_H__
