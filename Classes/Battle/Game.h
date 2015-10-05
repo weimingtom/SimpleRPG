@@ -21,8 +21,6 @@ public:
 	virtual void onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_event);
 	virtual void onTouchCancelled(cocos2d::Touch *touch, cocos2d::Event *unused_event);
 	
-    void next_scene(cocos2d::Ref* pSender);
-	
 	void update(float frame);
 	
 private:
@@ -109,6 +107,7 @@ private:
 	void _update_success(void);
 	void _update_fail(void);
 	void _update_result(void);
+    void _update_result_end(void);
 	
 	// test
 	void test_code();

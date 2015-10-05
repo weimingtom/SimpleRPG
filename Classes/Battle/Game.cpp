@@ -47,6 +47,7 @@ enum GAME_STEP {
 	STEP_ENEMY_ATTACK,
 	STEP_FAIL,
 	STEP_RESULT,
+    STEP_RESULT_END,
 	STEP_END,
 	NR_STEP
 };
@@ -415,6 +416,10 @@ void Game::update(float flame) {
 		case STEP_RESULT:
 			_update_result();
 			break;
+            
+        case STEP_RESULT_END:
+            _update_result_end();
+            break;
 			
 		case STEP_END:
 			break;
@@ -672,8 +677,27 @@ void Game::_update_result() {
 		set_bgm_volume(BGM_VOLUME_MAX);
 		
 		wait_counter = check;
-		game_step = STEP_END;
+		game_step = STEP_RESULT_END;
 	}
+}
+
+void Game::_update_result_end() {
+    auto message_window = (MessageLayer *)this->getChildByTag(TAG_MESSAGE_WINDOW_LAYER);
+    // 表示が消えたらシーン読み込み
+    if (!message_window->isVisible()) {
+        auto gm = GameManager::getInstance();
+        auto next_scene = (true) ? MapScene::createScene() : Loading::createScene();
+        float duration = 1.0f;
+        
+        // BGM フェードアウト
+        this->runAction(MusicFade::create(duration/2, BGM_VOLUME_MIN, true));
+        
+        Scene *p_scene = TransitionFade::create(duration, next_scene);
+        if (p_scene) {
+            Director::getInstance()->replaceScene(p_scene);
+        }
+        game_step = STEP_END;
+    }
 }
 
 //---------------------------------------------------------
@@ -681,23 +705,6 @@ void Game::_update_result() {
 //---------------------------------------------------------
 Rect Game::get_test_rect(int x, int y, Size size) {
 	return Rect(x - size.width/2, y - size.height/2, size.width, size.height);
-}
-
-//---------------------------------------------------------
-// 次のシーンへの遷移
-//---------------------------------------------------------
-void Game::next_scene(Ref* pSender) {
-	auto gm = GameManager::getInstance();
-	auto next_scene = (true) ? MapScene::createScene() : Loading::createScene();
-	float duration = 1.0f;
-	
-	// BGM フェードアウト
-	this->runAction(MusicFade::create(duration/2, BGM_VOLUME_MIN, true));
-	
-	Scene *p_scene = TransitionFade::create(duration, next_scene);
-	if (p_scene) {
-		Director::getInstance()->replaceScene(p_scene);
-	}
 }
 
 //---------------------------------------------------------
