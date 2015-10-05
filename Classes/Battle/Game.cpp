@@ -189,9 +189,6 @@ bool Game::init()
 
 
 	this->input_count     = 0;
-	this->touched_count   = 0;
-	this->answer_progress = 0;
-	this->answer_total    = 0;
 	this->combo_num       = 0;
 	this->wait_counter    = 0;
 	this->attack_count    = 0;
@@ -292,7 +289,7 @@ bool Game::init()
 						   visibleSize.height/2 + adjust_hint_y);
 	this->addChild(chain_img, ORDER_HINTS, TAG_CHAIN);
 	
-	for (int i = 0; i < COUNT_OF(this->question); i++) {
+	for (int i = 0; i < 3; i++) {
 		auto hint = Sprite::createWithSpriteFrameName("number_0.png");
 		hint->setScale(0.5f);
 		auto h_size = hint->getContentSize();
@@ -463,10 +460,8 @@ void Game::_update_start(void) {
 	}
 	else if (wait_counter > Common::sec2frame(7.5f) && !player->is_now_animation()) {
 		// ヒント表示開始
-		for (int i = 0; i < COUNT_OF(this->question); i++) {
-			auto hint = this->getChildByTag(TAG_HINTS + i);
+			auto hint = this->getChildByTag(TAG_HINTS + question);
 			hint->setVisible(true);
-		}
 		
 		// 入力メッセージとプレーヤーに攻撃前演出
 		auto message = (MessageWindow *)getChildByTag(TAG_MESSAGE_WINDOW);
@@ -725,17 +720,21 @@ bool Game::onTouchBegan(Touch *touch, Event *unused_event)
 			auto btn_rect   = btn->getBoundingBox();
 			auto touch_rect = this->get_test_rect(start_pos.x, start_pos.y, TOUCH_SIZE);
 			if (btn_rect.intersectsRect(touch_rect)) {
-				this->touch_st.x = btn->getPositionX();
-				this->touch_st.y = btn->getPositionY();
-				// タッチしたポジションを記憶
-				this->touched[position] = true;
 				is_collision = true;
-				this->touched_count++;
-
+				
 				// 正解しているかチェックする
-				if (this->_is_collect(position)) {
-					this->answer_progress++;
-					btn->setColor(PANEL_COLOR);
+                if (position == this->question) {
+                    btn->setColor(PANEL_COLOR);
+                    //
+                    
+                    auto judge = this->_get_judge();
+                    _success_effect(judge);
+                    this->judge_great_count += judge;
+                    this->input_timer = 0.0f;
+                    this->combo_num++;
+                    this->_limit_break_num_effect();
+                    play_se("input_success.wav");
+                    //
 				}
 			}
 		}
@@ -745,132 +744,16 @@ bool Game::onTouchBegan(Touch *touch, Event *unused_event)
 		this->touch_st = Point(-1.0f, -1.0f);
 	}
 
-
-    // MotionStreakを作成
-    this->removeChildByTag(TAG_MOTION_STREAK);
-	auto motion_streak = this->_create_motion_streak();
-    this->addChild(motion_streak, ORDER_UI, TAG_MOTION_STREAK);
-
-    motion_streak->setPosition(start_pos);
-
 	return true;
 }
 
-void Game::onTouchMoved(Touch *touch, Event *unused_event)
-{
-	// スワイプの処理
-
-	// 処理しない、もしくは開始時にタッチパネルに触れていない
-	if (this->is_touch_proc_igonre || this->touched_count == 0) {
-		return;
-	}
-
-	auto node = (DrawNode*)this->getChildByTag(TAG_LINE_NUM);
-	node->clear();
-
-	// 進行中の線
-	if (this->touch_st.x > 0 && this->touch_st.y > 0) {
-		auto start_vec = Vec2(this->touch_st.x, this->touch_st.y);
-		auto end_vec   = Vec2(touch->getLocation().x, touch->getLocation().y);
-		node->drawSegment(start_vec, end_vec, LINE_SIZE, LINE_COLOR);
-	}
-
-	// ポッチで連結している部分に線を引く
-	for (int y = 0; y < 3; y++) {
-		for (int x = 0; x < 3; x++) {
-
-			if (this->touch_st.x > 0 && this->touch_st.y > 0) {
-				int position = this->_get_img_position_by_xy(x, y);
-				auto btn = (Sprite*)this->getChildByTag(TAG_TOUCH_BUTTON + position);
-
-				auto btn_rect = btn->getBoundingBox();
-				auto touch_rect = this->get_test_rect(touch->getLocation().x, touch->getLocation().y, TOUCH_SIZE);
-
-				// 触れていたら線をつなぐ
-				if (!this->touched[position] && btn_rect.intersectsRect(touch_rect)) {
-					auto node2 = (DrawNode*)this->getChildByTag(TAG_FIXED_LINE);
-
-					auto start_vec = Vec2(btn->getPositionX(), btn->getPositionY());
-					auto end_vec   = Vec2(this->touch_st.x, this->touch_st.y);
-					node2->drawSegment(start_vec, end_vec, LINE_SIZE, LINE_COLOR);
-
-					// 起点を更新する
-					this->touch_st.x = btn->getPositionX();
-					this->touch_st.y = btn->getPositionY();
-
-					// 触ったことにする
-					this->touched[position] = true;
-					this->touched_count++;
-
-					// 正解しているかチェックする
-					if (this->_is_collect(position)) {
-						this->answer_progress++;
-						btn->setColor(PANEL_COLOR);
-					}
-					break;
-				}
-			}
-		}
-	}
-
-	// タッチ数と、正解数が違う時点で間違えている
-	// もしくは入力時間切れ
-	if ((this->touched_count != this->answer_progress) || this->is_timeout) {
-		this->is_mistaked = true;
-		// 間違えた時点で処理させない
-		this->is_touch_proc_igonre = true;
-		// 線を消す
-		this->_reset_line();
-		this->_reset_touch_panel_color();
-	}
-
-	// タッチ演出
-    MotionStreak* motion_streak = (MotionStreak *)this->getChildByTag(TAG_MOTION_STREAK);
-    motion_streak->setPosition(touch->getLocation());
-
+void Game::onTouchMoved(Touch *touch, Event *unused_event) {
 }
 
 void Game::onTouchEnded(Touch *tounc, Event *unused_event)
 {
-	// タップ終了時の処理
-
-	// パネルにタッチしてない
-	if (this->touched_count == 0) {
-		CCLOG("not started");
-		return;
-	}
-
-	// 正解判定はタッチが終了するまでわからないので、ここでやる
-	// 意図して、正解よりも余分にタッチしたかもしれない(基本ないだろうが)
-	CCLOG("t %d, p %d", answer_total, answer_progress);
-	if (this->answer_total != this->answer_progress) {
-		this->is_mistaked = true;
-	}
-
-	// 途中、もしくは最終的に間違ってた
-	if (this->is_mistaked) {
-		CCLOG("mistake!!");
-	}
-	else {
-		CCLOG("collect!");
-		auto judge = this->_get_judge();
-		_success_effect(judge);
-		this->judge_great_count += judge;
-		this->input_timer = 0.0f;
-		this->combo_num++;
-		this->_limit_break_num_effect();
-		play_se("input_success.wav");
-	}
-
-	// 線を消す
-	this->_reset_line();
+	// パネルをリセット
 	this->_reset_touch_panel_color();
-
-	// 判定をリセット
-	for (int i = 0; i < COUNT_OF(this->touched); i++) {
-		this->touched[i] = false;
-	}
-	this->is_touch_proc_igonre = false;
 
 	// 問題の更新
 	bool is_mistaked = this->is_mistaked;
@@ -950,13 +833,9 @@ void Game::_save_play_data() {
 //  問題の初期化
 //---------------------------------------------------------
 void Game::_init_question() {
-	// リセット
-	for (int i = 0; i < COUNT_OF(this->question); i++) {
-		this->question[i] = -1;
-	}
-	this->touched_count   = 0;
-	this->answer_progress = 0;
-	this->answer_total    = 0;
+    // リセット
+    this->question = -1;
+    
 	this->is_mistaked = false;
 
 	//int index        = this->input_count % this->commands.size(); // 入力ミスで入れ替え
@@ -965,37 +844,17 @@ void Game::_init_question() {
 	//int next_command = this->input_count % COUNT_OF(flag_position); // for test
 
 	// 問題を作る
-	for (int i = 0; i < COUNT_OF(flag_position[next_command]); i++) {
-		if (flag_position[next_command][i] >= 0) {
-			this->question[i] = flag_position[next_command][i];
-			this->answer_total++;
-		}
-	}
+    this->question = flag_position[next_command][0];
 	
 	// 表示用の数字を埋める
 	std::vector<int> vector;
 	for (int i = 0; i < COUNT_OF(disp_number); i++) {
 		vector.push_back(i+1);
 	}
-	// 表示がランダムになるレベルなら、シャッフル
-	auto game_manager = GameManager::getInstance();
-	//if (game_manager->is_random_number_level()) {
-	//	random_shuffle(vector.begin(), vector.end());
-	//}
 	
 	for (int i = 0; i < COUNT_OF(disp_number); i++) {
 		disp_number[i] = vector[i];
 	}
-}
-
-//---------------------------------------------------------
-// 今表示されている線を消す
-//---------------------------------------------------------
-void Game::_reset_line() {
-	auto fixed_line = (DrawNode*)this->getChildByTag(TAG_FIXED_LINE);
-	auto input_line = (DrawNode*)this->getChildByTag(TAG_LINE_NUM);
-	fixed_line->clear();
-	input_line->clear();
 }
 
 //---------------------------------------------------------
@@ -1019,20 +878,6 @@ int Game::_get_img_position_by_xy(int x, int y) {
 }
 
 //---------------------------------------------------------
-//  触れたパネルが正解か判断する
-//---------------------------------------------------------
-bool Game::_is_collect(int position) {
-	bool is_collect = false;
-	for (int i = 0; i < COUNT_OF(this->question); i++) {
-		if (position == this->question[this->answer_progress]) {
-			is_collect = true;
-			break;
-		}
-	}
-	return is_collect;
-}
-
-//---------------------------------------------------------
 // 問題更新時の画像切替
 //---------------------------------------------------------
 void Game::_switch_texture() {
@@ -1049,12 +894,10 @@ void Game::_switch_texture() {
 	}
 	
 	// ヒント画像
-	for (int i = 0; i < COUNT_OF(question); i++) {
-		int index = question[i];
-		std::string str = "number_" + std::to_string(disp_number[index]) + ".png";
-		auto hint = (Sprite *)getChildByTag(TAG_HINTS + i);
-		hint->setSpriteFrame(str);
-	}
+    int index = question;
+    std::string str = "number_" + std::to_string(disp_number[index]) + ".png";
+    auto hint = (Sprite *)getChildByTag(TAG_HINTS);
+    hint->setSpriteFrame(str);
 }
 
 //---------------------------------------------------------
@@ -1214,7 +1057,7 @@ void Game::_charge_stop_animation_and_hint() {
 	// コマンドを消す
 	auto chain = (Sprite *)this->getChildByTag(TAG_CHAIN);
 	chain->setVisible(false);
-	for (int i = 0; i < COUNT_OF(this->question); i++) {
+	for (int i = 0; i < 3; i++) {
 		auto hint = (Sprite *)this->getChildByTag(TAG_HINTS + i);
 		hint->setVisible(false);
 	}
@@ -1230,18 +1073,16 @@ void Game::_success_effect(int judge) {
 		color = Color3B::ORANGE;
 	}
 	
-	for (int i = 0; i < COUNT_OF(question); i++) {
-		int index = question[i];
-		auto button_effect = (Sprite *)getChildByTag(TAG_TOUCH_EFFECT + index);
-		button_effect->setOpacity(255);
-		button_effect->setScale(1.0f);
-		button_effect->setColor(color);
-		auto scale = button_effect->getScale();
-		auto scale_to = ScaleTo::create(0.5f, scale * 2.0f);
-		auto fade_out = FadeOut::create(0.5f);
-		auto spawn    = Spawn::create(scale_to, fade_out, nullptr);
-		button_effect->runAction(spawn);
-	}
+    int index = question;
+    auto button_effect = (Sprite *)getChildByTag(TAG_TOUCH_EFFECT + index);
+    button_effect->setOpacity(255);
+    button_effect->setScale(1.0f);
+    button_effect->setColor(color);
+    auto scale = button_effect->getScale();
+    auto scale_to = ScaleTo::create(0.5f, scale * 2.0f);
+    auto fade_out = FadeOut::create(0.5f);
+    auto spawn    = Spawn::create(scale_to, fade_out, nullptr);
+    button_effect->runAction(spawn);
 }
 
 //---------------------------------------------------------

@@ -28,11 +28,7 @@ private:
 	
 	cocos2d::Point touch_st; // タッチ開始点
 
-	int question[3];     // タッチすべき場所
-	bool touched[9];     // どこをタッチしたか記憶する
-	int touched_count;   // タッチパネルに触れた個数
-	int answer_progress; // タッチパネルの正解進捗
-	int answer_total;    // 正解すべき数
+	int question;     // タッチすべき場所
 	int disp_number[9];  // ユーザーに表示する数字
 	
 	bool is_mistaked;           // 失敗した
@@ -57,12 +53,10 @@ private:
 	///////////////////////
 	//  game proc
 	///////////////////////
-	bool _is_collect(int position);
 	void _switch_texture();
 	int  _get_img_position_by_xy(int x, int y);
 	
 	void _init_question();
-	void _reset_line();
 	void _reset_touch_panel_color();
 	
 	int _get_judge();
