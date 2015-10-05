@@ -13,7 +13,6 @@
 #include "Enemy.h"
 #include "DamageText.h"
 #include "MessageWindow.h"
-#include "LayerResult.h"
 
 #include "../GameManager.h"
 
@@ -647,17 +646,6 @@ void Game::_update_result() {
 		// ゲームデータを更新
 		this->_update_game_manager(great_rate);
 		this->_save_play_data();
-		
-		// モーダル的に表示
-        /*
-		auto result = LayerResult::create();
-		result->set_info(this->combo_num, damage, this->added_attack_value, (int)great_rate);
-		result->set_result(enemy->is_defeated());
-		result->setPosition(Common::get_layer_position(
-													   result->getContentSize(),
-													   Vec2(this->getContentSize().width/2, this->getContentSize().height/2)));
-		this->addChild(result, ORDER_RESULT_LAYER, TAG_RESULT_LAYER);
-         */
         
         // メッセージウインドウで結果を表示
         std::vector<std::string> test_message = {
