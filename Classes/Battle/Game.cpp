@@ -894,76 +894,18 @@ int Game::_get_judge() {
 // 攻撃アニメーションの演出
 //---------------------------------------------------------
 void Game::_attack_animation(int key) {
-    int hoge = key % COUNT_OF(flag_position);
-    int direction = flag_position_effect[hoge];
 
-    std::string str;
-    Sprite *effect = nullptr;
-    switch (direction) {
-        case UP:
-            str = "attack_tate_anime";
-            effect = (Sprite *)this->getChildByTag(TAG_ATTACK_EFFECT_TATE);
-            effect->setRotationX(180.0f);
-            break;
-
-        case DOWN:
-            str = "attack_tate_anime";
-            effect = (Sprite *)this->getChildByTag(TAG_ATTACK_EFFECT_TATE);
-            effect->setRotationX(0.0f);
-            break;
-
-        case LEFT:
-            str = "attack_yoko_anime";
-            effect = (Sprite *)this->getChildByTag(TAG_ATTACK_EFFECT_YOKO);
-            effect->setRotationY(180.0f);
-            break;
-
-        case RIGHT:
-            str = "attack_yoko_anime";
-            effect = (Sprite *)this->getChildByTag(TAG_ATTACK_EFFECT_YOKO);
-            effect->setRotationY(0.0f);
-            break;
-
-        case UP_LEFT:
-            str = "attack_naname_anime";
-            effect = (Sprite *)this->getChildByTag(TAG_ATTACK_EFFECT_NANAME);
-            effect->setRotationX(180.0f);
-            effect->setRotationY(180.0f);
-            break;
-
-        case UP_RIGHT:
-            str = "attack_naname_anime";
-            effect = (Sprite *)this->getChildByTag(TAG_ATTACK_EFFECT_NANAME);
-            effect->setRotationX(180.0f);
-            effect->setRotationY(0.0f);
-            break;
-
-        case DOWN_LEFT:
-            str = "attack_naname_anime";
-            effect = (Sprite *)this->getChildByTag(TAG_ATTACK_EFFECT_NANAME);
-            effect->setRotationX(0.0f);
-            effect->setRotationY(180.0f);
-            break;
-
-        case DOWN_RIGHT:
-            str = "attack_naname_anime";
-            effect = (Sprite *)this->getChildByTag(TAG_ATTACK_EFFECT_NANAME);
-            effect->setRotationX(0.0f);
-            effect->setRotationY(0.0f);
-            break;
-
-        default:
-            break;
-    }
+    std::string str = "attack_naname_anime";
+    auto effect = (Sprite *)this->getChildByTag(TAG_ATTACK_EFFECT_NANAME);
+    effect->setRotationX(0.0f);
+    effect->setRotationY(180.0f);
 
     // アニメーションを生成
     auto cache = AnimationCache::getInstance();
     auto animation = cache->getAnimation(str);
 
-
     auto action = Animate::create(animation);
     auto action_req = Repeat::create(action, 1);
-    //auto action_req = RepeatForever::create(action);
     action_req->setTag(999);
     effect->runAction(action_req);
 	
