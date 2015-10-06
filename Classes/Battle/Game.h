@@ -53,7 +53,6 @@ private:
 	///////////////////////
 	//  game proc
 	///////////////////////
-	void _switch_texture();
 	int  _get_img_position_by_xy(int x, int y);
 	
 	void _init_question();

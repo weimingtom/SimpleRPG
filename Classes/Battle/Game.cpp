@@ -341,7 +341,7 @@ bool Game::init()
 		}
 	}
 	
-	this->_switch_texture();
+	this->_reset_touch_panel_color();
 	
 	//this->test_code();
 
@@ -739,9 +739,6 @@ void Game::onTouchEnded(Touch *tounc, Event *unused_event)
 	this->input_count++;
 	this->_init_question();
     this->_reset_touch_panel_color();
-	if (!is_mistaked) {
-		this->_switch_texture();
-	}
 }
 
 void Game::onTouchCancelled(Touch *tounch, Event *unused_event)
@@ -859,23 +856,6 @@ int Game::_get_img_position_by_xy(int x, int y) {
 }
 
 //---------------------------------------------------------
-// 問題更新時の画像切替
-//---------------------------------------------------------
-void Game::_switch_texture() {
-	// パネルの数字
-	for (int y = 0; y < 3; y++) {
-		for (int x = 0; x < 3; x++) {
-			int position = this->_get_img_position_by_xy(x, y);
-			
-			// 数字画像
-			std::string num_img = "number_" + std::to_string(disp_number[position]) + ".png";
-			auto number = (Sprite *)getChildByTag(TAG_TOUCH_NUMBER + position);
-			number->setSpriteFrame(num_img);
-		}
-	}
-}
-
-//---------------------------------------------------------
 // 入力の精度判定
 //---------------------------------------------------------
 int Game::_get_judge() {
@@ -931,7 +911,6 @@ void Game::_damage_animation() {
     damage->runAction(action_req);
 	
 	// SE
-	auto gm = GameManager::getInstance();
 	std::string se_file = "lv" + std::to_string(1) + "_attack.wav";
 	play_se(se_file.c_str());
 }
@@ -2071,30 +2050,6 @@ bool Game::_is_collect(int position) {
     return is_collect;
 }
 
-//---------------------------------------------------------
-// 問題更新時の画像切替
-//---------------------------------------------------------
-void Game::_switch_texture() {
-    // パネルの数字
-    for (int y = 0; y < 3; y++) {
-        for (int x = 0; x < 3; x++) {
-            int position = this->_get_img_position_by_xy(x, y);
-            
-            // 数字画像
-            std::string num_img = "number_" + std::to_string(disp_number[position]) + ".png";
-            auto number = (Sprite *)getChildByTag(TAG_TOUCH_NUMBER + position);
-            number->setSpriteFrame(num_img);
-        }
-    }
-    
-    // ヒント画像
-    for (int i = 0; i < COUNT_OF(question); i++) {
-        int index = question[i];
-        std::string str = "number_" + std::to_string(disp_number[index]) + ".png";
-        auto hint = (Sprite *)getChildByTag(TAG_HINTS + i);
-        hint->setSpriteFrame(str);
-    }
-}
 
 //---------------------------------------------------------
 // 入力の精度判定
