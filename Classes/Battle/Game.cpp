@@ -282,23 +282,6 @@ bool Game::init()
 							  visibleSize.height/2 + adjust_stamina_y);
 	this->addChild(stamina_waku, ORDER_GAUGE_WAKU);
 	
-	// ヒント画像
-	auto adjust_hint_y = 20.0f;
-	auto chain_img = Sprite::create(RES_BATTLE_DIR + "chain.png");
-	chain_img->setPosition(visibleSize.width/2 - 100.0f,
-						   visibleSize.height/2 + adjust_hint_y);
-	this->addChild(chain_img, ORDER_HINTS, TAG_CHAIN);
-	
-	for (int i = 0; i < 3; i++) {
-		auto hint = Sprite::createWithSpriteFrameName("number_0.png");
-		hint->setScale(0.5f);
-		auto h_size = hint->getContentSize();
-		hint->setPosition(visibleSize.width/2 + (i-1) * h_size.width + 50.0f,
-						  visibleSize.height/2 + adjust_hint_y);
-		hint->setVisible(false);
-		this->addChild(hint, ORDER_HINTS, TAG_HINTS + i);
-	}
-	
 	// カウントダウン用
 	auto count_down = Sprite::createWithSpriteFrameName("number_0.png");
 	count_down->setPosition(visibleSize.width/2, visibleSize.height/2);
@@ -459,10 +442,6 @@ void Game::_update_start(void) {
 		}
 	}
 	else if (wait_counter > Common::sec2frame(7.5f) && !player->is_now_animation()) {
-		// ヒント表示開始
-			auto hint = this->getChildByTag(TAG_HINTS + question);
-			hint->setVisible(true);
-		
 		// 入力メッセージとプレーヤーに攻撃前演出
 		auto message = (MessageWindow *)getChildByTag(TAG_MESSAGE_WINDOW);
 		message->set_message("入力せよ！！");
@@ -759,6 +738,7 @@ void Game::onTouchEnded(Touch *tounc, Event *unused_event)
 	bool is_mistaked = this->is_mistaked;
 	this->input_count++;
 	this->_init_question();
+    this->_reset_touch_panel_color();
 	if (!is_mistaked) {
 		this->_switch_texture();
 	}
@@ -844,7 +824,7 @@ void Game::_init_question() {
 	//int next_command = this->input_count % COUNT_OF(flag_position); // for test
 
 	// 問題を作る
-    this->question = flag_position[next_command][0];
+    this->question = arc4random() % COUNT_OF(this->disp_number) ;
 	
 	// 表示用の数字を埋める
 	std::vector<int> vector;
@@ -865,7 +845,8 @@ void Game::_reset_touch_panel_color() {
 		for (int x = 0; x < 3; x++) {
 			int position = this->_get_img_position_by_xy(x, y);
 			auto btn = (Sprite*)this->getChildByTag(TAG_TOUCH_BUTTON + position);
-			btn->setColor(Color3B::WHITE);
+            auto _col = (this->question == position) ? PANEL_COLOR : Color3B::WHITE;
+			btn->setColor(_col);
 		}
 	}
 }
@@ -892,12 +873,6 @@ void Game::_switch_texture() {
 			number->setSpriteFrame(num_img);
 		}
 	}
-	
-	// ヒント画像
-    int index = question;
-    std::string str = "number_" + std::to_string(disp_number[index]) + ".png";
-    auto hint = (Sprite *)getChildByTag(TAG_HINTS);
-    hint->setSpriteFrame(str);
 }
 
 //---------------------------------------------------------
@@ -1053,14 +1028,6 @@ void Game::_charge_stop_animation_and_hint() {
 	
 	auto charge_action = charge->getActionByTag(999);
 	charge->stopAction(charge_action);
-	
-	// コマンドを消す
-	auto chain = (Sprite *)this->getChildByTag(TAG_CHAIN);
-	chain->setVisible(false);
-	for (int i = 0; i < 3; i++) {
-		auto hint = (Sprite *)this->getChildByTag(TAG_HINTS + i);
-		hint->setVisible(false);
-	}
 }
 
 //---------------------------------------------------------
