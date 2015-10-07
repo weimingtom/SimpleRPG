@@ -57,44 +57,6 @@ enum E_INPUT_JUDGE {
 	NR_JUDGE
 };
 
-// TODO:plistにする
-// 6 7 8
-// 3 4 5
-// 0 1 2
-const int flag_position[16][3] = {
-    {0, 3, 6}, // UP
-    {1, 4, 7}, // UP
-    {2, 5, 8}, // UP
-    
-    {6, 3, 0}, // DOWN
-    {7, 4, 1}, // DOWN
-    {8, 5, 2}, // DOWN
-    
-    {2, 1, 0}, // LEFT
-    {5, 4, 3}, // LEFT
-    {8, 7, 6}, // LEFT
-    
-    {0, 1, 2}, // RIGHT
-    {3, 4, 5}, // RIGHT
-    {6, 7, 8}, // RIGHT
-	
-    {2, 4, 6}, // UP_LEFT
-	{0, 4, 8}, // UP_RIGHT
-	{8, 4, 0}, // DOWN_LEFT
-	{6, 4, 2}, // DOWN_RIGHT
-};
-// todo : MAP化
-const int flag_position_effect[16] = {
-    UP, UP, UP,
-    DOWN, DOWN, DOWN,
-    LEFT, LEFT, LEFT,
-    RIGHT, RIGHT, RIGHT,
-    UP_LEFT,
-    UP_RIGHT,
-    DOWN_LEFT,
-    DOWN_RIGHT,
-};
-
 //---------------------------------------------------------
 //
 //---------------------------------------------------------

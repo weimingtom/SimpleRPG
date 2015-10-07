@@ -65,15 +65,4 @@ enum E_Z_ORDER {
 	NR_Z_ORDER
 };
 
-enum DIRECTION {
-	UP,
-	DOWN,
-	LEFT,
-	RIGHT,
-	UP_LEFT,
-	UP_RIGHT,
-	DOWN_LEFT,
-	DOWN_RIGHT,
-};
-
 #endif
