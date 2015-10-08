@@ -309,9 +309,6 @@ bool Game::init()
 
 	this->scheduleUpdate();
 	
-    // MotionStreakを作成
-    this->addChild(this->_create_motion_streak(), ORDER_UI, TAG_MOTION_STREAK);
-	
 	game_step = STEP_INIT;
 
     return true;
@@ -964,10 +961,6 @@ void Game::_limit_break_num_effect() {
 		num_img->setSpriteFrame("number_" + std::to_string(disp_keta) + ".png");
 		num_img->setVisible(disp_keta || disp_combo_num > 0 || i == 0);
 	}
-}
-
-MotionStreak* Game::_create_motion_streak() {
-	return MotionStreak::create(1.0f, 1.0f, 50.0f, Color3B::YELLOW, RES_BATTLE_DIR + "touch_line.png");
 }
 
 

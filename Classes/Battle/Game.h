@@ -77,8 +77,6 @@ private:
 	
 	void _limit_break_num_effect();
 	
-	cocos2d::MotionStreak* _create_motion_streak();
-	
 	///////////////////////
 	//  game manager & db
 	///////////////////////
