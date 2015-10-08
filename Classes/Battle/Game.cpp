@@ -159,7 +159,6 @@ bool Game::init()
 	
 	this->input_timer = .0f;
 	
-	this->is_mistaked           = false;
 	this->is_touch_proc_igonre  = false;
 	this->is_timeout            = false;
 	this->is_player_attack_skip = false;
@@ -303,7 +302,6 @@ bool Game::init()
 		}
 	}
 	
-	this->_reset_touch_panel_color();
 	
 	//this->test_code();
 
@@ -404,7 +402,8 @@ void Game::_update_start(void) {
 		// 入力メッセージとプレーヤーに攻撃前演出
 		auto message = (MessageWindow *)getChildByTag(TAG_MESSAGE_WINDOW);
 		message->set_message("入力せよ！！");
-		message->set_disp_timer(1.5f);
+        message->set_disp_timer(1.5f);
+        this->_reset_touch_panel_color();
 		_charge_animation();
 		wait_counter = 0;
 		game_step = STEP_INPUT;
@@ -694,7 +693,6 @@ void Game::onTouchEnded(Touch *tounc, Event *unused_event)
 	this->_reset_touch_panel_color();
 
 	// 問題の更新
-	bool is_mistaked = this->is_mistaked;
 	this->input_count++;
 	this->_init_question();
     this->_reset_touch_panel_color();
@@ -771,13 +769,9 @@ void Game::_save_play_data() {
 void Game::_init_question() {
     // リセット
     this->question = -1;
-    
-	this->is_mistaked = false;
 
-	//int index        = this->input_count % this->commands.size(); // 入力ミスで入れ替え
 	int index        = this->combo_num % this->commands.size();
 	int next_command = this->commands[index];
-	//int next_command = this->input_count % COUNT_OF(flag_position); // for test
 
 	// 問題を作る
     this->question = arc4random() % COUNT_OF(this->disp_number) ;

@@ -31,7 +31,6 @@ private:
 	int question;     // タッチすべき場所
 	int disp_number[9];  // ユーザーに表示する数字
 	
-	bool is_mistaked;           // 失敗した
 	bool is_touch_proc_igonre;  // タッチ関連の処理をしない
 	bool is_timeout;            // 入力に間に合わなかった
 	bool is_player_attack_skip; // プレイヤーの攻撃演出をスキップ
