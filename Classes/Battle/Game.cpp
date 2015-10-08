@@ -140,16 +140,6 @@ bool Game::init()
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	// ラインを書く
-	Size size = Director::getInstance()->getWinSize();
-	auto node = DrawNode::create();
-	this->addChild(node, ORDER_TOUCH_LINE, TAG_LINE_NUM);
-
-	// fixed line
-	auto fixed_line = DrawNode::create();
-	this->addChild(fixed_line, ORDER_TOUCH_LINE, TAG_FIXED_LINE);
-
-
 	this->input_count     = 0;
 	this->combo_num       = 0;
 	this->wait_counter    = 0;
