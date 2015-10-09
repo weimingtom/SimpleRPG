@@ -86,16 +86,6 @@ bool Game::init()
 	
 	// game manager
 	auto game_manager = GameManager::getInstance();
-	
-	// 問題の読み込み
-	std::string commands_file = "lv" + std::to_string(1) + "_commands.plist";
-	ValueVector list_vec = FileUtils::getInstance()->getValueVectorFromFile(RES_BATTLE_DIR + commands_file);
-	for(Value list : list_vec){
-		ValueMap list_map = list.asValueMap();
-		int command = list_map.at("command").asInt();
-		//list.asString().c_str();
-		this->commands.push_back(command);
-	}
 
 	// アニメーションキャッシュ
 	auto frame_cache = SpriteFrameCache::getInstance();
@@ -759,9 +749,6 @@ void Game::_save_play_data() {
 void Game::_init_question() {
     // リセット
     this->question = -1;
-
-	int index        = this->combo_num % this->commands.size();
-	int next_command = this->commands[index];
 
 	// 問題を作る
     this->question = arc4random() % COUNT_OF(this->disp_number) ;

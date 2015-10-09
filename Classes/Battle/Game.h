@@ -41,8 +41,6 @@ private:
 	int combo_num;             // コンボ数
 	int input_count;           // コマンド入力をした回数(成功、失敗両方)
 	
-	std::vector<int> commands; // 最大で10000
-	
 	int judge_great_count;
 	int added_attack_value;    // プレー結果から増える攻撃力値
 	
