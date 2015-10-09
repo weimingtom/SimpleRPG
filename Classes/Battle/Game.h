@@ -29,7 +29,7 @@ private:
 	cocos2d::Point touch_st; // タッチ開始点
 
 	int question;     // タッチすべき場所
-	int disp_number[9];  // ユーザーに表示する数字
+	std::vector<int> disp_numbers;  // ユーザーに表示する数字
 	
 	bool is_touch_proc_igonre;  // タッチ関連の処理をしない
 	bool is_timeout;            // 入力に間に合わなかった

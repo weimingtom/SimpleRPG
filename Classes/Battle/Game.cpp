@@ -142,6 +142,9 @@ bool Game::init()
 	this->is_touch_proc_igonre  = false;
 	this->is_timeout            = false;
 	this->is_player_attack_skip = false;
+    
+    // 最初はすべてを対象にする
+    this->question = -1;
 
 
 	auto player = _Player::create();
@@ -247,6 +250,12 @@ bool Game::init()
 			this->addChild(num_img, ORDER_UI, TAG_LIMIT_BREAK_NUM + i);
 		}
 	}
+    
+    // 表示用の数字を埋める
+    std::vector<int> vector;
+    for (int i = 0; i < 9; i++) {
+        this->disp_numbers.push_back(i+1);
+    }
 	
 	// 問題の初期化
 	this->_init_question();
@@ -747,21 +756,13 @@ void Game::_save_play_data() {
 //  問題の初期化
 //---------------------------------------------------------
 void Game::_init_question() {
-    // リセット
-    this->question = -1;
-
-	// 問題を作る
-    this->question = arc4random() % COUNT_OF(this->disp_number) ;
-	
-	// 表示用の数字を埋める
-	std::vector<int> vector;
-	for (int i = 0; i < COUNT_OF(disp_number); i++) {
-		vector.push_back(i+1);
-	}
-	
-	for (int i = 0; i < COUNT_OF(disp_number); i++) {
-		disp_number[i] = vector[i];
-	}
+    
+    // 次の問題を選択、同じな場合はずらす
+    int choice = arc4random() % this->disp_numbers.size();
+    if (choice == this->question) {
+        choice = (choice + 1) % this->disp_numbers.size();
+    }
+    this->question = choice;
 }
 
 //---------------------------------------------------------
