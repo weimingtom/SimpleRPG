@@ -6,6 +6,7 @@
 
 USING_NS_CC;
 USING_NS_CC_EXT;
+using namespace std;
 
 #define IS_DEBUG 1
 
@@ -16,6 +17,7 @@ const int SPACE = FONT_SIZE/2;
 const int MAX_LINE = 4;
 
 const float LETTER_DELAY = 0.1f;
+const float MOVE_TIME = 0.5f;
 
 // ORDER
 enum E_ORDER_MESSAGE_LAYER {
@@ -33,7 +35,17 @@ enum E_TAG_MESSAGE_LAYER {
     TAG_MESSAGE_WINDOW_TEXT_2,
     TAG_MESSAGE_WINDOW_TEXT_3,
     TAG_MESSAGE_WINDOW_TEXT_4,
+    // 交互に使う
+    TAG_MESSAGE_WINDOW_TEXT_A_1,
+    TAG_MESSAGE_WINDOW_TEXT_A_2,
+    TAG_MESSAGE_WINDOW_TEXT_A_3,
+    TAG_MESSAGE_WINDOW_TEXT_A_4,
+    TAG_MESSAGE_WINDOW_TEXT_B_1,
+    TAG_MESSAGE_WINDOW_TEXT_B_2,
+    TAG_MESSAGE_WINDOW_TEXT_B_3,
+    TAG_MESSAGE_WINDOW_TEXT_B_4,
     TAG_MESSAGE_BR,
+    TAG_CLIPPING,
     TAG_YES_BUTTON,
     TAG_YES_BUTTON_LABEL,
     TAG_NO_BUTTON,
@@ -55,7 +67,7 @@ bool MessageLayer::init()
 	auto base_position = Vec2(layer_size.width/2, layer_size.height/4);
     
     Size window_size = Size(layer_size.width - 50, 200);
-    Scale9Sprite* pScale = Scale9Sprite::create(RES_COMMON_DIR + "window.png", Rect(0, 0, 64, 64), Rect(10, 10, 44, 44));
+    auto pScale = ui::Scale9Sprite::create(RES_COMMON_DIR + "window.png", Rect(0, 0, 64, 64), Rect(10, 10, 44, 44));
     pScale->setContentSize(window_size);
     pScale->setPosition(base_position);
     pScale->setTag(TAG_MESSAGE_WINDOW);
@@ -65,6 +77,10 @@ bool MessageLayer::init()
 	this->scheduleUpdate();
     
     this->message_start_y_pos = base_position.y + (FONT_SIZE + SPACE) * 2 + SPACE;
+    
+    // 位置を取得して、ラベルを作成しておく
+    this->ab_text = "a";
+    this->fixed_text_y_move_amount = (MAX_LINE+1) * (FONT_SIZE + SPACE);
     
     // 改行演出
     auto delay = 0.5f;
@@ -85,6 +101,8 @@ bool MessageLayer::init()
     
     // YES NOボタン
     this->_init_yesno();
+    
+    this->_make_mask();
 
     return true;
 }
@@ -108,7 +126,7 @@ void MessageLayer::_init_yesno() {
     int text_tags[2] = { TAG_YES_BUTTON_LABEL, TAG_NO_BUTTON_LABEL};
     
     for (int i = 0; i < 2; i++) {
-        Scale9Sprite* yesno_window = Scale9Sprite::create(RES_COMMON_DIR + "window.png", Rect(0, 0, 64, 64), Rect(10, 10, 44, 44));
+        auto yesno_window = ui::Scale9Sprite::create(RES_COMMON_DIR + "window.png", Rect(0, 0, 64, 64), Rect(10, 10, 44, 44));
         yesno_window->setContentSize(yesno_window_size);
         
         auto item = MenuItemSprite::create(yesno_window, yesno_window, i == 1 ? no_func : yes_func);
@@ -162,12 +180,23 @@ void MessageLayer::set_message(std::vector<std::string> messages, Character *cha
 }
 
 void MessageLayer::set_message(std::vector<std::string> messages) {
+    //std::copy(messages.begin(), messages.end(), std::back_inserter(this->messages));
     this->messages = messages;
+    CCLOG("set message!!");
+    
+    auto cliping = this->getChildByTag(TAG_CLIPPING);
+    
+    for (int t = TAG_MESSAGE_WINDOW_TEXT_A_1, i = 0; t <= TAG_MESSAGE_WINDOW_TEXT_B_4; t++, i++) {
+        auto label = (Label *)cliping->getChildByTag(t);
+        label->setString("");
+    }
     
     this->_set_touch_enabled(true);
     this->setVisible(true);
     
-    this->_read_line();
+    //this->_read_line();
+    this->message_total_count = 0;
+    this->_proc_message(true);
 }
 
 //---------------------------------------------------------
@@ -186,6 +215,8 @@ void MessageLayer::_finalize(cocos2d::Node *sender) {
     this->message_now_line = 0;
     this->message_now_count = 0;
     
+    this->message_total_count = 0;
+    
     this->yesno_line.clear();
     
     this->_set_touch_enabled(false);
@@ -202,8 +233,57 @@ void MessageLayer::update(float flame) {
 }
 
 void MessageLayer::_test() {
+    vector<string> test = {
+    "a",
+    "b"};
+    
+    
+    // 最初に文字セット
+    
+    
 }
 
+void MessageLayer::_disp_lines(std::vector<std::string> lines, bool is_init) {
+    
+    auto move_amount = (is_init) ? 0 : this->fixed_text_y_move_amount;
+    CCLOG("amount %f", move_amount);
+    
+    auto cliping = (ClippingNode *)this->getChildByTag(TAG_CLIPPING);
+    
+    // 全ラインを送って、文字を入れ替える
+    // 現状の文字を送り出す
+    int start_tag = (this->ab_text == "a") ? TAG_MESSAGE_WINDOW_TEXT_A_1 : TAG_MESSAGE_WINDOW_TEXT_B_1;
+    for (int tag = start_tag; tag < start_tag + MAX_LINE; tag++) {
+        auto _message = cliping->getChildByTag(tag);
+        // 上に移動する
+        auto move_by = MoveBy::create(MOVE_TIME, Vec2(0.0f, move_amount));
+        _message->runAction(move_by);
+    }
+    
+    // 次に表示する文字
+    int new_start_tag = (this->ab_text == "a") ? TAG_MESSAGE_WINDOW_TEXT_B_1 : TAG_MESSAGE_WINDOW_TEXT_A_1;
+    for (int tag = new_start_tag, index = 0; tag < new_start_tag + MAX_LINE; tag++, index++) {
+        auto _message = (Label *)cliping->getChildByTag(tag);
+        // 新しい文字を設定
+        string line = (index < lines.size()) ? lines[index] : "";
+        _message->setString(line);
+        // 見えない位置から移動してくる
+        _message->setPositionY(this->fixed_line_y_positions[index] - move_amount);
+        auto move_by = MoveBy::create(MOVE_TIME, Vec2(0.0f, move_amount));
+        Sequence *seq;
+        if (index == 0) {
+            auto callback = CallFuncN::create( CC_CALLBACK_1(MessageLayer::_callback_event, this));
+            seq = Sequence::create(move_by, callback, nullptr);
+        }
+        else {
+            seq = Sequence::create(move_by, nullptr);
+        }
+        _message->runAction(seq);
+    }
+    
+    // abを更新
+    this->ab_text = (this->ab_text == "a") ? "b" : "a";
+}
 
 
 //---------------------------------------------------------
@@ -239,7 +319,7 @@ void MessageLayer::_proc_line(std::string line) {
     
     // メッセージの内容によって、処理を変更
     // 改行
-    if (line.length() < 1) {
+    if (line.find("br;") != std::string::npos) {
         CCLOG("br!!");
         // カーソルを表示する
         this->_set_br();
@@ -261,6 +341,74 @@ void MessageLayer::_proc_line(std::string line) {
     }
     else {
         this->_set_line(line);
+    }
+}
+
+void MessageLayer::_proc_message(bool is_init) {
+    
+    vector<string> lines;
+    int now_count = 0;
+    this->event_line = "";
+    
+    CCLOG("proc_message");
+    
+    while (now_count < MAX_LINE || this->message_total_count < this->messages.size()) {
+        CCLOG("now %d", this->message_total_count);
+        std::string line = this->messages[this->message_total_count];
+        this->message_total_count++;
+        // イベントメッセージ
+        if (line.find(";") != std::string::npos) {
+            CCLOG("event!!");
+            this->event_line = line;
+            break;
+        }
+        // セリフ
+        else {
+            lines.push_back(line);
+            now_count++;
+        }
+    }
+    // イベントがなかった場合
+    if (this->event_line.empty()) {
+        if (this->message_total_count >= this->messages.size()) {
+            this->event_line = "end;";
+        }
+        else {
+            this->event_line = "br;";
+        }
+    }
+    // メッセージをセット、ない場合はイベント処理
+    if (lines.size()) {
+        this->_disp_lines(lines, is_init);
+    }
+    else {
+        this->_callback_event(nullptr);
+    }
+}
+
+void MessageLayer::_callback_event(Node *sender) {
+    
+    if (this->event_line.find("br;") != std::string::npos) {
+        CCLOG("br!!");
+        // カーソルを表示する
+        this->_set_br();
+    }
+    // YES or NO
+    else if (this->event_line.find("yes_no;") != std::string::npos) {
+        CCLOG("find yes or now");
+        this->_set_yesno(this->event_line);
+    }
+    // 指定の行数にとぶ
+    else if (this->event_line.find("jump;") != std::string::npos) {
+        CCLOG("jump");
+        this->_set_jump(this->event_line);
+    }
+    // 途中だけど終了
+    else if (this->event_line.find("end;") != std::string::npos) {
+        this->_set_end();
+    }
+    else {
+        assert(0);
     }
 }
 
@@ -298,6 +446,7 @@ void MessageLayer::_set_line(std::string line) {
     label->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
     label->setPosition(x, y);
     
+    
     // 流れるようにする
     int letter_num = 0;
     for(int i = 0; i < label->getStringLength() + label->getStringNumLines(); i++) {
@@ -305,14 +454,17 @@ void MessageLayer::_set_line(std::string line) {
         if(nullptr != letter) {
             letter_num++;
             letter->setVisible(false);
+     
             // 終了時は次のメッセージを取得するコールバックを設定
             if (letter_num == label->getStringLength()) {
                 auto callback = CallFuncN::create( CC_CALLBACK_1(MessageLayer::_callback_line, this));
                 auto seq = Sequence::create(DelayTime::create(LETTER_DELAY * (i+1)), Show::create(), callback, nullptr);
                 letter->runAction(seq);
+                letter->setVisible(false);
             } else {
                 auto seq = Sequence::create(DelayTime::create(LETTER_DELAY * (i+1)), Show::create(), nullptr);
                 letter->runAction(seq);
+                letter->setVisible(false);
             }
         }
     }
@@ -338,7 +490,9 @@ void MessageLayer::_set_jump(std::string line) {
     assert(jump_line > -1);
     assert(jump_line < 255);
     this->message_now_count = jump_line;
-    this->_read_line();
+    this->message_total_count = jump_line;
+    //this->_read_line();
+    this->_proc_message();
 }
 
 //---------------------------------------------------------
@@ -387,7 +541,9 @@ void MessageLayer::_push_no(Ref* pSender)
 void MessageLayer::_push_yesno(std::string yesno) {
     // 指定の場所に飛ばす
     this->message_now_count = this->yesno_line[yesno];
-    this->_read_line();
+    this->message_total_count = this->yesno_line[yesno];
+    //this->_read_line();
+    this->_proc_message();
     // 非表示
     std::vector<int> tags = {TAG_YES_BUTTON, TAG_NO_BUTTON, TAG_YES_BUTTON_LABEL, TAG_NO_BUTTON_LABEL};
     for (auto tag : tags) {
@@ -403,7 +559,8 @@ bool MessageLayer::onTouchBegan(Touch *touch, Event *unused_event)
 {
     if (this->is_disp_br_cursor) {
         // タッチしたら次のメッセージを読む
-        this->_read_line();
+        //this->_read_line();
+        this->_proc_message();
         this->is_disp_br_cursor = false;
         auto br = this->getChildByTag(TAG_MESSAGE_BR);
         br->setVisible(false);
@@ -428,4 +585,71 @@ void MessageLayer::onTouchEnded(Touch *tounc, Event *unused_event) {
 void MessageLayer::onTouchCancelled(Touch *tounch, Event *unused_event) {
 }
 
+
+//---------------------------------------------------------
+// メッセージを流す場所
+//---------------------------------------------------------
+void MessageLayer::_make_mask() {
+    
+    auto layer_size = this->getContentSize();
+    
+    auto base_position = Vec2(layer_size.width/2, layer_size.height/4);
+    
+    // クリッピングマスク用のテクスチャ作成
+    // NOTE:addChildしないものはretainする
+    auto render_tex = RenderTexture::create(layer_size.width, layer_size.height);
+    render_tex->retain();
+    {
+        render_tex->begin();
+        
+        // 表示しない領域(透明画像)
+        auto stencil = Sprite::create();
+        stencil->setTextureRect(Rect(0.0f ,0.0f ,layer_size.width, 200 * 2));
+        stencil->setColor(Color3B::GREEN);
+        stencil->setOpacity(0);
+        stencil->setPosition(layer_size.width/2, layer_size.height/2);
+        stencil->retain();
+        
+        // 表示する領域(黒)
+        auto disp = Sprite::create();
+        disp->setTextureRect(Rect(0.0f ,0.0f ,layer_size.width - 50, 180));
+        disp->setColor(Color3B::BLACK);
+        disp->setPosition(layer_size.width/2, layer_size.height/2);
+        disp->retain();
+        
+        // render_texに焼き付ける
+        stencil->visit();
+        disp->visit();
+        
+        render_tex->end();
+    }
+    // 生成したテクスチャでスプライト作成
+    auto klone = Sprite::createWithTexture(render_tex->getSprite()->getTexture());
+    klone->setPosition(base_position);
+    
+    // クリッピング処理
+    auto clipping = ClippingNode::create();
+    clipping->setAnchorPoint(Vec2(0, 0));
+    clipping->setPosition(0, 0);
+    
+    // マスク領域
+    clipping->setStencil(klone);
+    clipping->setInverted(false); // stencilに設定した領域を表示する(黒い部分)
+    clipping->setAlphaThreshold(0.01f);
+    
+    // クリッピングして表示したいもの
+    auto x = this->getContentSize().width/2 - 180;
+    float line_start_y_pos = base_position.y + (FONT_SIZE + SPACE) * 1 + SPACE;
+    for (int t = TAG_MESSAGE_WINDOW_TEXT_A_1, i = 0; t <= TAG_MESSAGE_WINDOW_TEXT_B_4; t++, i++) {
+        float pos = line_start_y_pos - i * (FONT_SIZE + SPACE);
+        this->fixed_line_y_positions.push_back(pos);
+        // ラベル
+        auto label = Label::createWithTTF("", "fonts/misaki_gothic.ttf", FONT_SIZE);
+        label->setTextColor(Color4B::WHITE);
+        label->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
+        label->setPosition(x, pos);
+        clipping->addChild(label, ORDER_MESSAGE, t);
+    }
+    this->addChild(clipping, ORDER_MESSAGE, TAG_CLIPPING);
+}
 

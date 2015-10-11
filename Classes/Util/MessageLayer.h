@@ -52,12 +52,25 @@ private:
     
     int message_now_line;  // 表示に使っているライン(1 - 4)
     int message_now_count; // 表示している行番号
+    int message_total_count;
     float message_start_y_pos;
     std::vector<std::string> messages;
+    
+    std::string ab_text; // a or b
+    std::vector<float> fixed_line_y_positions;
+    float fixed_text_y_move_amount;
     
     Character *character; // 人に話しかけた場合
     
     void _test();
+    
+    
+    std::string event_line;
+    void _callback_event(cocos2d::Node *sender);
+    void _proc_message(bool is_init = false);
+    void _disp_lines(std::vector<std::string> lines, bool is_init);
+    
+    void _make_mask();
 	
 };
 
