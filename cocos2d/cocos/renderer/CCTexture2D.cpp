@@ -33,19 +33,19 @@ THE SOFTWARE.
 
 #include "renderer/CCTexture2D.h"
 
-#include "CCGL.h"
+#include "platform/CCGL.h"
 #include "platform/CCImage.h"
 #include "base/ccUtils.h"
 #include "platform/CCDevice.h"
 #include "base/ccConfig.h"
 #include "base/ccMacros.h"
 #include "base/CCConfiguration.h"
-#include "base/CCPlatformMacros.h"
+#include "platform/CCPlatformMacros.h"
 #include "base/CCDirector.h"
 #include "renderer/CCGLProgram.h"
 #include "renderer/ccGLStateCache.h"
 #include "renderer/CCGLProgramCache.h"
-
+#include "base/CCNinePatchImageParser.h"
 #include "deprecated/CCString.h"
 
 
@@ -79,7 +79,7 @@ namespace {
 #endif
         
 #ifdef GL_ETC1_RGB8_OES
-        PixelFormatInfoMapValue(Texture2D::PixelFormat::ETC, Texture2D::PixelFormatInfo(GL_ETC1_RGB8_OES, 0xFFFFFFFF, 0xFFFFFFFF, 24, true, false)),
+        PixelFormatInfoMapValue(Texture2D::PixelFormat::ETC, Texture2D::PixelFormatInfo(GL_ETC1_RGB8_OES, 0xFFFFFFFF, 0xFFFFFFFF, 4, true, false)),
 #endif
         
 #ifdef GL_COMPRESSED_RGBA_S3TC_DXT1_EXT
@@ -120,8 +120,6 @@ const Texture2D::PixelFormatInfoMap Texture2D::_pixelFormatInfoTables(TexturePix
 // If the image has alpha, you can create RGBA8 (32-bit) or RGBA4 (16-bit) or RGB5A1 (16-bit)
 // Default is: RGBA8888 (32-bit textures)
 static Texture2D::PixelFormat g_defaultAlphaPixelFormat = Texture2D::PixelFormat::DEFAULT;
-
-static bool _PVRHaveAlphaPremultiplied = false;
 
 //////////////////////////////////////////////////////////////////////////
 //conventer function
@@ -437,6 +435,7 @@ Texture2D::Texture2D()
 , _hasMipmaps(false)
 , _shaderProgram(nullptr)
 , _antialiasEnabled(true)
+, _ninePatchInfo(nullptr)
 {
 }
 
@@ -448,6 +447,8 @@ Texture2D::~Texture2D()
 
     CCLOGINFO("deallocing Texture2D: %p - id=%u", this, _name);
     CC_SAFE_RELEASE(_shaderProgram);
+
+    CC_SAFE_DELETE(_ninePatchInfo);
 
     if(_name)
     {
@@ -639,7 +640,12 @@ bool Texture2D::initWithMipmaps(MipmapInfo* mipmaps, int mipmapsNum, PixelFormat
     }
 #endif
 
-    CHECK_GL_ERROR_DEBUG(); // clean possible GL error
+    // clean possible GL error
+    GLenum err = glGetError();
+    if (err != GL_NO_ERROR)
+    {
+        cocos2d::log("OpenGL error 0x%04X in %s %s %d\n", err, __FILE__, __FUNCTION__, __LINE__);
+    }
     
     // Specify OpenGL texture image
     int width = pixelsWide;
@@ -664,7 +670,7 @@ bool Texture2D::initWithMipmaps(MipmapInfo* mipmaps, int mipmapsNum, PixelFormat
             CCLOG("cocos2d: Texture2D. WARNING. Mipmap level %u is not squared. Texture won't render correctly. width=%d != height=%d", i, width, height);
         }
 
-        GLenum err = glGetError();
+        err = glGetError();
         if (err != GL_NO_ERROR)
         {
             CCLOG("cocos2d: Texture2D: Error uploading compressed texture level: %u . glError: 0x%04X", i, err);
@@ -779,20 +785,8 @@ bool Texture2D::initWithImage(Image *image, PixelFormat format)
         }
 
         // set the premultiplied tag
-        if (!image->hasPremultipliedAlpha())
-        {
-            if (image->getFileType() == Image::Format::PVR)
-            {
-                _hasPremultipliedAlpha = _PVRHaveAlphaPremultiplied;
-            }else
-            {
-                CCLOG("wanning: We cann't find the data is premultiplied or not, we will assume it's false.");
-                _hasPremultipliedAlpha = false;
-            }
-        }else
-        {
-            _hasPremultipliedAlpha = image->isPremultipliedAlpha();
-        }
+        _hasPremultipliedAlpha = image->hasPremultipliedAlpha();
+        
         return true;
     }
 }
@@ -1170,16 +1164,8 @@ void Texture2D::drawAtPoint(const Vec2& point)
     GL::bindTexture2D( _name );
 
 
-#ifdef EMSCRIPTEN
-    setGLBufferData(vertices, 8 * sizeof(GLfloat), 0);
-    glVertexAttribPointer(GLProgram::VERTEX_ATTRIB_POSITION, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-    setGLBufferData(coordinates, 8 * sizeof(GLfloat), 1);
-    glVertexAttribPointer(GLProgram::VERTEX_ATTRIB_TEX_COORD, 2, GL_FLOAT, GL_FALSE, 0, 0);
-#else
     glVertexAttribPointer(GLProgram::VERTEX_ATTRIB_POSITION, 2, GL_FLOAT, GL_FALSE, 0, vertices);
     glVertexAttribPointer(GLProgram::VERTEX_ATTRIB_TEX_COORD, 2, GL_FLOAT, GL_FALSE, 0, coordinates);
-#endif // EMSCRIPTEN
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
@@ -1203,25 +1189,17 @@ void Texture2D::drawInRect(const Rect& rect)
 
     GL::bindTexture2D( _name );
 
-#ifdef EMSCRIPTEN
-    setGLBufferData(vertices, 8 * sizeof(GLfloat), 0);
-    glVertexAttribPointer(GLProgram::VERTEX_ATTRIB_POSITION, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-    setGLBufferData(coordinates, 8 * sizeof(GLfloat), 1);
-    glVertexAttribPointer(GLProgram::VERTEX_ATTRIB_TEX_COORD, 2, GL_FLOAT, GL_FALSE, 0, 0);
-#else
     glVertexAttribPointer(GLProgram::VERTEX_ATTRIB_POSITION, 2, GL_FLOAT, GL_FALSE, 0, vertices);
     glVertexAttribPointer(GLProgram::VERTEX_ATTRIB_TEX_COORD, 2, GL_FLOAT, GL_FALSE, 0, coordinates);
-#endif // EMSCRIPTEN
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
 void Texture2D::PVRImagesHavePremultipliedAlpha(bool haveAlphaPremultiplied)
 {
-    _PVRHaveAlphaPremultiplied = haveAlphaPremultiplied;
+    Image::setPVRImagesHavePremultipliedAlpha(haveAlphaPremultiplied);
 }
 
-    
+
 //
 // Use to apply MIN/MAG filter
 //
@@ -1384,7 +1362,7 @@ Texture2D::PixelFormat Texture2D::getDefaultAlphaPixelFormat()
 
 unsigned int Texture2D::getBitsPerPixelForFormat(Texture2D::PixelFormat format) const
 {
-    if (format == PixelFormat::NONE)
+    if (format == PixelFormat::NONE || format == PixelFormat::DEFAULT)
     {
         return 0;
     }
@@ -1402,5 +1380,60 @@ const Texture2D::PixelFormatInfoMap& Texture2D::getPixelFormatInfoMap()
     return _pixelFormatInfoTables;
 }
 
+void Texture2D::addSpriteFrameCapInset(SpriteFrame* spritframe, const Rect& capInsets)
+{
+    if(nullptr == _ninePatchInfo)
+    {
+        _ninePatchInfo = new NinePatchInfo;
+    }
+    if(nullptr == spritframe)
+    {
+        _ninePatchInfo->capInsetSize = capInsets;
+    }
+    else
+    {
+        _ninePatchInfo->capInsetMap[spritframe] = capInsets;
+    }
+}
+
+bool Texture2D::isContain9PatchInfo()const
+{
+    return nullptr != _ninePatchInfo;
+}
+
+const Rect& Texture2D::getSpriteFrameCapInset( cocos2d::SpriteFrame *spriteFrame )const
+{
+    CCASSERT(_ninePatchInfo != nullptr,
+             "Can't get the sprite frame capInset when the texture contains no 9-patch info.");
+    if(nullptr == spriteFrame)
+    {
+        return this->_ninePatchInfo->capInsetSize;
+    }
+    else
+    {
+        auto &capInsetMap = this->_ninePatchInfo->capInsetMap;
+        if(capInsetMap.find(spriteFrame) != capInsetMap.end())
+        {
+            return capInsetMap.at(spriteFrame);
+        }
+        else
+        {
+            return this->_ninePatchInfo->capInsetSize;
+        }
+    }
+}
+
+
+void Texture2D::removeSpriteFrameCapInset(SpriteFrame* spriteFrame)
+{
+    if(nullptr != this->_ninePatchInfo)
+    {
+        auto capInsetMap = this->_ninePatchInfo->capInsetMap;
+        if(capInsetMap.find(spriteFrame) != capInsetMap.end())
+        {
+            capInsetMap.erase(spriteFrame);
+        }
+    }
+}
 
 NS_CC_END

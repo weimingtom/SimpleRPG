@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 Copyright (c) 2013-2014 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
@@ -28,13 +28,14 @@ THE SOFTWARE.
 #include "CCComBase.h"
 #include "2d/CCComponent.h"
 #include "base/CCValue.h"
+#include "cocostudio/CocosStudioExport.h"
 
 namespace cocostudio {
 
-class ComAttribute : public cocos2d::Component
+class CC_STUDIO_DLL ComAttribute : public cocos2d::Component
 {
     DECLARE_CLASS_COMPONENT_INFO
-protected:
+public:
     /**
      * @js ctor
      */

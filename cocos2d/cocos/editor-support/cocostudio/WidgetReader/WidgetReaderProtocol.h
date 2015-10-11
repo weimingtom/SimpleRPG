@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
  Copyright (c) 2014 cocos2d-x.org
  
  http://www.cocos2d-x.org
@@ -27,8 +27,12 @@
 
 #include "cocos2d.h"
 #include "cocostudio/DictionaryHelper.h"
+#include "cocostudio/CocosStudioExport.h"
 
-
+namespace protocolbuffers
+{
+    class NodeTree;
+}
 
 namespace cocos2d
 {
@@ -43,12 +47,12 @@ namespace cocostudio
     class CocoLoader;
     struct stExpCocoNode;
     
-    class WidgetReaderProtocol
+    class CC_STUDIO_DLL WidgetReaderProtocol
     {
     public:
         virtual ~WidgetReaderProtocol() {};
         virtual void setPropsFromJsonDictionary(cocos2d::ui::Widget* widget, const rapidjson::Value& options) = 0;
-        virtual void setPropsFromBinary(cocos2d::ui::Widget* widget, CocoLoader* cocoLoader,  stExpCocoNode*	pCocoNode) = 0;
+        virtual void setPropsFromBinary(cocos2d::ui::Widget* widget, CocoLoader* cocoLoader,  stExpCocoNode*	pCocoNode) = 0;        
     };
 }
 

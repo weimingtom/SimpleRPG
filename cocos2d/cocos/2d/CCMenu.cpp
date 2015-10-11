@@ -24,14 +24,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 #include "2d/CCMenu.h"
+#include "2d/CCCamera.h"
 #include "base/CCDirector.h"
 #include "base/CCTouch.h"
-#include "CCStdC.h"
 #include "base/CCEventListenerTouch.h"
+#include "base/CCEventDispatcher.h"
+#include "platform/CCStdC.h"
 #include "deprecated/CCString.h"
 
 #include <vector>
-#include <stdarg.h>
 
 using namespace std;
 
@@ -57,7 +58,7 @@ Menu* Menu::create()
     return Menu::create(nullptr, nullptr);
 }
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WP8) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
 Menu * Menu::variadicCreate(MenuItem* item, ...)
 {
     va_list args;
@@ -88,7 +89,7 @@ Menu * Menu::create(MenuItem* item, ...)
 
 Menu* Menu::createWithArray(const Vector<MenuItem*>& arrayOfItems)
 {
-    auto ret = new Menu();
+    auto ret = new (std::nothrow) Menu();
     if (ret && ret->initWithArray(arrayOfItems))
     {
         ret->autorelease();
@@ -140,7 +141,7 @@ bool Menu::initWithArray(const Vector<MenuItem*>& arrayOfItems)
         setAnchorPoint(Vec2(0.5f, 0.5f));
         this->setContentSize(s);
 
-        setPosition(Vec2(s.width/2, s.height/2));
+        setPosition(s.width/2, s.height/2);
         
         int z=0;
         
@@ -200,11 +201,27 @@ void Menu::addChild(Node * child, int zOrder, const std::string &name)
 
 void Menu::onEnter()
 {
+#if CC_ENABLE_SCRIPT_BINDING
+    if (_scriptType == kScriptTypeJavascript)
+    {
+        if (ScriptEngineManager::sendNodeEventToJSExtended(this, kNodeOnEnter))
+            return;
+    }
+#endif
+    
     Layer::onEnter();
 }
 
 void Menu::onExit()
 {
+#if CC_ENABLE_SCRIPT_BINDING
+    if (_scriptType == kScriptTypeJavascript)
+    {
+        if (ScriptEngineManager::sendNodeEventToJSExtended(this, kNodeOnExit))
+            return;
+    }
+#endif
+    
     if (_state == Menu::State::TRACKING_TOUCH)
     {
         if (_selectedItem)
@@ -236,7 +253,8 @@ void Menu::removeChild(Node* child, bool cleanup)
 
 bool Menu::onTouchBegan(Touch* touch, Event* event)
 {
-    if (_state != Menu::State::WAITING || ! _visible || !_enabled)
+    auto camera = Camera::getVisitingCamera();
+    if (_state != Menu::State::WAITING || ! _visible || !_enabled || !camera)
     {
         return false;
     }
@@ -249,10 +267,11 @@ bool Menu::onTouchBegan(Touch* touch, Event* event)
         }
     }
     
-    _selectedItem = this->getItemForTouch(touch);
+    _selectedItem = this->getItemForTouch(touch, camera);
     if (_selectedItem)
     {
         _state = Menu::State::TRACKING_TOUCH;
+        _selectedWithCamera = camera;
         _selectedItem->selected();
         
         return true;
@@ -271,6 +290,7 @@ void Menu::onTouchEnded(Touch* touch, Event* event)
         _selectedItem->activate();
     }
     _state = Menu::State::WAITING;
+    _selectedWithCamera = nullptr;
     this->release();
 }
 
@@ -289,7 +309,7 @@ void Menu::onTouchCancelled(Touch* touch, Event* event)
 void Menu::onTouchMoved(Touch* touch, Event* event)
 {
     CCASSERT(_state == Menu::State::TRACKING_TOUCH, "[Menu ccTouchMoved] -- invalid state");
-    MenuItem *currentItem = this->getItemForTouch(touch);
+    MenuItem *currentItem = this->getItemForTouch(touch, _selectedWithCamera);
     if (currentItem != _selectedItem)
     {
         if (_selectedItem)
@@ -320,7 +340,7 @@ void Menu::alignItemsVerticallyWithPadding(float padding)
     float y = height / 2.0f;
     
     for(const auto &child : _children) {
-        child->setPosition(Vec2(0, y - child->getContentSize().height * child->getScaleY() / 2.0f));
+        child->setPosition(0, y - child->getContentSize().height * child->getScaleY() / 2.0f);
         y -= child->getContentSize().height * child->getScaleY() + padding;
     }
 }
@@ -339,7 +359,7 @@ void Menu::alignItemsHorizontallyWithPadding(float padding)
     float x = -width / 2.0f;
     
     for(const auto &child : _children) {
-        child->setPosition(Vec2(x + child->getContentSize().width * child->getScaleX() / 2.0f, 0));
+        child->setPosition(x + child->getContentSize().width * child->getScaleX() / 2.0f, 0);
         x += child->getContentSize().width * child->getScaleX() + padding;
     }
 }
@@ -375,11 +395,11 @@ void Menu::alignItemsInColumnsWithArray(const ValueVector& rows)
     int rowColumns = 0;
 
     for(const auto &child : _children) {
-        CCASSERT(row < rows.size(), "");
+        CCASSERT(row < rows.size(), "row should less than rows.size()!");
         
         rowColumns = rows[row].asInt();
         // can not have zero columns on a row
-        CCASSERT(rowColumns, "");
+        CCASSERT(rowColumns, "rowColumns can't be 0.");
         
         float tmp = child->getContentSize().height;
         rowHeight = (unsigned int)((rowHeight >= tmp || isnan(tmp)) ? rowHeight : tmp);
@@ -396,7 +416,7 @@ void Menu::alignItemsInColumnsWithArray(const ValueVector& rows)
     }
 
     // check if too many rows/columns for available menu items
-    CCASSERT(! columnsOccupied, "");
+    CCASSERT(! columnsOccupied, "columnsOccupied should be 0.");
 
     Size winSize = Director::getInstance()->getWinSize();
 
@@ -418,8 +438,8 @@ void Menu::alignItemsInColumnsWithArray(const ValueVector& rows)
         float tmp = child->getContentSize().height;
         rowHeight = (unsigned int)((rowHeight >= tmp || isnan(tmp)) ? rowHeight : tmp);
 
-        child->setPosition(Vec2(x - winSize.width / 2,
-                               y - child->getContentSize().height / 2));
+        child->setPosition(x - winSize.width / 2,
+                               y - child->getContentSize().height / 2);
 
         x += w;
         ++columnsOccupied;
@@ -471,11 +491,11 @@ void Menu::alignItemsInRowsWithArray(const ValueVector& columns)
 
     for(const auto &child : _children) {
         // check if too many menu items for the amount of rows/columns
-        CCASSERT(column < columns.size(), "");
+        CCASSERT(column < columns.size(), "column should be less than columns.size().");
 
         columnRows = columns[column].asInt();
         // can't have zero rows on a column
-        CCASSERT(columnRows, "");
+        CCASSERT(columnRows, "columnRows can't be 0.");
 
         // columnWidth = fmaxf(columnWidth, [item contentSize].width);
         float tmp = child->getContentSize().width;
@@ -498,7 +518,7 @@ void Menu::alignItemsInRowsWithArray(const ValueVector& columns)
     }
 
     // check if too many rows/columns for available menu items.
-    CCASSERT(! rowsOccupied, "");
+    CCASSERT(! rowsOccupied, "rowsOccupied should be 0.");
 
     Size winSize = Director::getInstance()->getWinSize();
 
@@ -519,8 +539,8 @@ void Menu::alignItemsInRowsWithArray(const ValueVector& columns)
         float tmp = child->getContentSize().width;
         columnWidth = (unsigned int)((columnWidth >= tmp || isnan(tmp)) ? columnWidth : tmp);
 
-        child->setPosition(Vec2(x + columnWidths[column] / 2,
-                               y - winSize.height / 2));
+        child->setPosition(x + columnWidths[column] / 2,
+                               y - winSize.height / 2);
 
         y -= child->getContentSize().height + 10;
         ++rowsOccupied;
@@ -536,29 +556,26 @@ void Menu::alignItemsInRowsWithArray(const ValueVector& columns)
     }
 }
 
-MenuItem* Menu::getItemForTouch(Touch *touch)
+MenuItem* Menu::getItemForTouch(Touch *touch, const Camera *camera)
 {
     Vec2 touchLocation = touch->getLocation();
-
     if (!_children.empty())
     {
         for (auto iter = _children.crbegin(); iter != _children.crend(); ++iter)
         {
             MenuItem* child = dynamic_cast<MenuItem*>(*iter);
-            if (child && child->isVisible() && child->isEnabled())
+            if (nullptr == child || false == child->isVisible() || false == child->isEnabled())
             {
-                Vec2 local = child->convertToNodeSpace(touchLocation);
-                Rect r = child->rect();
-                r.origin = Vec2::ZERO;
-                
-                if (r.containsPoint(local))
-                {
-                    return child;
-                }
+                continue;
+            }
+            Rect rect;
+            rect.size = child->getContentSize();
+            if (isScreenPointInRect(touchLocation, camera, child->getWorldToNodeTransform(), rect, nullptr))
+            {
+                return child;
             }
         }
     }
-
     return nullptr;
 }
 

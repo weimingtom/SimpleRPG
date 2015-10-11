@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 Copyright (c) 2013-2014 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
@@ -27,6 +27,7 @@ THE SOFTWARE.
 
 #include <string>
 #include "DictionaryHelper.h"
+#include "cocostudio/CocosStudioExport.h"
 #include "base/ObjectFactory.h"
 #include "CocoLoader.h"
 
@@ -46,7 +47,7 @@ THE SOFTWARE.
 #define CREATE_CLASS_COMPONENT_INFO(className) \
         cocos2d::ObjectFactory::TInfo(#className, &className::createInstance)
 
-struct SerData
+struct CC_STUDIO_DLL SerData
 {
     const rapidjson::Value *_rData;
     cocostudio::stExpCocoNode *_cocoNode;

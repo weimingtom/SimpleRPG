@@ -99,11 +99,11 @@ void NodeLoader::parseProperties(Node * pNode, Node * pParent, CCBReader * ccbRe
             __Array *extraPropsNames = static_cast<__Array*>(pNode->getUserObject());
             if (! extraPropsNames)
             {
-                extraPropsNames = Array::create();
+                extraPropsNames = __Array::create();
                 pNode->setUserObject(extraPropsNames);
             }
             
-            extraPropsNames->addObject(String::create(propertyName));
+            extraPropsNames->addObject(__String::create(propertyName));
         }
 
         switch(type) 
@@ -361,7 +361,7 @@ void NodeLoader::parseProperties(Node * pNode, Node * pParent, CCBReader * ccbRe
                 break;
             }
             default:
-                ASSERT_FAIL_UNEXPECTED_PROPERTYTYPE(type);
+                ASSERT_FAIL_UNEXPECTED_PROPERTYTYPE(static_cast<int>(type));
                 break;
         }
     }
@@ -619,7 +619,7 @@ Animation * NodeLoader::parsePropTypeAnimation(Node * pNode, Node * pParent, CCB
     // know what to do with them, since its pulling from bundle.
     // Eventually this should be handled by a client side asset manager
     // interface which figured out what resources to load.
-    // TODO Does this problem exist in C++?
+    // TODO: Does this problem exist in C++?
     animation = CCBReader::lastPathComponent(animation.c_str());
     animationFile = CCBReader::lastPathComponent(animationFile.c_str());
     
@@ -687,7 +687,7 @@ Color4F * NodeLoader::parsePropTypeColor4FVar(Node * pNode, Node * pParent, CCBR
     float blueVar = ccbReader->readFloat();
     float alphaVar = ccbReader->readFloat();
     
-    Color4F * colors = new Color4F[2];
+    Color4F * colors = new (std::nothrow) Color4F[2];
     colors[0].r = red;
     colors[0].g = green;
     colors[0].b = blue;
@@ -742,7 +742,7 @@ std::string NodeLoader::parsePropTypeFontTTF(Node * pNode, Node * pParent, CCBRe
 
     // String * ttfEnding = String::create(".ttf");
 
-    // TODO Fix me if it is wrong
+    // TODO: Fix me if it is wrong
     /* If the fontTTF comes with the ".ttf" extension, prepend the absolute path. 
      * System fonts come without the ".ttf" extension and do not need the path prepended. */
     /*
@@ -798,7 +798,7 @@ BlockData * NodeLoader::parsePropTypeBlock(Node * pNode, Node * pParent, CCBRead
                     if(selMenuHandler == 0) {
                         CCLOG("Skipping selector '%s' since no CCBSelectorResolver is present.", selectorName.c_str());
                     } else {
-                        BlockData * blockData = new BlockData();
+                        BlockData * blockData = new (std::nothrow) BlockData();
                         blockData->mSELMenuHandler = selMenuHandler;
                         
                         blockData->_target = target;
@@ -882,7 +882,7 @@ BlockControlData * NodeLoader::parsePropTypeBlockControl(Node * pNode, Node * pP
                     }
                     else
                     {
-                        BlockControlData * blockControlData = new BlockControlData();
+                        BlockControlData * blockControlData = new (std::nothrow) BlockControlData();
                         blockControlData->mSELControlHandler = selControlHandler;
                         
                         blockControlData->_target = target;
@@ -929,7 +929,7 @@ Node * NodeLoader::parsePropTypeCCBFile(Node * pNode, Node * pParent, CCBReader 
 
     auto dataPtr = std::make_shared<Data>(FileUtils::getInstance()->getDataFromFile(path));
     
-    CCBReader * reader = new CCBReader(pCCBReader);
+    CCBReader * reader = new (std::nothrow) CCBReader(pCCBReader);
     reader->autorelease();
     reader->getAnimationManager()->setRootContainerSize(pParent->getContentSize());
     
@@ -968,7 +968,8 @@ Node * NodeLoader::parsePropTypeCCBFile(Node * pNode, Node * pParent, CCBReader 
         auto& ownerCallbackNodes = reader->getOwnerCallbackNodes();
         if (!ownerCallbackNames.empty() && !ownerCallbackNodes.empty())
         {
-            CCASSERT(ownerCallbackNames.size() == ownerCallbackNodes.size(), "");
+            CCASSERT(ownerCallbackNames.size() == ownerCallbackNodes.size(),
+                     "ownerCallbackNames size should equal to ownerCallbackNodes size.");
             ssize_t nCount = ownerCallbackNames.size();
             
             for (ssize_t i = 0 ; i < nCount; i++)
@@ -982,7 +983,8 @@ Node * NodeLoader::parsePropTypeCCBFile(Node * pNode, Node * pParent, CCBReader 
         auto ownerOutletNodes = reader->getOwnerOutletNodes();
         if (!ownerOutletNames.empty() && !ownerOutletNodes.empty())
         {
-            CCASSERT(ownerOutletNames.size() == ownerOutletNodes.size(), "");
+            CCASSERT(ownerOutletNames.size() == ownerOutletNodes.size(),
+                     "ownerOutletNames size should be equal to ownerOutletNodes's size.");
             ssize_t nCount = ownerOutletNames.size();
             
             for (ssize_t i = 0 ; i < nCount; i++)

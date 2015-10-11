@@ -5,6 +5,10 @@ LOCAL_MODULE := cocos_ui_static
 
 LOCAL_MODULE_FILENAME := libui
 
+ifeq ($(USE_ARM_MODE),1)
+LOCAL_ARM_MODE := arm
+endif
+
 LOCAL_SRC_FILES := \
 UIWidget.cpp \
 UILayout.cpp \
@@ -15,8 +19,11 @@ UIHelper.cpp \
 UIListView.cpp \
 UIPageView.cpp \
 UIScrollView.cpp \
+UIScrollViewBar.cpp \
 UIButton.cpp \
+UIAbstractCheckButton.cpp \
 UICheckBox.cpp \
+UIRadioButton.cpp \
 UIImageView.cpp \
 UIText.cpp \
 UITextAtlas.cpp \
@@ -25,27 +32,23 @@ UILoadingBar.cpp \
 UISlider.cpp \
 UITextField.cpp \
 UIRichText.cpp \
-CCProtectedNode.cpp \
 UIHBox.cpp \
 UIVBox.cpp \
 UIRelativeBox.cpp \
-UIVideoPlayerAndroid.cpp \
+UIVideoPlayer-android.cpp \
 UIDeprecated.cpp \
+UIScale9Sprite.cpp \
+UIWebView.cpp \
+UIWebViewImpl-android.cpp \
+UIEditBox/UIEditBox.cpp \
+UIEditBox/UIEditBoxImpl-android.cpp \
+UIEditBox/UIEditBoxImpl-common.cpp \
+UILayoutComponent.cpp \
 
-LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/.. \
-$(LOCAL_PATH)/../editor-support
+LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/../editor-support
 
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/.. \
-$(LOCAL_PATH)/../../external \
-$(LOCAL_PATH)/.. \
-$(LOCAL_PATH)/../.. \
-$(LOCAL_PATH)/../editor-support
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/../editor-support
 
-
-LOCAL_WHOLE_STATIC_LIBRARIES := cocos2dx_static
-LOCAL_WHOLE_STATIC_LIBRARIES += cocos_extension_static
+LOCAL_STATIC_LIBRARIES := cocos_extension_static
 
 include $(BUILD_STATIC_LIBRARY)
-
-$(call import-module,extensions)
-$(call import-module,.)

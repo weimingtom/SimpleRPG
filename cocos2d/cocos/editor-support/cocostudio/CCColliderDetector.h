@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 Copyright (c) 2013-2014 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
@@ -27,6 +27,7 @@ THE SOFTWARE.
 
 #include "cocostudio/CCArmatureDefine.h"
 #include "cocostudio/CCDatas.h"
+#include "cocostudio/CocosStudioExport.h"
 
 #ifndef PT_RATIO
 #define PT_RATIO 32
@@ -48,7 +49,7 @@ class Bone;
  *  @js NA
  *  @lua NA
  */
-class ColliderFilter
+class CC_STUDIO_DLL ColliderFilter
 {
 public:
     virtual ~ColliderFilter() { }
@@ -85,7 +86,7 @@ protected:
 #endif
 };
 
-class ColliderBody : public cocos2d::Ref
+class CC_STUDIO_DLL ColliderBody : public cocos2d::Ref
 {
 public:
     ColliderBody(ContourData *contourData);
@@ -130,13 +131,13 @@ private:
  *  @js NA
  *  @lua NA
  */
-class ColliderDetector : public cocos2d::Ref
+class CC_STUDIO_DLL ColliderDetector : public cocos2d::Ref
 {
 public:
     static ColliderDetector *create();
     static ColliderDetector *create(Bone *bone);
 public:
-	/**
+    /**
      * @js ctor
      */
     ColliderDetector();

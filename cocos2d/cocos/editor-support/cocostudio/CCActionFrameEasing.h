@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 Copyright (c) 2013-2014 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
@@ -26,48 +26,49 @@ THE SOFTWARE.
 #define __ActionFrameEasing_H__
 
 #include "base/CCRef.h"
+#include "cocostudio/CocosStudioExport.h"
 
 namespace cocostudio {
 
 enum FrameEasingType
 {
-	kframeEasingInstant,
+    kframeEasingInstant,
 
-	kframeEasingLinear,
+    kframeEasingLinear,
 
-	kframeEasingCubicIn,
-	kframeEasingCubicOut,
-	kframeEasingCubicInOut,
+    kframeEasingCubicIn,
+    kframeEasingCubicOut,
+    kframeEasingCubicInOut,
 
-	kframeEasingElasticIn,
-	kframeEasingElasticOut,
-	kframeEasingElasticInOut,
+    kframeEasingElasticIn,
+    kframeEasingElasticOut,
+    kframeEasingElasticInOut,
 
-	kframeEasingBounceIn,
-	kframeEasingBounceOut,
-	kframeEasingBounceInOut,
+    kframeEasingBounceIn,
+    kframeEasingBounceOut,
+    kframeEasingBounceInOut,
 
-	kframeEasingBackIn,
-	kframeEasingBackOut,
-	kframeEasingBackInOut,
+    kframeEasingBackIn,
+    kframeEasingBackOut,
+    kframeEasingBackInOut,
 };
 
 /**
 *  @js NA
 *  @lua NA
 */
-class ActionFrameEasing:public cocos2d::Ref
+class CC_STUDIO_DLL ActionFrameEasing:public cocos2d::Ref
 {
 protected:
-	FrameEasingType _type;
-	float _fValue;
+    FrameEasingType _type;
+    float _fValue;
 public:
-	ActionFrameEasing();
-	virtual ~ActionFrameEasing();
+    ActionFrameEasing();
+    virtual ~ActionFrameEasing();
 
-	float bounceTime(float t);
+    float bounceTime(float t);
 
-	float easeValue(float t);
+    float easeValue(float t);
 };
 
 }

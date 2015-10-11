@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 Copyright (c) 2013-2014 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
@@ -28,6 +28,7 @@ THE SOFTWARE.
 
 #include "cocostudio/CCProcessBase.h"
 #include "2d/CCTweenFunction.h"
+#include "cocostudio/CocosStudioExport.h"
 
 namespace cocostudio {
 
@@ -39,7 +40,7 @@ using cocos2d::tweenfunc::TweenType;
  *  @js NA
  *  @lua NA
  */
-class  Tween : public ProcessBase
+class CC_STUDIO_DLL Tween : public ProcessBase
 {
 public:
     /**
@@ -139,7 +140,7 @@ protected:
     int _totalDuration;
 
 
-    int _fromIndex;				    //! The current frame index in FrameList of MovementBoneData, it's different from m_iFrameIndex
+    int _fromIndex;                    //! The current frame index in FrameList of MovementBoneData, it's different from m_iFrameIndex
     int _toIndex;                   //! The next frame index in FrameList of MovementBoneData, it's different from m_iFrameIndex
 
     ArmatureAnimation *_animation;

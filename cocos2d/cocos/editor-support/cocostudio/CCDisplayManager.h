@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 Copyright (c) 2013-2014 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
@@ -28,6 +28,7 @@ THE SOFTWARE.
 #include "cocostudio/CCArmatureDefine.h"
 #include "cocostudio/CCDecorativeDisplay.h"
 #include "cocostudio/CCDatas.h"
+#include "cocostudio/CocosStudioExport.h"
 
 namespace cocostudio {
 
@@ -37,7 +38,7 @@ class Bone;
  *  @js NA
  *  @lua NA
  */
-class  DisplayManager : public cocos2d::Ref
+class CC_STUDIO_DLL DisplayManager : public cocos2d::Ref
 {
 public:
     static DisplayManager *create(Bone *bone);
@@ -60,11 +61,11 @@ public:
      * If index already have a display, then replace it.
      * If index is current display index, then also change display to _index
      *
-     *	@param 	displayData it include the display information, like DisplayType.
-     *					If you want to create a sprite display, then create a SpriteDisplayData param
+     *    @param     displayData it include the display information, like DisplayType.
+     *                    If you want to create a sprite display, then create a SpriteDisplayData param
      *
-     *	@param 	index the index of the display you want to replace or add to
-     *					-1 : append display from back
+     *    @param     index the index of the display you want to replace or add to
+     *                    -1 : append display from back
      */
     void addDisplay(DisplayData *displayData, int index);
 
