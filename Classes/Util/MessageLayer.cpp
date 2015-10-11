@@ -76,8 +76,6 @@ bool MessageLayer::init()
 
 	this->scheduleUpdate();
     
-    this->message_start_y_pos = base_position.y + (FONT_SIZE + SPACE) * 2 + SPACE;
-    
     // 位置を取得して、ラベルを作成しておく
     this->ab_text = "a";
     this->fixed_text_y_move_amount = (MAX_LINE+1) * (FONT_SIZE + SPACE);
@@ -194,7 +192,6 @@ void MessageLayer::set_message(std::vector<std::string> messages) {
     this->_set_touch_enabled(true);
     this->setVisible(true);
     
-    //this->_read_line();
     this->message_total_count = 0;
     this->_proc_message(true);
 }
@@ -204,16 +201,8 @@ void MessageLayer::set_message(std::vector<std::string> messages) {
 //---------------------------------------------------------
 void MessageLayer::_finalize(cocos2d::Node *sender) {
     
-    // 表示済みの文字を削除する
-    auto index_tag = TAG_MESSAGE_WINDOW_TEXT_0 + this->message_now_line; // 1以上じゃないとおかしくなる
-    for (int tag = TAG_MESSAGE_WINDOW_TEXT_1; tag <= index_tag; tag++) {
-        this->removeChildByTag(tag);
-    }
-    
     this->is_end_line = false;
     this->is_disp_br_cursor = false;
-    this->message_now_line = 0;
-    this->message_now_count = 0;
     
     this->message_total_count = 0;
     
@@ -285,65 +274,9 @@ void MessageLayer::_disp_lines(std::vector<std::string> lines, bool is_init) {
     this->ab_text = (this->ab_text == "a") ? "b" : "a";
 }
 
-
-//---------------------------------------------------------
-// 入力からのライン処理
-//---------------------------------------------------------
-void MessageLayer::_read_line() {
-    
-    // ライン全部読んだら終わり
-    if (this->messages.size() <= this->message_now_count) {
-        this->is_end_line = true;
-        return;
-    }
-    
-    std::string line = this->messages[this->message_now_count];
-    
-    this->message_now_count++;
-    // ラインの内容で処理を分岐
-    this->_proc_line(line);
-}
-
-//---------------------------------------------------------
-// コールバック時のライン処理
-//---------------------------------------------------------
-void MessageLayer::_callback_line(Node *sender) {
-    
-    this->_read_line();
-}
-
 //---------------------------------------------------------
 // テキスト内容の把握
 //---------------------------------------------------------
-void MessageLayer::_proc_line(std::string line) {
-    
-    // メッセージの内容によって、処理を変更
-    // 改行
-    if (line.find("br;") != std::string::npos) {
-        CCLOG("br!!");
-        // カーソルを表示する
-        this->_set_br();
-    }
-    // YES or NO
-    else if (line.find("yes_no;") != std::string::npos) {
-        CCLOG("find yes or now");
-        this->_set_yesno(line);
-    }
-    // 指定の行数にとぶ
-    else if (line.find("jump;") != std::string::npos) {
-        CCLOG("jump");
-        this->_set_jump(line);
-    }
-    // 途中だけど終了
-    else if (line.find("end;") != std::string::npos) {
-        this->_set_end();
-        return;
-    }
-    else {
-        this->_set_line(line);
-    }
-}
-
 void MessageLayer::_proc_message(bool is_init) {
     
     vector<string> lines;
@@ -413,64 +346,6 @@ void MessageLayer::_callback_event(Node *sender) {
 }
 
 //---------------------------------------------------------
-// ラインを流すように設定する
-//---------------------------------------------------------
-void MessageLayer::_set_line(std::string line) {
-    
-    // 規定のラインを送ったらライン送り
-    this->message_now_line++;
-    if (this->message_now_line > MAX_LINE) {
-        this->message_now_line = MAX_LINE;
-        // 一番上を削除し、他ラインのタグを更新する
-        this->removeChildByTag(TAG_MESSAGE_WINDOW_TEXT_1);
-        for (int tag = TAG_MESSAGE_WINDOW_TEXT_2; tag <= TAG_MESSAGE_WINDOW_TEXT_4; tag++) {
-            auto _message = this->getChildByTag(tag);
-            auto _tag = _message->getTag();
-            _message->setTag(_tag - 1);
-            // 上に移動する
-            auto move_by = MoveBy::create(LETTER_DELAY, Vec2(0.0f, FONT_SIZE + SPACE));
-            _message->runAction(move_by);
-        }
-    }
-    
-    auto layer_size = this->getContentSize();
-    auto x = this->getContentSize().width/2 - 180;
-    auto y = this->message_start_y_pos - this->message_now_line * (FONT_SIZE + SPACE);
-    
-    // 文書を生成
-    auto label = Label::createWithTTF(line, "fonts/misaki_gothic.ttf", FONT_SIZE);
-    label->setTextColor(Color4B::WHITE);
-    label->setTag(TAG_MESSAGE_WINDOW_TEXT_0 + this->message_now_line);
-    this->addChild(label, ORDER_MESSAGE);
-    
-    label->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
-    label->setPosition(x, y);
-    
-    
-    // 流れるようにする
-    int letter_num = 0;
-    for(int i = 0; i < label->getStringLength() + label->getStringNumLines(); i++) {
-        auto letter = label->getLetter(i);
-        if(nullptr != letter) {
-            letter_num++;
-            letter->setVisible(false);
-     
-            // 終了時は次のメッセージを取得するコールバックを設定
-            if (letter_num == label->getStringLength()) {
-                auto callback = CallFuncN::create( CC_CALLBACK_1(MessageLayer::_callback_line, this));
-                auto seq = Sequence::create(DelayTime::create(LETTER_DELAY * (i+1)), Show::create(), callback, nullptr);
-                letter->runAction(seq);
-                letter->setVisible(false);
-            } else {
-                auto seq = Sequence::create(DelayTime::create(LETTER_DELAY * (i+1)), Show::create(), nullptr);
-                letter->runAction(seq);
-                letter->setVisible(false);
-            }
-        }
-    }
-}
-
-//---------------------------------------------------------
 // 改行演出
 //---------------------------------------------------------
 void MessageLayer::_set_br() {
@@ -489,9 +364,7 @@ void MessageLayer::_set_jump(std::string line) {
     int jump_line = std::atoi(_split[1].c_str()) - 1;
     assert(jump_line > -1);
     assert(jump_line < 255);
-    this->message_now_count = jump_line;
     this->message_total_count = jump_line;
-    //this->_read_line();
     this->_proc_message();
 }
 
@@ -540,9 +413,7 @@ void MessageLayer::_push_no(Ref* pSender)
 }
 void MessageLayer::_push_yesno(std::string yesno) {
     // 指定の場所に飛ばす
-    this->message_now_count = this->yesno_line[yesno];
     this->message_total_count = this->yesno_line[yesno];
-    //this->_read_line();
     this->_proc_message();
     // 非表示
     std::vector<int> tags = {TAG_YES_BUTTON, TAG_NO_BUTTON, TAG_YES_BUTTON_LABEL, TAG_NO_BUTTON_LABEL};
@@ -559,7 +430,6 @@ bool MessageLayer::onTouchBegan(Touch *touch, Event *unused_event)
 {
     if (this->is_disp_br_cursor) {
         // タッチしたら次のメッセージを読む
-        //this->_read_line();
         this->_proc_message();
         this->is_disp_br_cursor = false;
         auto br = this->getChildByTag(TAG_MESSAGE_BR);
