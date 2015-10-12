@@ -11,7 +11,6 @@
 
 
 #include "cocos2d.h"
-#include "CreateFunc.h"
 
 class Enemy : public cocos2d::Sprite
 {

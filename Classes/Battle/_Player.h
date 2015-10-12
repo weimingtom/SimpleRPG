@@ -10,7 +10,6 @@
 #define __Choukyu__Player__
 
 #include "cocos2d.h"
-#include "CreateFunc.h"
 
 class _Player : public cocos2d::Sprite
 {

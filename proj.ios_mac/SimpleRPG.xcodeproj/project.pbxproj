@@ -19,7 +19,6 @@
 		2F12D90C1BC9F5ED00762F08 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = 2F12D9061BC9F5ED00762F08 /* fonts */; settings = {ASSET_TAGS = (); }; };
 		2F12D90D1BC9F5ED00762F08 /* map in Resources */ = {isa = PBXBuildFile; fileRef = 2F12D9071BC9F5ED00762F08 /* map */; settings = {ASSET_TAGS = (); }; };
 		2F12D93B1BC9F61900762F08 /* _Player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F12D90F1BC9F61900762F08 /* _Player.cpp */; settings = {ASSET_TAGS = (); }; };
-		2F12D93C1BC9F61900762F08 /* AttackEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F12D9111BC9F61900762F08 /* AttackEffect.cpp */; settings = {ASSET_TAGS = (); }; };
 		2F12D93D1BC9F61900762F08 /* DamageText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F12D9141BC9F61900762F08 /* DamageText.cpp */; settings = {ASSET_TAGS = (); }; };
 		2F12D93E1BC9F61900762F08 /* Enemy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F12D9171BC9F61900762F08 /* Enemy.cpp */; settings = {ASSET_TAGS = (); }; };
 		2F12D93F1BC9F61900762F08 /* Game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F12D9191BC9F61900762F08 /* Game.cpp */; settings = {ASSET_TAGS = (); }; };
@@ -131,8 +130,6 @@
 		2F12D9071BC9F5ED00762F08 /* map */ = {isa = PBXFileReference; lastKnownFileType = folder; path = map; sourceTree = "<group>"; };
 		2F12D90F1BC9F61900762F08 /* _Player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = _Player.cpp; sourceTree = "<group>"; };
 		2F12D9101BC9F61900762F08 /* _Player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _Player.h; sourceTree = "<group>"; };
-		2F12D9111BC9F61900762F08 /* AttackEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AttackEffect.cpp; sourceTree = "<group>"; };
-		2F12D9121BC9F61900762F08 /* AttackEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttackEffect.h; sourceTree = "<group>"; };
 		2F12D9131BC9F61900762F08 /* CreateFunc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateFunc.h; sourceTree = "<group>"; };
 		2F12D9141BC9F61900762F08 /* DamageText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DamageText.cpp; sourceTree = "<group>"; };
 		2F12D9151BC9F61900762F08 /* DamageText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DamageText.h; sourceTree = "<group>"; };
@@ -339,8 +336,6 @@
 			children = (
 				2F12D90F1BC9F61900762F08 /* _Player.cpp */,
 				2F12D9101BC9F61900762F08 /* _Player.h */,
-				2F12D9111BC9F61900762F08 /* AttackEffect.cpp */,
-				2F12D9121BC9F61900762F08 /* AttackEffect.h */,
 				2F12D9131BC9F61900762F08 /* CreateFunc.h */,
 				2F12D9141BC9F61900762F08 /* DamageText.cpp */,
 				2F12D9151BC9F61900762F08 /* DamageText.h */,
@@ -652,7 +647,6 @@
 				2F12D9461BC9F61900762F08 /* MapScene.cpp in Sources */,
 				503AE10117EB989F00D1A890 /* main.m in Sources */,
 				2F12D9421BC9F61900762F08 /* Common.cpp in Sources */,
-				2F12D93C1BC9F61900762F08 /* AttackEffect.cpp in Sources */,
 				2F12D9431BC9F61900762F08 /* GameManager.cpp in Sources */,
 				2F12D94C1BC9F61900762F08 /* Sound.cpp in Sources */,
 				2F12D9411BC9F61900762F08 /* MessageWindow.cpp in Sources */,
