@@ -12,17 +12,31 @@
 
 USING_NS_CC;
 
-#define TAG_WINDOW 1
-#define TAG_WINDOW_BG 2
-#define TAG_MESSAGE 3
+enum {
+    TAG_WINDOW,
+    TAG_WINDOW_BG,
+    TAG_MESSAGE
+};
 
 //---------------------------------------------------------
 // 初期化
 //---------------------------------------------------------
-bool MessageWindow::init() {
-	if (!Node::init()) {
-		return false;
-	}
+MessageWindow* MessageWindow::create() {
+    
+    auto mw = new MessageWindow();
+    if (mw)
+    {
+        mw->_init();
+        mw->autorelease();
+        mw->retain();
+        return mw;
+    }
+    
+    CC_SAFE_DELETE(mw);
+    return NULL;
+}
+
+void MessageWindow::_init() {
 	
 	// window画像
 	auto img_window    = Sprite::create(RES_BATTLE_DIR + "window_waku.png");
@@ -39,13 +53,6 @@ bool MessageWindow::init() {
 	this->addChild(img_window_bg, 1, TAG_WINDOW_BG);
 	this->addChild(img_window,    2, TAG_WINDOW);
 	this->addChild(message_text,  3, TAG_MESSAGE);
-	
-	return true;
-}
-
-void MessageWindow::onEnter() {
-	Node::onEnter();
-	
 }
 
 //---------------------------------------------------------
@@ -64,16 +71,8 @@ void MessageWindow::set_disp_timer(float time) {
 	// 何も動かない
 	auto disp = MoveTo::create(time, getPosition());
 	
-	// 消す
-    auto hide = CallFunc::create([&]() {
-		setVisible(false);
-    });
-	
 	// 直列実行
-	auto seq = Sequence::create(
-								disp,
-								hide,
-								nullptr);
+    auto seq = Sequence::create(disp, Hide::create(), nullptr);
 	runAction(seq);
 }
 

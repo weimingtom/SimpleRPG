@@ -10,14 +10,11 @@
 #define __Choukyu__MessageWindow__
 
 #include "cocos2d.h"
-#include "CreateFunc.h"
 
-class MessageWindow : public cocos2d::Node, create_func<MessageWindow>
+class MessageWindow : public cocos2d::Node
 {
 public:
-	virtual bool init(); // 初期化処理
-	void onEnter() override; // 表示前処理
-	using create_func::create;
+    static MessageWindow* create();
 	
 	void set_disp_timer(float time);
 	void set_message(std::string message);
@@ -25,6 +22,7 @@ public:
 	cocos2d::Size get_img_size();
 	
 private:
+    void _init();
 };
 
 #endif /* defined(__Choukyu__MessageWindow__) */
