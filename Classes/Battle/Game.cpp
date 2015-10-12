@@ -164,7 +164,19 @@ bool Game::init()
     message_layer->setTag(TAG_MESSAGE_WINDOW_LAYER);
     message_layer->setVisible(false);
     this->addChild(message_layer, ORDER_MESSAGE_WINDOW_LAYER);
-	
+    
+    // ここでの設定はいける
+    /*
+    this->test_messages = {
+        "てきをたおした！",
+        "の経験値を得た",
+        "ゴールドをてに入れた",
+        "br;",
+        "てうと"
+    };
+    message_layer->set_message(this->test_messages);
+	*/
+     
 	// ダメージ表示のテクスチャ作成
 	for (int i = 0; i < DAMAGE_TEXT_NUM; i++) {
 		auto p = Vec2(enemy->get_default_pos().x, enemy->get_default_pos().y + 20.0f * i - 50.0f);
@@ -174,14 +186,10 @@ bool Game::init()
 	}
 
 	// 攻撃エフェクト
-	auto position = Vec2(visibleSize.width/2 - 150,
-						 visibleSize.height/2 + 200);
-	const char effect_name[3][32] = {"attack_tate09.png", "attack_yoko09.png", "attack_naname09.png"};
-	int effect_tags[3]     = {TAG_ATTACK_EFFECT_TATE, TAG_ATTACK_EFFECT_YOKO, TAG_ATTACK_EFFECT_NANAME};
-	for (int i = 0; i < COUNT_OF(effect_name); i++) {
-		auto effect = Sprite::createWithSpriteFrameName(effect_name[i]);
+	{
+		auto effect = Sprite::createWithSpriteFrameName("attack_naname09.png");
 		effect->setPosition(enemy->get_default_pos());
-		effect->setTag(effect_tags[i]);
+		effect->setTag(TAG_ATTACK_EFFECT);
 		this->addChild(effect, ORDER_EFFECT);
 	}
 	
@@ -577,6 +585,11 @@ bool Game::onTouchBegan(Touch *touch, Event *unused_event)
                     play_se("input_success.wav");
                     //
                     this->_player_attack();
+                    
+                    // 問題の更新
+                    this->input_count++;
+                    this->_init_question();
+                    this->_reset_touch_panel_color();
 				}
 			}
 		}
@@ -592,15 +605,7 @@ bool Game::onTouchBegan(Touch *touch, Event *unused_event)
 void Game::onTouchMoved(Touch *touch, Event *unused_event) {
 }
 
-void Game::onTouchEnded(Touch *tounc, Event *unused_event)
-{
-	// パネルをリセット
-	this->_reset_touch_panel_color();
-
-	// 問題の更新
-	this->input_count++;
-	this->_init_question();
-    this->_reset_touch_panel_color();
+void Game::onTouchEnded(Touch *tounc, Event *unused_event) {
 }
 
 void Game::onTouchCancelled(Touch *tounch, Event *unused_event)
@@ -723,7 +728,7 @@ int Game::_get_judge() {
 void Game::_attack_animation(int key) {
 
     std::string str = "attack_naname_anime";
-    auto effect = (Sprite *)this->getChildByTag(TAG_ATTACK_EFFECT_NANAME);
+    auto effect = (Sprite *)this->getChildByTag(TAG_ATTACK_EFFECT);
     effect->setRotationX(0.0f);
     effect->setRotationY(180.0f);
 
