@@ -83,13 +83,11 @@ bool Game::init()
 	}
 	
 	// game manager
-	auto game_manager = GameManager::getInstance();
+	//auto game_manager = GameManager::getInstance();
 
 	// アニメーションキャッシュ
 	auto frame_cache = SpriteFrameCache::getInstance();
 	frame_cache->removeSpriteFrames();
-	frame_cache->addSpriteFramesWithFile(RES_BATTLE_DIR + "attack_tate.plist");
-	frame_cache->addSpriteFramesWithFile(RES_BATTLE_DIR + "attack_yoko.plist");
 	frame_cache->addSpriteFramesWithFile(RES_BATTLE_DIR + "attack_naname.plist");
 
 	frame_cache->addSpriteFramesWithFile(RES_BATTLE_DIR + "player.plist");
@@ -97,8 +95,6 @@ bool Game::init()
 
 	auto animation_cache = AnimationCache::getInstance();
 	animation_cache->destroyInstance();
-	animation_cache->addAnimationsWithFile(RES_BATTLE_DIR + "attack_tate_animations.plist");
-	animation_cache->addAnimationsWithFile(RES_BATTLE_DIR + "attack_yoko_animations.plist");
 	animation_cache->addAnimationsWithFile(RES_BATTLE_DIR + "attack_naname_animations.plist");
 	
 	// ダメージアニメーションの読み込み
@@ -207,13 +203,6 @@ bool Game::init()
 	background->setPosition(Vec2(visibleSize.width/2, visibleSize.height - b_size.height/2));
 	background->setScale(visibleSize.width / b_size.width);
 	addChild(background, ORDER_BACKGROUND);
-	
-	// チャージ画像
-	auto charge = Sprite::createWithSpriteFrameName("charge01.png");
-	charge->setTag(TAG_CHARGE);
-	charge->setVisible(false);
-	charge->setPosition(player->get_default_position());
-	addChild(charge, ORDER_EFFECT);
 	
 	// 入力タイマー表示
 	auto adjust_stamina_y = 60.0f;
@@ -476,7 +465,7 @@ void Game::_update_result() {
 	int check = 60;
 	if (wait_counter++ >= check) {
 		auto enemy = (Enemy *)getChildByTag(TAG_ENEMY);
-		auto damage = enemy->get_damage();
+		//auto damage = enemy->get_damage();
 		
 		// Great率を計算(0 - 1の範囲は1にする)
 		auto great_rate = (float)this->judge_great_count * 100.0f / (float)enemy->get_combo_limit();
@@ -516,7 +505,7 @@ void Game::_update_result_end() {
     CCLOG("tag = %d, %d ", message_window->getTag(), message_window->isVisible());
     // 表示が消えたらシーン読み込み
     if (!message_window->isVisible()) {
-        auto gm = GameManager::getInstance();
+        //auto gm = GameManager::getInstance();
         auto next_scene = (true) ? MapScene::createScene() : Loading::createScene();
         float duration = 1.0f;
         
@@ -559,7 +548,6 @@ bool Game::onTouchBegan(Touch *touch, Event *unused_event)
 	auto start_pos = touch->getLocation();
 
 	// 点からやる
-	bool is_collision = false;
 	for (int y = 0; y < 3; y++) {
 		for (int x = 0; x < 3; x++) {
 			int position = this->_get_img_position_by_xy(x, y);
@@ -569,7 +557,6 @@ bool Game::onTouchBegan(Touch *touch, Event *unused_event)
 			auto btn_rect   = btn->getBoundingBox();
 			auto touch_rect = this->get_test_rect(start_pos.x, start_pos.y, TOUCH_SIZE);
 			if (btn_rect.intersectsRect(touch_rect)) {
-				is_collision = true;
 				
 				// 正解しているかチェックする
                 if (position == this->question) {
@@ -594,11 +581,6 @@ bool Game::onTouchBegan(Touch *touch, Event *unused_event)
 			}
 		}
 	}
-	// 触れてない場合は、あさっての方向へ
-	if (!is_collision) {
-		this->touch_st = Point(-1.0f, -1.0f);
-	}
-
 	return true;
 }
 

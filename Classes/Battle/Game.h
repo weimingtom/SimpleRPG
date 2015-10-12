@@ -25,8 +25,6 @@ public:
 	
 private:
 	int game_step;
-	
-	cocos2d::Point touch_st; // タッチ開始点
 
 	int question;     // タッチすべき場所
 	std::vector<int> disp_numbers;  // ユーザーに表示する数字
