@@ -18,22 +18,32 @@ USING_NS_CC;
 //---------------------------------------------------------
 // 初期化
 //---------------------------------------------------------
-bool Enemy::init(int level) {
-	if (!Sprite::init()) {
-		return false;
-	}
+Enemy* Enemy::create(int level) {
+    
+    auto enemy = new Enemy();
+    
+    std::string str = "lv" + std::to_string(level) + ".png";
+    if (enemy && enemy->initWithFile(RES_BATTLE_DIR + str)) {
+        enemy->_init(level);
+        enemy->autorelease();
+        enemy->retain();
+        return enemy;
+    }
+    
+    CC_SAFE_DELETE(enemy);
+    return NULL;
+}
+
+void Enemy::_init(int level) {
 	// init
 	this->is_attack_animation_end = false;
 	this->level = level;
-	
-	std::string str = "lv" + std::to_string(level) + ".png";
-	this->setTexture(RES_BATTLE_DIR + str);
 	
 	// 最高レベルだけ通常
 	float scale = (level == 5) ? 1.0f : 1.5f;
 	this->setScale(scale);
 	
-	auto game_manager = GameManager::getInstance();
+	//auto game_manager = GameManager::getInstance();
     this->combo_norma   = 10;//game_manager->get_combo_norma();
     this->input_time    = 5.0f;//game_manager->get_input_time() + game_manager->get_extend_input_time();
 	this->damaged       = 0;
@@ -46,17 +56,8 @@ bool Enemy::init(int level) {
 					   );
 	this->setPosition(Vec2(-200, this->default_pos.y));
 	
-	return true;
 }
 
-void Enemy::onEnter() {
-	Sprite::onEnter();
-}
-
-// UGLY:compile error safe
-void Enemy::setDisplayFrameWithAnimationName(const std::string &animationName, ssize_t frameIndex) {
-	//Sprite::setDisplayFrameWithAnimationName(animationName, frameIndex);
-}
 
 //---------------------------------------------------------
 // 入力可能な時間

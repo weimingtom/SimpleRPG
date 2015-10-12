@@ -13,12 +13,10 @@
 #include "cocos2d.h"
 #include "CreateFunc.h"
 
-class Enemy : public cocos2d::Sprite, create_func<Enemy>
+class Enemy : public cocos2d::Sprite
 {
 public:
-	virtual bool init(int level); // 初期化処理
-	void onEnter() override; // 表示前処理
-	using create_func::create;
+    static Enemy* create(int level);
     
     float get_input_enable_time(); // 入力が可能な時間
 	
@@ -40,8 +38,6 @@ public:
 	
 	cocos2d::Vec2 get_default_pos();
 	
-	virtual void setDisplayFrameWithAnimationName(const std::string &animationName, ssize_t frameIndex);
-	
 private:
 	cocos2d::Vec2 default_pos;
 	bool is_attack_animation_end;
@@ -55,6 +51,8 @@ private:
 	float input_time; // 入力制限時間
 	
 	int text_count;
+    
+    void _init(int level);
 	
 	bool _is_last_boss(void);
 };
