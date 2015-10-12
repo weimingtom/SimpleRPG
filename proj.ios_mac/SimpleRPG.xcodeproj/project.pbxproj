@@ -130,7 +130,6 @@
 		2F12D9071BC9F5ED00762F08 /* map */ = {isa = PBXFileReference; lastKnownFileType = folder; path = map; sourceTree = "<group>"; };
 		2F12D90F1BC9F61900762F08 /* _Player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = _Player.cpp; sourceTree = "<group>"; };
 		2F12D9101BC9F61900762F08 /* _Player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _Player.h; sourceTree = "<group>"; };
-		2F12D9131BC9F61900762F08 /* CreateFunc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateFunc.h; sourceTree = "<group>"; };
 		2F12D9141BC9F61900762F08 /* DamageText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DamageText.cpp; sourceTree = "<group>"; };
 		2F12D9151BC9F61900762F08 /* DamageText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DamageText.h; sourceTree = "<group>"; };
 		2F12D9161BC9F61900762F08 /* Define.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Define.h; sourceTree = "<group>"; };
@@ -336,7 +335,6 @@
 			children = (
 				2F12D90F1BC9F61900762F08 /* _Player.cpp */,
 				2F12D9101BC9F61900762F08 /* _Player.h */,
-				2F12D9131BC9F61900762F08 /* CreateFunc.h */,
 				2F12D9141BC9F61900762F08 /* DamageText.cpp */,
 				2F12D9151BC9F61900762F08 /* DamageText.h */,
 				2F12D9161BC9F61900762F08 /* Define.h */,
