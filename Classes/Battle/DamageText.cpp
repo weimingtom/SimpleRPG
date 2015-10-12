@@ -14,26 +14,32 @@ USING_NS_CC;
 
 #define FONT_SIZE 30
 
-bool DamageText::init(Vec2 position) {
-	if (!Label::init()) {
-		return false;
-	}
+DamageText* DamageText::create(Vec2 position) {
+    TTFConfig ttfConfig("fonts/misaki_gothic.ttf",
+                        FONT_SIZE,
+                        GlyphCollection::DYNAMIC);
+    
+    auto dt = new DamageText();
+    if (dt && dt->createWithTTF(ttfConfig, "")) {
+        dt->_init(position);
+        dt->autorelease();
+        dt->retain();
+        return dt;
+    }
+    
+    CC_SAFE_DELETE(dt);
+    return nullptr;
+}
+
+void DamageText::_init(Vec2 position) {
 	init_position = position;
 	setPosition(init_position);
-	setSystemFontSize(FONT_SIZE);
-	//setSystemFontName("Arial");
 	
 	TTFConfig ttfConfig("fonts/misaki_gothic.ttf",
                         FONT_SIZE,
                         GlyphCollection::DYNAMIC);
 	setTTFConfig(ttfConfig);
-	return true;
 }
-
-void DamageText::onEnter() {
-	Label::onEnter();
-}
-
 
 void DamageText::do_animation(int damage) {
 	std::string text = std::to_string(damage);

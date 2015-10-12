@@ -31,7 +31,7 @@ _Player* _Player::create()
     }
     
     CC_SAFE_DELETE(_player);
-    return NULL;
+    return nullptr;
 }
 
 void _Player::_init() {

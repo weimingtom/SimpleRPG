@@ -10,14 +10,11 @@
 #define __Choukyu__DamageText__
 
 #include "cocos2d.h"
-#include "CreateFunc.h"
 
-class DamageText : public cocos2d::Label, create_func<DamageText>
+class DamageText : public cocos2d::Label
 {
 public:
-	virtual bool init(cocos2d::Vec2 position); // 初期化処理
-	void onEnter() override; // 表示前処理
-	using create_func::create;
+    static DamageText* create(cocos2d::Vec2 position);
 	
 	void do_animation(int damage);
 	void do_player_side_animation(int damage);
@@ -25,6 +22,7 @@ public:
 	bool is_now_animating(void);
 	
 private:
+    void _init(cocos2d::Vec2 position);
 	cocos2d::Vec2 init_position;
 };
 

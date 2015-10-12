@@ -33,7 +33,7 @@ MessageWindow* MessageWindow::create() {
     }
     
     CC_SAFE_DELETE(mw);
-    return NULL;
+    return nullptr;
 }
 
 void MessageWindow::_init() {

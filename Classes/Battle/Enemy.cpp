@@ -31,7 +31,7 @@ Enemy* Enemy::create(int level) {
     }
     
     CC_SAFE_DELETE(enemy);
-    return NULL;
+    return nullptr;
 }
 
 void Enemy::_init(int level) {
