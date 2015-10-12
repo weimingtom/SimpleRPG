@@ -40,9 +40,6 @@ public:
 	
 	cocos2d::Vec2 get_default_pos();
 	
-	std::string get_attack_serif();
-	std::string get_dead_serif(int attack_count);
-	
 	virtual void setDisplayFrameWithAnimationName(const std::string &animationName, ssize_t frameIndex);
 	
 private:

@@ -136,8 +136,6 @@ bool Game::init()
 	this->count_down_disp_num = 0;
 	
 	this->input_timer = .0f;
-	
-	this->is_touch_proc_igonre  = false;
     
     // 最初はすべてを対象にする
     this->question = -1;

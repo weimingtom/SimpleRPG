@@ -36,8 +36,6 @@ public:
 	
 	cocos2d::Vec2 get_default_position();
 	
-	std::string get_attack_serif();
-	
 private:
 	cocos2d::Vec2 default_pos;
 };

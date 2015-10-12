@@ -31,8 +31,6 @@ private:
 	int question;     // タッチすべき場所
 	std::vector<int> disp_numbers;  // ユーザーに表示する数字
 	
-	bool is_touch_proc_igonre;  // タッチ関連の処理をしない
-	
 	float input_timer;
 	
 	int attack_count;          // 攻撃演出用カウンター

@@ -14,12 +14,6 @@ USING_NS_CC;
 #define TAG_SWORD 1
 #define TAG_ANIMATION_DAMAGE 2
 
-const std::vector<std::string> attack_serifs = {
-	"いくぞっ！",
-	"やってやる！",
-	"くらえっ！"
-};
-
 //---------------------------------------------------------
 // 初期化
 //---------------------------------------------------------
@@ -186,12 +180,4 @@ bool _Player::is_now_animation() {
 //---------------------------------------------------------
 Vec2 _Player::get_default_position() {
 	return default_pos;
-}
-
-//---------------------------------------------------------
-// 攻撃時のセリフ
-//---------------------------------------------------------
-std::string _Player::get_attack_serif() {
-	auto index = (arc4random() * arc4random()) % attack_serifs.size();
-	return attack_serifs[index];
 }

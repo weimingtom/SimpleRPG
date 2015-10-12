@@ -15,27 +15,6 @@
 
 USING_NS_CC;
 
-// 攻撃時のセリフ
-const std::string attack_serifs[MAX_LEVEL] = {
-	"キシャァァァン！！",
-	"ふふっ、そんなものですか？",
-	"ぬるい！返り討ちにしてくれる！",
-	"甘い、死へといざなおう",
-	"ものたりないな・・"
-};
-
-// やられる時のセリフ
-const std::string dead_serifs[MAX_LEVEL] = {
-	"グワァァァン！！",
-	"な、なんと・・・",
-	"お見事・・！",
-	"まさかお前が・・！",
-	"大した努力だ・・！"
-};
-
-// 特別なセリフ
-const std::string special_serif = "お主こそ最強・・！";
-
 //---------------------------------------------------------
 // 初期化
 //---------------------------------------------------------
@@ -227,23 +206,6 @@ bool Enemy::is_now_pre_attack_animation() {
 //---------------------------------------------------------
 Vec2 Enemy::get_default_pos(void) {
 	return default_pos;
-}
-
-//---------------------------------------------------------
-// 攻撃時、撃破時のセリフ
-//---------------------------------------------------------
-std::string Enemy::get_attack_serif() {
-	auto index = this->level - 1;
-	return attack_serifs[index];
-}
-
-std::string Enemy::get_dead_serif(int attack_count) {
-	auto index = this->level - 1;
-	// ラスボスをコンボで倒した時はセリフを変える
-	if (this->is_combo_norma_achieve(attack_count) && this->_is_last_boss()) {
-		return special_serif;
-	}
-	return dead_serifs[index];
 }
 
 //---------------------------------------------------------
