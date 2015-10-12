@@ -424,11 +424,15 @@ void Game::_update_input(float flame) {
     
     // 倒した
     if (this->test_enemy_hp <= 0) {
+        this->question = -1;
+        this->_reset_touch_panel_color();
         this->game_step = STEP_SUCCESS;
     }
     
     // 自分がやられた
     if (this->test_player_hp <= 0) {
+        this->question = -1;
+        this->_reset_touch_panel_color();
         this->game_step = STEP_FAIL;
     }
 }
