@@ -566,7 +566,6 @@ bool Game::onTouchBegan(Touch *touch, Event *unused_event)
                     auto judge = this->_get_judge();
                     _success_effect(judge);
                     this->judge_great_count += judge;
-                    this->input_timer = 0.0f;
                     this->combo_num++;
                     this->_limit_break_num_effect();
                     play_se("input_success.wav");
@@ -577,6 +576,11 @@ bool Game::onTouchBegan(Touch *touch, Event *unused_event)
                     this->input_count++;
                     this->_init_question();
                     this->_reset_touch_panel_color();
+                    
+                    // リセットできるボタンの時
+                    if (0) {
+                        this->input_timer = 0.0f;
+                    }
 				}
 			}
 		}
