@@ -12,18 +12,11 @@
 #include "cocos2d.h"
 #include "CreateFunc.h"
 
-class _Player : public cocos2d::Sprite, create_func<_Player>
+class _Player : public cocos2d::Sprite
 {
 public:
-	virtual bool init(); // 初期化処理
-	void onEnter() override; // 表示前処理
-	using create_func::create;
-	
-	//CREATE_FUNC(Players); // create関数作成マクロ
-	
-	//CC_SYNTHESIZE(Players, _player, Player); // プレーヤー情報
-	
-	virtual void setDisplayFrameWithAnimationName(const std::string &animationName, ssize_t frameIndex);
+    
+    static _Player* create();
 	
 	void start_animation(void);
 	
@@ -37,6 +30,7 @@ public:
 	cocos2d::Vec2 get_default_position();
 	
 private:
+    void _init();
 	cocos2d::Vec2 default_pos;
 };
 

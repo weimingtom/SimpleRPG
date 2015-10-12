@@ -11,40 +11,43 @@
 
 USING_NS_CC;
 
-#define TAG_SWORD 1
-#define TAG_ANIMATION_DAMAGE 2
+enum {
+    TAG_SWORD,
+    TAG_ANIMATION_DAMAGE
+};
 
 //---------------------------------------------------------
 // 初期化
 //---------------------------------------------------------
-bool _Player::init() {
-	if (!Sprite::init()) {
-		return false;
-	}
+_Player* _Player::create()
+{
+    auto _player = new _Player();
+    if (_player && _player->initWithSpriteFrameName("player_stand.png"))
+    {
+        _player->_init();
+        _player->autorelease();
+        _player->retain();
+        return _player;
+    }
+    
+    CC_SAFE_DELETE(_player);
+    return NULL;
+}
+
+void _Player::_init() {
     Size visibleSize = Director::getInstance()->getVisibleSize();
 	default_pos = Vec2(visibleSize.width - 70,
 					   visibleSize.height - 200
 					   );
 	setPosition(Vec2(visibleSize.width + 200 ,default_pos.y));
-	return true;
-}
-
-void _Player::onEnter() {
-	Sprite::onEnter();
     
-	setSpriteFrame("player_stand.png");
-	setScale(2.0f);
-	
-	auto sword = Sprite::create(RES_BATTLE_DIR + "sword.png");
-	sword->setVisible(false);
-	sword->setPosition(Vec2(30.0f, 35.0f));
-	sword->setTag(TAG_SWORD);
-	addChild(sword);
-}
-
-// UGLY : compile error safe
-void _Player::setDisplayFrameWithAnimationName(const std::string &animationName, ssize_t frameIndex) {
-	//Sprite::setDisplayFrameWithAnimationName(animationName, frameIndex);
+    setScale(2.0f);
+    
+    auto sword = Sprite::create(RES_BATTLE_DIR + "sword.png");
+    sword->setVisible(false);
+    sword->setPosition(Vec2(30.0f, 35.0f));
+    sword->setTag(TAG_SWORD);
+    addChild(sword);
 }
 
 //---------------------------------------------------------
