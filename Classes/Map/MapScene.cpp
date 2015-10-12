@@ -191,7 +191,7 @@ void MapScene::_test_button(Ref* pSender)
 {
     CCLOG("push!!");
     auto message_window = (MessageLayer *)this->getChildByTag(TAG_LAYER_MESSAGE_WINDOW);
-    message_window->set_message({"a", "b"});
+    //message_window->set_message({"a", "b"});
 }
 
 

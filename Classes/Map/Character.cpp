@@ -60,7 +60,7 @@ void Character::_init(Vec2 map, Size tile) {
     this->serif = {
         "ほれほれ",
         "たたたたたたたたたたたたたたつ",
-        "",
+        "br;",
         "こんにちは",
         "これはメッセージ",
         "ながれる　あれ",

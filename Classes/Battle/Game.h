@@ -96,9 +96,15 @@ private:
 	void _update_fail(void);
 	void _update_result(void);
     void _update_result_end(void);
+    
+    //// new!!
+    void _player_attack();
+    void _enemy_attack();
 	
 	// test
 	void test_code();
+    
+    std::vector<std::string> test_messages;
 };
 
 

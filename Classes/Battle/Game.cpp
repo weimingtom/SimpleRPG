@@ -165,6 +165,7 @@ bool Game::init()
     // メッセージウインドウ
     auto message_layer = MessageLayer::create();
     message_layer->setTag(TAG_MESSAGE_WINDOW_LAYER);
+    message_layer->setVisible(false);
     this->addChild(message_layer, ORDER_MESSAGE_WINDOW_LAYER);
 	
 	// ダメージ表示のテクスチャ作成
@@ -409,11 +410,10 @@ void Game::_update_input(float flame) {
 	auto input_enable_time = enemy->get_input_enable_time();
 	if (input_timer > input_enable_time) {
 		input_timer = 0.0f;
-        this->is_timeout = true;
+        //this->is_timeout = true;
 		
-		// test
-		//game_step = STEP_ENEMY_ATTACK;
-		//game_step = STEP_PLAYER_ATTACK;
+        this->_enemy_attack();
+		
 	}
 	
 	// ゲージの表示調整
@@ -569,16 +569,17 @@ void Game::_update_result() {
 		this->_save_play_data();
         
         // メッセージウインドウで結果を表示
-        std::vector<std::string> test_message = {
+        this->test_messages = {
             "てきをたおした！",
             "の経験値を得た",
             "ゴールドをてに入れた",
-            "",
+            "br;",
             "てうと"
         };
         auto message_window = (MessageLayer *)this->getChildByTag(TAG_MESSAGE_WINDOW_LAYER);
-        message_window->set_message(test_message);
+        message_window->set_message(this->test_messages);
 		//Common::nend_icon_enable();
+        CCLOG("hogehoge");
 		
 		// BGM
 		std::string bgm_filename = enemy->is_defeated() ? "win_fanfare.mp3" : "lose_rec.mp3";
@@ -592,6 +593,7 @@ void Game::_update_result() {
 
 void Game::_update_result_end() {
     auto message_window = (MessageLayer *)this->getChildByTag(TAG_MESSAGE_WINDOW_LAYER);
+    CCLOG("tag = %d, %d ", message_window->getTag(), message_window->isVisible());
     // 表示が消えたらシーン読み込み
     if (!message_window->isVisible()) {
         auto gm = GameManager::getInstance();
@@ -661,6 +663,7 @@ bool Game::onTouchBegan(Touch *touch, Event *unused_event)
                     this->_limit_break_num_effect();
                     play_se("input_success.wav");
                     //
+                    this->_player_attack();
 				}
 			}
 		}
@@ -933,6 +936,28 @@ void Game::_limit_break_num_effect() {
 		num_img->setSpriteFrame("number_" + std::to_string(disp_keta) + ".png");
 		num_img->setVisible(disp_keta || disp_combo_num > 0 || i == 0);
 	}
+}
+
+// new!!
+void Game::_player_attack() {
+    auto player = (_Player *)this->getChildByTag(TAG_PLAYER);
+    auto enemy = (Enemy *)this->getChildByTag(TAG_ENEMY);
+    int damage = enemy->add_damage(123);//(game_manager->get_attack_value());
+    player->attack_animation();
+    _attack_animation(this->attack_count);
+    auto damage_text = (DamageText *)getChildByTag(TAG_DAMEGE_TEXT + this->attack_count % DAMAGE_TEXT_NUM);
+    damage_text->do_animation(damage);
+    this->attack_count++;
+}
+
+
+void Game::_enemy_attack() {
+    auto player = (_Player *)getChildByTag(TAG_PLAYER);
+    auto enemy  = (Enemy *)getChildByTag(TAG_ENEMY);
+    if (!enemy->is_now_pre_attack_animation()) {
+        //player->damage_animation();
+        _damage_animation();
+    }
 }
 
 
