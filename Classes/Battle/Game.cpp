@@ -41,9 +41,7 @@ enum GAME_STEP {
 	STEP_INIT,
 	STEP_START,
 	STEP_INPUT,
-	STEP_PLAYER_ATTACK,
 	STEP_SUCCESS,
-	STEP_ENEMY_ATTACK,
 	STEP_FAIL,
 	STEP_RESULT,
     STEP_RESULT_END,
@@ -140,11 +138,12 @@ bool Game::init()
 	this->input_timer = .0f;
 	
 	this->is_touch_proc_igonre  = false;
-	this->is_timeout            = false;
-	this->is_player_attack_skip = false;
     
     // 最初はすべてを対象にする
     this->question = -1;
+    
+    this->test_enemy_hp = 100;
+    this->test_player_hp = 100;
 
 
 	auto player = _Player::create();
@@ -323,14 +322,6 @@ void Game::update(float flame) {
 			_update_input(flame);
 			break;
 			
-		case STEP_PLAYER_ATTACK:
-			_update_player_attack();
-			break;
-			
-		case STEP_ENEMY_ATTACK:
-			_update_enemy_attack();
-			break;
-			
 		case STEP_SUCCESS:
 			_update_success();
 			break;
@@ -394,7 +385,6 @@ void Game::_update_start(void) {
 		message->set_message("入力せよ！！");
         message->set_disp_timer(1.5f);
         this->_reset_touch_panel_color();
-		_charge_animation();
 		wait_counter = 0;
 		game_step = STEP_INPUT;
 	}
@@ -410,14 +400,13 @@ void Game::_update_input(float flame) {
 	auto input_enable_time = enemy->get_input_enable_time();
 	if (input_timer > input_enable_time) {
 		input_timer = 0.0f;
-        //this->is_timeout = true;
 		
         this->_enemy_attack();
 		
 	}
 	
 	// ゲージの表示調整
-	float scale = this->is_timeout ? 0.0f : 1.0f - (input_timer/input_enable_time);
+	float scale = 1.0f - (input_timer/input_enable_time);
 	auto gauge = getChildByTag(TAG_INPUT_GAUGE);
 	gauge->setScaleX(scale);
 	
@@ -428,91 +417,20 @@ void Game::_update_input(float flame) {
 	gauge->setColor(col);
 	
     // 入力時間切れ、もしくはコンボノルマ達成の場合、そこで発動終了
-	if (this->is_timeout || enemy->is_combo_norma_achieve(this->combo_num)) {
-		// アニメーションとヒントを消す
-		_charge_stop_animation_and_hint();
-		game_step = STEP_PLAYER_ATTACK;
-		
-		// 攻撃する場合、セリフを出す
-		if (this->combo_num > 0) {
-			auto player = (_Player *)this->getChildByTag(TAG_PLAYER);
-			auto message = (MessageWindow *)getChildByTag(TAG_MESSAGE_WINDOW);
-			message->set_message(player->get_attack_serif());
-			message->setVisible(true);
-		}
+	if (enemy->is_defeat(this->combo_num)) {
+    }
+	if (enemy->is_combo_norma_achieve(this->combo_num)) {
 	}
-}
-
-void Game::_update_player_attack(void) {
-	auto game_manager = (GameManager *)GameManager::getInstance();
-	auto player = (_Player *)getChildByTag(TAG_PLAYER);
-	auto enemy  = (Enemy *)getChildByTag(TAG_ENEMY);
-	
-	if (player->is_now_animation()) {
-		// to do nothing
-	} else {
-		// 終了
-#if IS_DEFEAT_DEBUG
-		this->combo_num = game_manager->get_combo_norma(); // for debug
-#endif
-		if (this->combo_num == this->attack_count) {
-			//game_step = STEP_INPUT;
-			if (wait_counter++ > Common::sec2frame(1.0f)) {
-				// リセットしとく
-				this->attack_count = 0;
-				wait_counter = 0;
-				if (enemy->is_defeat(this->combo_num)) {
-					game_step = STEP_SUCCESS;
-					
-					// 倒す時のセリフを
-					auto message = (MessageWindow *)getChildByTag(TAG_MESSAGE_WINDOW);
-					message->set_message(enemy->get_dead_serif(this->combo_num));
-					message->set_disp_timer(2.0f);
-				}
-				else {
-					game_step = STEP_ENEMY_ATTACK;
-					enemy->pre_attack_animation();
-					
-					// 攻撃される時のセリフを
-					auto message = (MessageWindow *)getChildByTag(TAG_MESSAGE_WINDOW);
-					message->set_message(enemy->get_attack_serif());
-					message->set_disp_timer(2.0f);
-				}
-			}
-			return;
-		}
-        // ダメージを与える
-        auto enemy = (Enemy *)getChildByTag(TAG_ENEMY);
-		
-		// 攻撃演出
-		if (!this->is_player_attack_skip) {
-            int damage = enemy->add_damage(123);//(game_manager->get_attack_value());
-			player->attack_animation();
-			_attack_animation(this->attack_count);
-			auto damage_text = (DamageText *)getChildByTag(TAG_DAMEGE_TEXT + this->attack_count % DAMAGE_TEXT_NUM);
-			damage_text->do_animation(damage);
-			this->attack_count++;
-		}
-		else {
-			for (int i = this->attack_count; i < this->combo_num; i++) {
-                enemy->add_damage(456);//(game_manager->get_attack_value());
-			}
-			this->attack_count = this->combo_num;
-		}
-	}
-	// すべての演出を終えた、もしくはスキップするまで演出する
-	
-}
-
-void Game::_update_enemy_attack(void) {
-	auto player = (_Player *)getChildByTag(TAG_PLAYER);
-	auto enemy  = (Enemy *)getChildByTag(TAG_ENEMY);
-	if (!enemy->is_now_pre_attack_animation()) {
-		player->damage_animation();
-		_damage_animation();
-		wait_counter = 0;
-		game_step = STEP_FAIL;
-	}
+    
+    // 倒した
+    if (this->test_enemy_hp <= 0) {
+        this->game_step = STEP_SUCCESS;
+    }
+    
+    // 自分がやられた
+    if (this->test_player_hp <= 0) {
+        this->game_step = STEP_FAIL;
+    }
 }
 
 void Game::_update_success(void) {
@@ -535,14 +453,6 @@ void Game::_update_success(void) {
 void Game::_update_fail(void) {
 	if (!_is_now_damage_animation()) {
 		auto player = (_Player *)getChildByTag(TAG_PLAYER);
-		// ダメージ値
-		if (wait_counter == 0) {
-			auto damage_text = (DamageText *)getChildByTag(TAG_DAMEGE_TEXT);
-			damage_text->setPosition(player->getPosition());
-			damage_text->do_player_side_animation(9999);
-			auto damage_animation = (Sprite *)getChildByTag(TAG_DAMAGE_EFFECT);
-			damage_animation->setVisible(false);
-		}
 		if (wait_counter++ > 30) {
 			wait_counter = 0;
 			player->die_animation();
@@ -626,13 +536,14 @@ bool Game::onTouchBegan(Touch *touch, Event *unused_event)
 	// タップ開始時の処理
 	
 	// プレーヤー攻撃時は演出スキップ。それ以外は入力時しか受け付けない
-	if (this->game_step == STEP_PLAYER_ATTACK) {
-		this->is_player_attack_skip = true;
+    if (this->game_step != STEP_INPUT) {
 		return true;
 	}
-	else if (this->game_step != STEP_INPUT) {
-		return true;
-	}
+    
+    // すでに死んでたら無視
+    if (this->test_player_hp <= 0) {
+        return true;
+    }
 
 	// 開始時の座標を取得
 	auto start_pos = touch->getLocation();
@@ -857,33 +768,7 @@ bool Game::_is_now_damage_animation(void) {
 	return damage_effect->getNumberOfRunningActions() > 0;
 }
 
-//---------------------------------------------------------
-// 入力時のプレーヤー演出
-//---------------------------------------------------------
-void Game::_charge_animation() {
-	auto charge = (Sprite *)getChildByTag(TAG_CHARGE);
-	charge->setVisible(true);
-	
-    // アニメーションを生成
-    auto cache = AnimationCache::getInstance();
-    auto animation = cache->getAnimation("charge_anime");
-	
-    auto action = Animate::create(animation);
-    auto action_req = RepeatForever::create(action);
-    action_req->setTag(999);
-    charge->runAction(action_req);
-}
 
-//---------------------------------------------------------
-// 入力時の演出を止めて、ヒントを出す
-//---------------------------------------------------------
-void Game::_charge_stop_animation_and_hint() {
-	auto charge = (Sprite *)getChildByTag(TAG_CHARGE);
-	charge->setVisible(false);
-	
-	auto charge_action = charge->getActionByTag(999);
-	charge->stopAction(charge_action);
-}
 
 //---------------------------------------------------------
 // 入力成功時のパネル演出
@@ -948,6 +833,8 @@ void Game::_player_attack() {
     auto damage_text = (DamageText *)getChildByTag(TAG_DAMEGE_TEXT + this->attack_count % DAMAGE_TEXT_NUM);
     damage_text->do_animation(damage);
     this->attack_count++;
+    
+    this->test_enemy_hp -= 10;
 }
 
 
@@ -955,8 +842,18 @@ void Game::_enemy_attack() {
     auto player = (_Player *)getChildByTag(TAG_PLAYER);
     auto enemy  = (Enemy *)getChildByTag(TAG_ENEMY);
     if (!enemy->is_now_pre_attack_animation()) {
-        //player->damage_animation();
+        player->damage_animation();
+        // ダメージ表示
+        auto damage_text = (DamageText *)getChildByTag(TAG_DAMEGE_TEXT);
+        damage_text->setPosition(player->getPosition());
+        damage_text->do_player_side_animation(9999);
+        auto damage_animation = (Sprite *)getChildByTag(TAG_DAMAGE_EFFECT);
+        damage_animation->setVisible(false);
+        
+        enemy->pre_attack_animation();
         _damage_animation();
+        
+        this->test_player_hp -= 10;
     }
 }
 

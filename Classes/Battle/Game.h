@@ -32,8 +32,6 @@ private:
 	std::vector<int> disp_numbers;  // ユーザーに表示する数字
 	
 	bool is_touch_proc_igonre;  // タッチ関連の処理をしない
-	bool is_timeout;            // 入力に間に合わなかった
-	bool is_player_attack_skip; // プレイヤーの攻撃演出をスキップ
 	
 	float input_timer;
 	
@@ -65,9 +63,6 @@ private:
 	void _damage_animation();
 	bool _is_now_damage_animation(void);
 	
-	void _charge_animation();
-	void _charge_stop_animation_and_hint();
-	
 	void _success_effect(int judge);
 	
 	void _countdown_animation(int disp_sec);
@@ -90,8 +85,6 @@ private:
 	///////////////////////
     void _update_start(void);
 	void _update_input(float flame);
-	void _update_player_attack(void);
-	void _update_enemy_attack(void);
 	void _update_success(void);
 	void _update_fail(void);
 	void _update_result(void);
@@ -105,6 +98,9 @@ private:
 	void test_code();
     
     std::vector<std::string> test_messages;
+    int test_enemy_hp;
+    int test_player_hp;
+    
 };
 
 
