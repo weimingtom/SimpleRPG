@@ -27,9 +27,11 @@ USING_NS_CC;
 #define BUTTON_SPACE 100
 #define BUTTON_ADJUST_Y 200
 
-#define LINE_SIZE 2.0f
-#define LINE_COLOR  Color4F::YELLOW
-#define PANEL_COLOR Color3B::YELLOW
+#define ATTACK_COLOR Color3B::YELLOW
+#define DEFENSE_COLOR Color3B::BLUE
+
+//static const Color3B ATTACK_COLOR  = Color3B::YELLOW;
+//static const Color3B DEFENSE_COLOR = Color3B::ORANGE;
 
 #define TOUCH_SIZE Size(15, 15)
 
@@ -49,10 +51,10 @@ enum GAME_STEP {
 	NR_STEP
 };
 
-enum E_INPUT_JUDGE {
-	JUDGE_GOOD,
-	JUDGE_GREAT,
-	NR_JUDGE
+enum E_INPUT_TYPE {
+	ATTACK,
+	DEFENSE,
+	NR_INPUT
 };
 
 //---------------------------------------------------------
@@ -134,7 +136,8 @@ bool Game::init()
 	this->input_timer = .0f;
     
     // 最初はすべてを対象にする
-    this->question = -1;
+    this->attack_number = -1;
+    this->enable_input_defense = false;
     
     this->test_enemy_hp = 100;
     this->test_player_hp = 100;
@@ -399,6 +402,7 @@ void Game::_update_input(float flame) {
         this->_enemy_attack();
 		
 	}
+    
 	
 	// ゲージの表示調整
 	float scale = 1.0f - (input_timer/input_enable_time);
@@ -410,6 +414,18 @@ void Game::_update_input(float flame) {
 	float b = 0;
 	auto col = Color3B(r, g, b);
 	gauge->setColor(col);
+    
+    // 防御パネル
+    if (0.25f <= scale && scale <= 0.75f && !this->enable_input_defense) {
+        this->enable_input_defense = true;
+        auto btn = (Sprite*)this->getChildByTag(TAG_TOUCH_BUTTON + this->defense_number);
+        btn->setColor(DEFENSE_COLOR);
+    }
+    else  if (scale < 0.25f) {
+        this->enable_input_defense = false;
+        auto btn = (Sprite*)this->getChildByTag(TAG_TOUCH_BUTTON + this->defense_number);
+        btn->setColor(Color3B::WHITE);
+    }
 	
     // 入力時間切れ、もしくはコンボノルマ達成の場合、そこで発動終了
 	if (enemy->is_defeat(this->combo_num)) {
@@ -419,14 +435,14 @@ void Game::_update_input(float flame) {
     
     // 倒した
     if (this->test_enemy_hp <= 0) {
-        this->question = -1;
+        this->attack_number = -1;
         this->_reset_touch_panel_color();
         this->game_step = STEP_SUCCESS;
     }
     
     // 自分がやられた
     if (this->test_player_hp <= 0) {
-        this->question = -1;
+        this->attack_number = -1;
         this->_reset_touch_panel_color();
         this->game_step = STEP_FAIL;
     }
@@ -559,29 +575,31 @@ bool Game::onTouchBegan(Touch *touch, Event *unused_event)
 			if (btn_rect.intersectsRect(touch_rect)) {
 				
 				// 正解しているかチェックする
-                if (position == this->question) {
-                    btn->setColor(PANEL_COLOR);
-                    //
-                    
-                    auto judge = this->_get_judge();
-                    _success_effect(judge);
-                    this->judge_great_count += judge;
-                    this->combo_num++;
-                    this->_limit_break_num_effect();
-                    play_se("input_success.wav");
-                    //
+                bool is_collect = false;
+                if (position == this->attack_number) {
+                    _success_effect(ATTACK);
                     this->_player_attack();
+                    is_collect = true;
+				}
+                else if (position == this->defense_number && this->enable_input_defense) {
+                    _success_effect(DEFENSE);
+                    this->input_timer = 0.0f;
+                    is_collect = true;
+                }
+                // 正解してる場合
+                if (is_collect) {
+                    this->_limit_break_num_effect();
+                    
+                    this->enable_input_defense = false;
+                    
+                    this->input_count++;
+                    this->combo_num++;
                     
                     // 問題の更新
-                    this->input_count++;
                     this->_init_question();
                     this->_reset_touch_panel_color();
-                    
-                    // リセットできるボタンの時
-                    if (0) {
-                        this->input_timer = 0.0f;
-                    }
-				}
+                    play_se("input_success.wav");
+                }
 			}
 		}
 	}
@@ -666,10 +684,17 @@ void Game::_init_question() {
     
     // 次の問題を選択、同じな場合はずらす
     int choice = arc4random() % this->disp_numbers.size();
-    if (choice == this->question) {
+    if (choice == this->attack_number) {
         choice = (choice + 1) % this->disp_numbers.size();
     }
-    this->question = choice;
+    this->attack_number = choice;
+    
+    // 防御
+    int defense = arc4random() % this->disp_numbers.size();
+    if (defense == this->attack_number) {
+        defense = (defense + 1) % this->disp_numbers.size();
+    }
+    this->defense_number = defense;
 }
 
 //---------------------------------------------------------
@@ -680,7 +705,7 @@ void Game::_reset_touch_panel_color() {
 		for (int x = 0; x < 3; x++) {
 			int position = this->_get_img_position_by_xy(x, y);
 			auto btn = (Sprite*)this->getChildByTag(TAG_TOUCH_BUTTON + position);
-            auto _col = (this->question == position) ? PANEL_COLOR : Color3B::WHITE;
+            auto _col = (this->attack_number == position) ? ATTACK_COLOR : Color3B::WHITE;
 			btn->setColor(_col);
 		}
 	}
@@ -691,21 +716,6 @@ void Game::_reset_touch_panel_color() {
 //---------------------------------------------------------
 int Game::_get_img_position_by_xy(int x, int y) {
 	return x + y * 3;
-}
-
-//---------------------------------------------------------
-// 入力の精度判定
-//---------------------------------------------------------
-int Game::_get_judge() {
-	auto enemy = (Enemy *)getChildByTag(TAG_ENEMY);
-	auto input_enable_time = enemy->get_input_enable_time();
-	int wait_percent = this->input_timer * 100 / input_enable_time;
-	
-	// 半分以内に入力した
-	if (wait_percent < 50) {
-		return JUDGE_GREAT;
-	}
-	return JUDGE_GOOD;
 }
 
 //---------------------------------------------------------
@@ -766,15 +776,12 @@ bool Game::_is_now_damage_animation(void) {
 //---------------------------------------------------------
 // 入力成功時のパネル演出
 //---------------------------------------------------------
-void Game::_success_effect(int judge) {
+void Game::_success_effect(int type) {
 	// GREAT時は色を付ける
-	auto color = Color3B::WHITE;
-	if (judge == JUDGE_GREAT) {
-		color = Color3B::ORANGE;
-	}
+    auto color = (type == ATTACK) ? ATTACK_COLOR : DEFENSE_COLOR;
+    auto pos   = (type == ATTACK) ? this->attack_number : this->defense_number;
 	
-    int index = question;
-    auto button_effect = (Sprite *)getChildByTag(TAG_TOUCH_EFFECT + index);
+    auto button_effect = (Sprite *)getChildByTag(TAG_TOUCH_EFFECT + pos);
     button_effect->setOpacity(255);
     button_effect->setScale(1.0f);
     button_effect->setColor(color);
@@ -845,6 +852,8 @@ void Game::_enemy_attack() {
         
         enemy->pre_attack_animation();
         _damage_animation();
+        
+        this->enable_input_defense = false;
         
         this->test_player_hp -= 10;
     }

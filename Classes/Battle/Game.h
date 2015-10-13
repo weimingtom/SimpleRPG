@@ -26,10 +26,13 @@ public:
 private:
 	int game_step;
 
-	int question;     // タッチすべき場所
+	int attack_number;     // 攻撃できるパネル
+    int defense_number;    // 防御できるパネル
 	std::vector<int> disp_numbers;  // ユーザーに表示する数字
 	
 	float input_timer;
+    
+    bool enable_input_defense;
 	
 	int attack_count;          // 攻撃演出用カウンター
 	int combo_num;             // コンボ数
@@ -49,8 +52,6 @@ private:
 	void _init_question();
 	void _reset_touch_panel_color();
 	
-	int _get_judge();
-	
 	///////////////////////
 	//  animation
 	///////////////////////
@@ -59,7 +60,7 @@ private:
 	void _damage_animation();
 	bool _is_now_damage_animation(void);
 	
-	void _success_effect(int judge);
+	void _success_effect(int type);
 	
 	void _countdown_animation(int disp_sec);
 	
