@@ -217,7 +217,18 @@ bool Game::init()
 							   (visibleSize.height - GAUGE_SIZE.height)/2 + adjust_stamina_y);
 	stamina_layer->setTag(TAG_INPUT_GAUGE);
 	stamina_layer->setScaleX(1.0f);
-	this->addChild(stamina_layer, ORDER_GAUGE);
+	this->addChild(stamina_layer, ORDER_INPUT_GAUGE);
+    
+    // 防御ゲージ
+    auto defense_gauge = Sprite::create();
+    defense_gauge->setTextureRect(Rect(0.0f ,0.0f ,GAUGE_SIZE.width, GAUGE_SIZE.height));
+    defense_gauge->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
+    defense_gauge->setColor(Color3B::BLUE);
+    defense_gauge->setPosition((visibleSize.width  - GAUGE_SIZE.width)/2,
+                               (visibleSize.height - GAUGE_SIZE.height)/2 + adjust_stamina_y);
+    //defense_gauge->setVisible(false);
+    this->addChild(defense_gauge, ORDER_DEFENSE_GAUGE, TAG_DEFENSE_GAUGE);
+    this->defense_gauge_default_pos = defense_gauge->getPositionX();
 	
 	auto stamina_waku = Sprite::create(RES_BATTLE_DIR + "gauge_waku.png");
 	stamina_waku->setPosition(visibleSize.width/2,
@@ -416,12 +427,19 @@ void Game::_update_input(float flame) {
 	gauge->setColor(col);
     
     // 防御パネル
-    if (0.25f <= scale && scale <= 0.75f && !this->enable_input_defense) {
+    auto defense_time = 0.5f;
+    auto defense_gauge_scale = defense_time / input_enable_time;
+    auto start_range = 0.6f;
+    auto defense_gauge = (Sprite *)this->getChildByTag(TAG_DEFENSE_GAUGE);
+    defense_gauge->setScaleX(defense_gauge_scale);
+    defense_gauge->setPositionX(this->defense_gauge_default_pos + defense_gauge->getContentSize().width * start_range);
+    
+    if (start_range <= scale && scale <= start_range + defense_gauge_scale && !this->enable_input_defense) {
         this->enable_input_defense = true;
         auto btn = (Sprite*)this->getChildByTag(TAG_TOUCH_BUTTON + this->defense_number);
         btn->setColor(DEFENSE_COLOR);
     }
-    else  if (scale < 0.25f) {
+    else  if (scale < start_range) {
         this->enable_input_defense = false;
         auto btn = (Sprite*)this->getChildByTag(TAG_TOUCH_BUTTON + this->defense_number);
         btn->setColor(Color3B::WHITE);

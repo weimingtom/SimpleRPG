@@ -43,6 +43,8 @@ private:
 	
 	int count_down_disp_num;   // カウントダウン表示制御用
 	int wait_counter;          // 演出用汎用カウンタ
+    
+    float defense_gauge_default_pos;
 	
 	///////////////////////
 	//  game proc
